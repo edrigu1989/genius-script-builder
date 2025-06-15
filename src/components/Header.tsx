@@ -1,16 +1,27 @@
-
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import LanguageToggle from './LanguageToggle';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
+
+  const handleAuthClick = () => {
+    navigate('/auth');
+    setIsMenuOpen(false);
+  };
+
+  const handleGeneratorClick = () => {
+    navigate('/generator');
     setIsMenuOpen(false);
   };
 
@@ -19,7 +30,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
             <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">MG</span>
             </div>
@@ -51,13 +62,22 @@ const Header = () => {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <LanguageToggle />
-            <button className="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+            <button 
+              onClick={handleAuthClick}
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
+            >
               {t('header.login')}
             </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+            <button 
+              onClick={handleGeneratorClick}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+            >
               {t('header.demo')}
             </button>
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 transform hover:scale-105">
+            <button 
+              onClick={handleAuthClick}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+            >
               {t('header.start')}
             </button>
           </div>
@@ -97,13 +117,22 @@ const Header = () => {
                 <div className="flex justify-center pb-2">
                   <LanguageToggle />
                 </div>
-                <button className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left">
+                <button 
+                  onClick={handleAuthClick}
+                  className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left"
+                >
                   {t('header.login')}
                 </button>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+                <button 
+                  onClick={handleGeneratorClick}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-center"
+                >
                   {t('header.demo')}
                 </button>
-                <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 text-center">
+                <button 
+                  onClick={handleAuthClick}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 text-center"
+                >
                   {t('header.start')}
                 </button>
               </div>
@@ -116,3 +145,4 @@ const Header = () => {
 };
 
 export default Header;
+
