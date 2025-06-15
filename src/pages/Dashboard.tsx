@@ -43,7 +43,7 @@ const Dashboard = () => {
           topic: 'Lanzamiento de producto',
           status: 'approved',
           created_at: '2024-06-14T10:00:00Z',
-          ai_model_used: 'openai'
+          ai_model_used: 'advanced'
         },
         {
           id: '2',
@@ -51,7 +51,7 @@ const Dashboard = () => {
           topic: 'Newsletter semanal',
           status: 'pending',
           created_at: '2024-06-13T15:30:00Z',
-          ai_model_used: 'claude'
+          ai_model_used: 'professional'
         },
         {
           id: '3',
@@ -59,7 +59,7 @@ const Dashboard = () => {
           topic: 'Página de servicios',
           status: 'generated',
           created_at: '2024-06-12T09:15:00Z',
-          ai_model_used: 'gemini'
+          ai_model_used: 'creative'
         }
       ]
 
