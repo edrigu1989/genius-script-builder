@@ -1,30 +1,33 @@
 
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Stats = () => {
+  const { t } = useLanguage();
+
   const stats = [
     {
       number: '50,000+',
-      label: 'Scripts Generados', 
-      description: 'Mensualmente en nuestra plataforma',
+      label: t('stats.scripts'),
+      description: t('stats.scriptsDesc'),
       icon: '📝'
     },
     {
       number: '2,500+',
-      label: 'Agencias Activas',
-      description: 'Confían en Marketing Genius',
+      label: t('stats.agencies'),
+      description: t('stats.agenciesDesc'),
       icon: '🏢'
     },
     {
       number: '95%',
-      label: 'Tasa de Satisfacción',
-      description: 'De nuestros clientes premium',
+      label: t('stats.satisfaction'),
+      description: t('stats.satisfactionDesc'),
       icon: '⭐'
     },
     {
       number: '30 seg',
-      label: 'Tiempo Promedio',
-      description: 'Para generar un script profesional',
+      label: t('stats.time'),
+      description: t('stats.timeDesc'),
       icon: '⚡'
     }
   ];
@@ -44,17 +47,16 @@ const Stats = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-full text-sm font-medium mb-4">
-            📊 Números que Hablan
+            {t('stats.badge')}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Resultados que
+            {t('stats.title')}
             <span className="bg-gradient-to-r from-yellow-400 to-green-400 bg-clip-text text-transparent block">
-              Transforman Negocios
+              {t('stats.titleHighlight')}
             </span>
           </h2>
           <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-            Miles de agencias ya confían en Marketing Genius para revolucionar 
-            su proceso de creación de contenido y aumentar su productividad.
+            {t('stats.subtitle')}
           </p>
         </div>
 
@@ -90,7 +92,7 @@ const Stats = () => {
 
         {/* Trust Indicators */}
         <div className="mt-20 text-center">
-          <p className="text-blue-200 mb-8 text-lg">Empresas que confían en nosotros:</p>
+          <p className="text-blue-200 mb-8 text-lg">{t('stats.trustedBy')}</p>
           <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
             {[
               'Microsoft Partner', 'Google Cloud', 'AWS', 'OpenAI Partner', 'Meta Business'

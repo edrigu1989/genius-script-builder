@@ -1,9 +1,12 @@
 
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import LanguageToggle from './LanguageToggle';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -29,32 +32,33 @@ const Header = () => {
               onClick={() => scrollToSection('features')}
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
             >
-              Características
+              {t('header.features')}
             </button>
             <button
               onClick={() => scrollToSection('pricing')}
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
             >
-              Precios
+              {t('header.pricing')}
             </button>
             <button
               onClick={() => scrollToSection('stats')}
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
             >
-              Estadísticas
+              {t('header.stats')}
             </button>
           </nav>
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
+            <LanguageToggle />
             <button className="text-gray-700 hover:text-blue-600 transition-colors duration-200">
-              Iniciar Sesión
+              {t('header.login')}
             </button>
             <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-              Ver Demo
+              {t('header.demo')}
             </button>
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 transform hover:scale-105">
-              Comenzar Gratis
+              {t('header.start')}
             </button>
           </div>
 
@@ -75,29 +79,32 @@ const Header = () => {
                 onClick={() => scrollToSection('features')}
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left"
               >
-                Características
+                {t('header.features')}
               </button>
               <button
                 onClick={() => scrollToSection('pricing')}
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left"
               >
-                Precios
+                {t('header.pricing')}
               </button>
               <button
                 onClick={() => scrollToSection('stats')}
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left"
               >
-                Estadísticas
+                {t('header.stats')}
               </button>
               <div className="flex flex-col space-y-2 pt-4 border-t">
+                <div className="flex justify-center pb-2">
+                  <LanguageToggle />
+                </div>
                 <button className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left">
-                  Iniciar Sesión
+                  {t('header.login')}
                 </button>
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-center">
-                  Ver Demo
+                  {t('header.demo')}
                 </button>
                 <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 text-center">
-                  Comenzar Gratis
+                  {t('header.start')}
                 </button>
               </div>
             </div>

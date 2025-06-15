@@ -1,42 +1,45 @@
 
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Features = () => {
+  const { t } = useLanguage();
+
   const features = [
     {
       icon: '🤖',
-      title: 'Multi-IA Avanzada',
-      description: 'Acceso a OpenAI GPT-4, Claude, Gemini y más modelos de IA para generar contenido variado y de alta calidad.',
+      title: t('features.multiAI.title'),
+      description: t('features.multiAI.desc'),
       gradient: 'from-blue-500 to-purple-600'
     },
     {
       icon: '⚡',
-      title: 'Generación Instantánea',
-      description: 'Crea scripts profesionales en menos de 30 segundos. Optimiza tu tiempo y aumenta tu productividad.',
+      title: t('features.instant.title'),
+      description: t('features.instant.desc'),
       gradient: 'from-purple-500 to-pink-600'
     },
     {
       icon: '🎨',
-      title: 'Personalización de Marca',
-      description: 'Entrena la IA con el tono y estilo de tu marca para mantener consistencia en todas tus comunicaciones.',
+      title: t('features.brand.title'),
+      description: t('features.brand.desc'),
       gradient: 'from-green-500 to-blue-600'
     },
     {
       icon: '📊',
-      title: 'Analytics Avanzados',
-      description: 'Métricas detalladas de rendimiento, ROI y efectividad de tus scripts con reportes en tiempo real.',
+      title: t('features.analytics.title'),
+      description: t('features.analytics.desc'),
       gradient: 'from-orange-500 to-red-600'
     },
     {
       icon: '✅',
-      title: 'Control de Calidad',
-      description: 'Sistema de revisión automática y manual para garantizar la calidad y precisión de cada script generado.',
+      title: t('features.quality.title'),
+      description: t('features.quality.desc'),
       gradient: 'from-teal-500 to-green-600'
     },
     {
       icon: '🔄',
-      title: 'Disponibilidad 24/7',
-      description: 'Plataforma siempre disponible con soporte técnico continuo y actualizaciones automáticas.',
+      title: t('features.availability.title'),
+      description: t('features.availability.desc'),
       gradient: 'from-indigo-500 to-blue-600'
     }
   ];
@@ -47,17 +50,16 @@ const Features = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mb-4">
-            🚀 Características Principales
+            {t('features.badge')}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Todo lo que Necesitas para
+            {t('features.title')}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
-              Dominar el Marketing
+              {t('features.titleHighlight')}
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Herramientas profesionales diseñadas para agencias que buscan eficiencia, 
-            calidad y resultados excepcionales en sus campañas de marketing.
+            {t('features.subtitle')}
           </p>
         </div>
 
@@ -94,7 +96,7 @@ const Features = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-xl">
-            Probar Todas las Características
+            {t('features.cta')}
           </button>
         </div>
       </div>
