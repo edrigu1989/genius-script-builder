@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { SocialMediaManager } from '../lib/socialMediaService';
 import { platformConnections } from '../lib/supabase';
 import DashboardLayout from '../components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -33,6 +34,141 @@ const PlatformConnectionsPage = () => {
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(null);
+  const [socialManager, setSocialManager] = useState(null);
+  const [connectionStatuses, setConnectionStatuses] = useState({});
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Initialize Social Media Manager
+  useEffect(() => {
+    if (user) {
+      const manager = new SocialMediaManager(user.id);
+      setSocialManager(manager);
+      initializeConnections(manager);
+    }
+  }, [user]);
+
+  const initializeConnections = async (manager) => {
+    try {
+      setLoading(true);
+      await manager.initialize();
+      
+      // Get all platform statuses
+      const statuses = await manager.getAllConnectionStatuses();
+      setConnectionStatuses(statuses);
+      
+      // Get available platforms
+      const platforms = manager.getAvailablePlatforms();
+      setConnections(platforms);
+      
+    } catch (err) {
+      console.error('Error initializing connections:', err);
+      setError('Error cargando conexiones');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle platform connection
+  const handleConnect = async (platformId) => {
+    if (!socialManager) return;
+    
+    try {
+      setConnecting(platformId);
+      setError('');
+      setSuccess('');
+      
+      await socialManager.connections.initiateConnection(platformId);
+      
+      // Refresh connection statuses
+      const statuses = await socialManager.getAllConnectionStatuses();
+      setConnectionStatuses(statuses);
+      
+      setSuccess(`Conectado exitosamente a ${platformId}`);
+    } catch (err) {
+      console.error(`Error connecting to ${platformId}:`, err);
+      setError(`Error conectando a ${platformId}: ${err.message}`);
+    } finally {
+      setConnecting(null);
+    }
+  };
+
+  // Handle platform disconnection
+  const handleDisconnect = async (platformId) => {
+    if (!socialManager) return;
+    
+    try {
+      setLoading(true);
+      await socialManager.connections.disconnect(platformId);
+      
+      // Refresh connection statuses
+      const statuses = await socialManager.getAllConnectionStatuses();
+      setConnectionStatuses(statuses);
+      
+      setSuccess(`Desconectado de ${platformId}`);
+    } catch (err) {
+      console.error(`Error disconnecting from ${platformId}:`, err);
+      setError(`Error desconectando de ${platformId}: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get platform configuration
+  const getPlatformConfig = (platformId) => {
+    const configs = {
+      facebook: {
+        name: 'Facebook',
+        icon: Facebook,
+        color: 'bg-blue-600',
+        description: 'Publica posts, gestiona páginas y analiza engagement',
+        features: ['Posts automáticos', 'Gestión de páginas', 'Analytics detallados', 'Programación de contenido']
+      },
+      instagram: {
+        name: 'Instagram Business',
+        icon: Instagram,
+        color: 'bg-pink-600',
+        description: 'Comparte fotos, stories y gestiona tu presencia visual',
+        features: ['Posts de fotos/videos', 'Stories automáticas', 'Insights detallados', 'Hashtags optimizados']
+      },
+      twitter: {
+        name: 'Twitter/X',
+        icon: Twitter,
+        color: 'bg-blue-400',
+        description: 'Publica tweets, hilos y mantente al día con tendencias',
+        features: ['Tweets automáticos', 'Hilos programados', 'Trending topics', 'Engagement tracking']
+      },
+      linkedin: {
+        name: 'LinkedIn',
+        icon: Linkedin,
+        color: 'bg-blue-700',
+        description: 'Contenido profesional y networking empresarial',
+        features: ['Posts profesionales', 'Artículos largos', 'Network building', 'B2B analytics']
+      },
+      tiktok: {
+        name: 'TikTok Business',
+        icon: Music,
+        color: 'bg-black',
+        description: 'Videos virales y contenido de entretenimiento',
+        features: ['Videos cortos', 'Trending sounds', 'Viral analytics', 'Creator tools']
+      },
+      youtube: {
+        name: 'YouTube',
+        icon: Youtube,
+        color: 'bg-red-600',
+        description: 'Videos largos, tutoriales y contenido educativo',
+        features: ['Video uploads', 'Playlist management', 'Analytics avanzados', 'Monetización']
+      }
+    };
+    
+    return configs[platformId] || {
+      name: platformId,
+      icon: Globe,
+      color: 'bg-gray-600',
+      description: 'Plataforma de redes sociales',
+      features: []
+    };
+  };
 
   // Configuración de plataformas disponibles
   const platforms = [

@@ -1,37 +1,185 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getUnifiedMetrics, getPlatformInsights } from '../lib/supabase';
+import { RealTimeAnalytics } from '../lib/realTimeAnalytics';
+import { SocialMediaAnalytics } from '../lib/socialMediaService';
+import DashboardLayout from '../components/DashboardLayout';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { Alert, AlertDescription } from '../components/ui/alert';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import DashboardLayout from '../components/DashboardLayout';
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  DollarSign, 
+  Users, 
+  Eye, 
+  Heart, 
+  Share2, 
+  BarChart3,
+  Download,
+  RefreshCw,
+  Calendar,
+  Target,
+  Zap
+} from 'lucide-react';
 
 const Analytics = () => {
   const { user } = useAuth();
-  const [metrics, setMetrics] = useState([]);
-  const [insights, setInsights] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+  const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [realTimeAnalytics, setRealTimeAnalytics] = useState(null);
+  const [error, setError] = useState('');
+  const [lastUpdated, setLastUpdated] = useState(null);
 
+  // Initialize real-time analytics
   useEffect(() => {
-    const loadAnalytics = async () => {
-      if (user) {
-        try {
-          const [metricsData, insightsData] = await Promise.all([
-            getUnifiedMetrics(user.id),
-            getPlatformInsights(user.id)
-          ]);
-          setMetrics(metricsData || []);
-          setInsights(insightsData || []);
-        } catch (error) {
-          console.error('Error loading analytics:', error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadAnalytics();
+    if (user) {
+      const rtAnalytics = new RealTimeAnalytics(user.id);
+      setRealTimeAnalytics(rtAnalytics);
+      initializeAnalytics(rtAnalytics);
+    }
   }, [user]);
+
+  const initializeAnalytics = async (rtAnalytics) => {
+    try {
+      setLoading(true);
+      
+      // Initialize analytics
+      await rtAnalytics.initialize();
+      
+      // Get performance dashboard
+      const dashboardData = await rtAnalytics.getPerformanceDashboard('30d');
+      setDashboard(dashboardData);
+      
+      // Subscribe to real-time updates
+      const unsubscribe = rtAnalytics.subscribe('all', (data) => {
+        console.log('Real-time analytics update:', data);
+        setLastUpdated(new Date());
+      });
+
+      // Subscribe to metrics updates
+      rtAnalytics.subscribe('metrics_updated', (metrics) => {
+        setDashboard(prev => ({
+          ...prev,
+          overview: {
+            ...prev?.overview,
+            ...metrics
+          }
+        }));
+      });
+
+      setLastUpdated(new Date());
+      
+      // Cleanup subscription on unmount
+      return () => unsubscribe();
+      
+    } catch (err) {
+      console.error('Error initializing analytics:', err);
+      setError('Error cargando analytics');
+      
+      // Load fallback data
+      loadFallbackData();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadFallbackData = () => {
+    // Fallback dashboard data
+    setDashboard({
+      overview: {
+        scripts_generated: 45,
+        content_published: 38,
+        total_engagement: 12500,
+        roi_percentage: 156.7
+      },
+      revenue: {
+        total_revenue: 2850,
+        total_investment: 1820,
+        profit: 1030,
+        break_even_point: 15
+      },
+      platforms: {
+        facebook: { engagement_rate: 4.2, followers: 2500 },
+        instagram: { engagement_rate: 6.8, followers: 1800 },
+        linkedin: { engagement_rate: 3.1, followers: 950 },
+        twitter: { engagement_rate: 2.9, followers: 1200 }
+      },
+      trends: {
+        scripts_growth: 23.5,
+        engagement_growth: 18.2,
+        revenue_growth: 34.1,
+        roi_trend: 'increasing'
+      },
+      predictions: {
+        next_month_scripts: 52,
+        next_month_revenue: 3200,
+        projected_roi: 175.3,
+        break_even_date: 'Already profitable'
+      },
+      recommendations: [
+        {
+          type: 'content',
+          priority: 'high',
+          title: 'Optimizar horarios de publicación',
+          description: 'Publicar entre 10:00-12:00 AM para mejor engagement',
+          action: 'Programar contenido'
+        },
+        {
+          type: 'platforms',
+          priority: 'medium',
+          title: 'Expandir a TikTok',
+          description: 'Gran potencial para audiencia joven',
+          action: 'Conectar TikTok'
+        }
+      ]
+    });
+  };
+
+  // Refresh analytics data
+  const refreshAnalytics = async () => {
+    if (!realTimeAnalytics) return;
+    
+    try {
+      setLoading(true);
+      const dashboardData = await realTimeAnalytics.getPerformanceDashboard('30d');
+      setDashboard(dashboardData);
+      setLastUpdated(new Date());
+    } catch (err) {
+      console.error('Error refreshing analytics:', err);
+      setError('Error actualizando datos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Generate report
+  const generateReport = async () => {
+    if (!realTimeAnalytics) return;
+    
+    try {
+      const report = await realTimeAnalytics.generateReport('30d');
+      
+      // Create downloadable file
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `analytics-report-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+    } catch (err) {
+      console.error('Error generating report:', err);
+      setError('Error generando reporte');
+    }
+  };
 
   // Datos de ejemplo para demostración
   const sampleMetrics = [

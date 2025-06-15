@@ -655,3 +655,192 @@ export const saveScript = async (scriptData: any) => {
 // Agregar saveScript al objeto api
 api.saveScript = saveScript
 
+
+// ==========================
+// FUNCIONES PARA ANALYTICS Y REPORTES
+// ==========================
+
+export const saveAnalyticsEvent = async (eventData) => {
+  try {
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .insert(eventData)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error saving analytics event:', error)
+    throw error
+  }
+}
+
+export const getAnalyticsTrends = async (userId, dateRange = '30d') => {
+  try {
+    const days = parseInt(dateRange.replace('d', ''))
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days)
+
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('timestamp', startDate.toISOString())
+      .order('timestamp', { ascending: true })
+
+    if (error) throw error
+    return data || []
+  } catch (error) {
+    console.error('Error getting analytics trends:', error)
+    return []
+  }
+}
+
+export const savePlatformMetrics = async (metricsData) => {
+  try {
+    const { data, error } = await supabase
+      .from('platform_metrics')
+      .upsert(metricsData, { 
+        onConflict: 'user_id,platform,date_range',
+        ignoreDuplicates: false 
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error saving platform metrics:', error)
+    throw error
+  }
+}
+
+export const getPublishedContent = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from('published_content')
+      .select('*')
+      .eq('user_id', userId)
+      .order('published_at', { ascending: false })
+
+    if (error) throw error
+    return data || []
+  } catch (error) {
+    console.error('Error getting published content:', error)
+    return []
+  }
+}
+
+export const savePublishedContent = async (contentData) => {
+  try {
+    const { data, error } = await supabase
+      .from('published_content')
+      .insert(contentData)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error saving published content:', error)
+    throw error
+  }
+}
+
+export const saveScheduledContent = async (contentData) => {
+  try {
+    const { data, error } = await supabase
+      .from('scheduled_content')
+      .insert(contentData)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error saving scheduled content:', error)
+    throw error
+  }
+}
+
+export const saveSocialConnection = async (connectionData) => {
+  try {
+    const { data, error } = await supabase
+      .from('social_connections')
+      .upsert(connectionData, { 
+        onConflict: 'user_id,platform',
+        ignoreDuplicates: false 
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error saving social connection:', error)
+    throw error
+  }
+}
+
+export const getUserSocialConnections = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from('social_connections')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+
+    if (error) throw error
+    return data || []
+  } catch (error) {
+    console.error('Error getting social connections:', error)
+    return []
+  }
+}
+
+export const disconnectSocialPlatform = async (userId, platform) => {
+  try {
+    const { data, error } = await supabase
+      .from('social_connections')
+      .update({ is_active: false, disconnected_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .eq('platform', platform)
+      .select()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error disconnecting social platform:', error)
+    throw error
+  }
+}
+
+export const saveVideoAnalysis = async (analysisData) => {
+  try {
+    const { data, error } = await supabase
+      .from('video_analyses')
+      .insert(analysisData)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error saving video analysis:', error)
+    throw error
+  }
+}
+
+// Agregar todas las nuevas funciones al objeto api
+api.saveAnalyticsEvent = saveAnalyticsEvent
+api.getAnalyticsTrends = getAnalyticsTrends
+api.savePlatformMetrics = savePlatformMetrics
+api.getPublishedContent = getPublishedContent
+api.savePublishedContent = savePublishedContent
+api.saveScheduledContent = saveScheduledContent
+api.saveSocialConnection = saveSocialConnection
+api.getUserSocialConnections = getUserSocialConnections
+api.disconnectSocialPlatform = disconnectSocialPlatform
+api.saveVideoAnalysis = saveVideoAnalysis
+
