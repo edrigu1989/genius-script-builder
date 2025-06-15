@@ -277,8 +277,6 @@ const Dashboard = () => {
                         <span>{getScriptTypeLabel(script.script_type)}</span>
                         <span>•</span>
                         <span>{new Date(script.created_at).toLocaleDateString()}</span>
-                        <span>•</span>
-                        <span className="capitalize">{script.ai_model_used}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -317,9 +315,9 @@ const Dashboard = () => {
                 </p>
               </div>
               <div className="space-y-2">
-                <h4 className="font-semibold text-blue-900">⚡ Prueba diferentes modelos</h4>
+                <h4 className="font-semibold text-blue-900">⚡ Prueba diferentes estilos</h4>
                 <p className="text-sm text-blue-800">
-                  Cada modelo de IA tiene fortalezas únicas. Experimenta con OpenAI, Claude y Gemini.
+                  Experimenta con diferentes tonos y formatos para encontrar lo que mejor funciona.
                 </p>
               </div>
               <div className="space-y-2">

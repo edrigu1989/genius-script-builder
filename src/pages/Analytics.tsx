@@ -52,9 +52,9 @@ const Analytics = () => {
   ];
 
   const aiModelData = [
-    { name: 'ScriptMaster Pro', value: 45, color: '#8884d8' },
-    { name: 'AnalyticsBrain', value: 30, color: '#82ca9d' },
-    { name: 'TrendHunter AI', value: 25, color: '#ffc658' }
+    { name: 'Redes Sociales', value: 45, color: '#8884d8' },
+    { name: 'Email Marketing', value: 30, color: '#82ca9d' },
+    { name: 'Landing Pages', value: 25, color: '#ffc658' }
   ];
 
   if (loading) {
@@ -124,7 +124,7 @@ const Analytics = () => {
         <TabsList>
           <TabsTrigger value="platforms">Por Plataforma</TabsTrigger>
           <TabsTrigger value="performance">Rendimiento</TabsTrigger>
-          <TabsTrigger value="ai-models">Modelos IA</TabsTrigger>
+          <TabsTrigger value="ai-models">Tipos de Contenido</TabsTrigger>
           <TabsTrigger value="insights">Insights</TabsTrigger>
         </TabsList>
 
@@ -174,8 +174,8 @@ const Analytics = () => {
         <TabsContent value="ai-models" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Uso de Modelos IA</CardTitle>
-              <CardDescription>Distribución de uso entre ScriptMaster, AnalyticsBrain y TrendHunter</CardDescription>
+              <CardTitle>Rendimiento por Tipo de Contenido</CardTitle>
+              <CardDescription>Distribución de uso entre diferentes tipos de scripts</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -225,7 +225,7 @@ const Analytics = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>🚀 Recomendaciones IA</CardTitle>
+                <CardTitle>🚀 Recomendaciones Inteligentes</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="p-4 bg-orange-50 rounded-lg">
@@ -237,8 +237,8 @@ const Analytics = () => {
                   <p className="text-red-700">TikTok muestra potencial 300% mayor que otras plataformas</p>
                 </div>
                 <div className="p-4 bg-indigo-50 rounded-lg">
-                  <h4 className="font-semibold text-indigo-900">Modelo recomendado</h4>
-                  <p className="text-indigo-700">TrendHunter AI para contenido viral, AnalyticsBrain para B2B</p>
+                  <h4 className="font-semibold text-indigo-900">Estrategia recomendada</h4>
+                  <p className="text-indigo-700">Enfócate en contenido visual para maximizar engagement</p>
                 </div>
               </CardContent>
             </Card>
