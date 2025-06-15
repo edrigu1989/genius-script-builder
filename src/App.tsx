@@ -11,7 +11,9 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AdminPanel from "./pages/AdminPanel";
 import WordPressGenerator from "./pages/WordPressGenerator";
+import PlatformConnections from "./components/PlatformConnections";
 import NotFound from "./pages/NotFound";
+import './i18n';
 
 const queryClient = new QueryClient();
 
@@ -81,6 +83,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <AdminPanel />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/connections" 
+        element={
+          <ProtectedRoute>
+            <PlatformConnections />
           </ProtectedRoute>
         } 
       />
