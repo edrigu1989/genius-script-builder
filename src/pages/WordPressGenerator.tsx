@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
+import DashboardLayout from '../components/DashboardLayout'
 import { 
   Globe,
   Palette,
@@ -19,7 +20,6 @@ import {
   Type,
   Smartphone
 } from 'lucide-react'
-import DashboardLayout from '../components/DashboardLayout'
 
 const WordPressGenerator = () => {
   const navigate = useNavigate()

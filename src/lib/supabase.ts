@@ -529,3 +529,94 @@ export const api = {
   }
 }
 
+
+
+// =====================================================
+// FUNCIONES PARA ANALYTICS Y SETTINGS
+// =====================================================
+
+// Obtener métricas unificadas
+export const getUnifiedMetrics = async (clientId: string) => {
+  const { data, error } = await supabase
+    .from('unified_metrics')
+    .select('*')
+    .eq('client_id', clientId)
+    .order('date', { ascending: false })
+    .limit(30)
+  
+  if (error) throw error
+  return data || []
+}
+
+// Obtener insights de plataformas
+export const getPlatformInsights = async (clientId: string) => {
+  const { data, error } = await supabase
+    .from('platform_insights')
+    .select('*')
+    .eq('client_id', clientId)
+    .eq('is_active', true)
+    .order('created_at', { ascending: false })
+    .limit(10)
+  
+  if (error) throw error
+  return data || []
+}
+
+// Obtener preferencias de usuario
+export const getUserPreferences = async (clientId: string) => {
+  const { data, error } = await supabase
+    .from('user_preferences')
+    .select('*')
+    .eq('client_id', clientId)
+    .single()
+  
+  if (error && error.code !== 'PGRST116') throw error
+  return data
+}
+
+// Actualizar preferencias de usuario
+export const updateUserPreferences = async (clientId: string, preferences: any) => {
+  const { data, error } = await supabase
+    .from('user_preferences')
+    .upsert({
+      client_id: clientId,
+      ...preferences,
+      updated_at: new Date().toISOString()
+    })
+    .select()
+    .single()
+  
+  if (error) throw error
+  return data
+}
+
+// Crear métricas unificadas
+export const createUnifiedMetrics = async (clientId: string, metrics: any) => {
+  const { data, error } = await supabase
+    .from('unified_metrics')
+    .insert({
+      client_id: clientId,
+      ...metrics
+    })
+    .select()
+    .single()
+  
+  if (error) throw error
+  return data
+}
+
+// Crear insight de plataforma
+export const createPlatformInsight = async (clientId: string, insight: any) => {
+  const { data, error } = await supabase
+    .from('platform_insights')
+    .insert({
+      client_id: clientId,
+      ...insight
+    })
+    .select()
+    .single()
+  
+  if (error) throw error
+  return data
+}
+

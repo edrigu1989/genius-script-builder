@@ -11,6 +11,8 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AdminPanel from "./pages/AdminPanel";
 import WordPressGenerator from "./pages/WordPressGenerator";
+import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 import PlatformConnections from "./components/PlatformConnections";
 import NotFound from "./pages/NotFound";
 import './i18n';
@@ -83,6 +85,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <AdminPanel />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/analytics" 
+        element={
+          <ProtectedRoute>
+            <Analytics />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <ProtectedRoute>
+            <Settings />
           </ProtectedRoute>
         } 
       />
