@@ -125,97 +125,85 @@ const VideoAnalysis = () => {
     const steps = [
       { progress: 20, message: "Subiendo video..." },
       { progress: 40, message: "Extrayendo audio..." },
-       const handleAnalyzeFile = async () => {
-    if (!selectedFile) return;
+      { progress: 60, message: "Analizando contenido..." },
+      { progress: 80, message: "Generando insights..." },
+      { progress: 100, message: "Análisis completado" }
+    ];
 
-    setAnalyzing(true);
-    setError('');
-    setAnalysisResults(null);
-
-    try {
-      console.log('Starting real video analysis...');
-      
-      // Analyze video with real AI
-      const results = await videoAnalysisService.analyzeVideo(selectedFile, {
-        platform: analysisOptions.platform,
-        targetAudience: analysisOptions.targetAudience,
-        industry: analysisOptions.industry,
-        duration: selectedFile.duration || null
-      });
-
-      // Transform results to match UI expectations
-      const transformedResults = {
-        file_info: results.file_info,
-        processing_time: Math.round((new Date() - new Date(results.analysis_timestamp)) / 1000),
-        transcript: {
-          text: results.transcription.text,
-          confidence: Math.round(results.transcription.confidence * 100),
-          word_count: results.transcription.text.split(' ').length,
-          duration: results.transcription.duration || 'N/A',
-          language: results.transcription.language || 'es'
-        },
-        sentiment_analysis: {
-          overall_sentiment: results.sentiment_analysis.sentiment.tipo,
-          confidence: Math.round(results.sentiment_analysis.sentiment.confianza * 100),
-          emotions: results.sentiment_analysis.emotions.reduce((acc, emotion) => {
-            acc[emotion.emocion] = Math.round(emotion.intensidad * 100);
-            return acc;
-          }, {})
-        },
-        key_insights: {
-          main_topics: results.sentiment_analysis.keywords,
-          speaking_pace: "Moderado",
-          energy_level: results.sentiment_analysis.tone === 'urgente' ? 'Alto' : 'Medio',
-          clarity_score: Math.round(results.transcription.confidence * 100)
-        },
-        performance_prediction: {
-          estimated_engagement: `${results.engagement_prediction.engagement_score}%`,
-          viral_potential: results.engagement_prediction.virality_probability > 70 ? 'Alto' : 
-                          results.engagement_prediction.virality_probability > 40 ? 'Medio' : 'Bajo',
-          target_audience_match: "85%",
-          optimal_posting_time: results.engagement_prediction.best_time
-        },
-        improvement_suggestions: [
-          ...results.sentiment_analysis.recommendations.map(rec => ({
-            category: "Contenido",
-            suggestion: rec,
-            impact: "Alto"
-          })),
-          ...results.engagement_prediction.improvements.map(imp => ({
-            category: "Engagement", 
-            suggestion: imp,
-            impact: "Medio"
-          }))
-        ],
-        script_recommendations: results.engagement_prediction.recommendations,
-        hashtags: results.engagement_prediction.hashtags,
-        trends: results.trends_analysis.trends,
-        overall_score: results.overall_score
-      };
-
-      setAnalysisResults(transformedResults);
-
-      // Save analysis to Supabase
-      try {
-        await api.saveVideoAnalysis({
-          user_id: user?.id,
-          file_name: selectedFile.name,
-          analysis_results: transformedResults,
-          created_at: new Date().toISOString()
-        });
-      } catch (saveError) {
-        console.error('Error saving analysis:', saveError);
-      }
-
-    } catch (err) {
-      console.error('Video analysis error:', err);
-      setError(`Error analizando video: ${err.message}`);
-      
-      // Fallback to mock analysis
-      await handleAnalyzeFileMock();
-    } finally {
-      setAnalyzing(false);
+    for (const step of steps) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setAnalysisProgress(step.progress);
+      setProgressMessage(step.message);
     }
+
+    // Simular resultados de análisis
+    const mockResults = {
+      file_info: {
+        name: selectedFile.name,
+        size: selectedFile.size,
+        duration: "2:45",
+        format: "MP4",
+        resolution: "1920x1080"
+      },
+      processing_time: 15,
+      transcript: {
+        text: "Hola, bienvenidos a nuestro canal. Hoy vamos a hablar sobre marketing digital y cómo pueden mejorar sus estrategias de contenido para obtener mejores resultados en redes sociales.",
+        confidence: 94,
+        word_count: 28,
+        duration: "2:45",
+        language: "es"
+      },
+      sentiment_analysis: {
+        overall_sentiment: "positivo",
+        confidence: 87,
+        emotions: {
+          alegría: 65,
+          confianza: 78,
+          entusiasmo: 82,
+          profesionalismo: 91
+        }
+      },
+      key_insights: {
+        main_topics: ["marketing digital", "estrategias", "redes sociales", "contenido"],
+        speaking_pace: "Moderado",
+        energy_level: "Alto",
+        clarity_score: 94
+      },
+      performance_prediction: {
+        estimated_engagement: "7.2%",
+        viral_potential: "Alto",
+        target_audience_match: "89%",
+        optimal_posting_time: "10:00 AM - 12:00 PM"
+      },
+      improvement_suggestions: [
+        {
+          category: "Contenido",
+          suggestion: "Agregar más ejemplos prácticos para aumentar el engagement",
+          impact: "Alto"
+        },
+        {
+          category: "Técnico",
+          suggestion: "Mejorar la iluminación para mayor calidad visual",
+          impact: "Medio"
+        },
+        {
+          category: "Engagement",
+          suggestion: "Incluir call-to-action más claros al final",
+          impact: "Alto"
+        }
+      ],
+      script_recommendations: [
+        "Usar más preguntas directas para involucrar a la audiencia",
+        "Incluir estadísticas relevantes para dar credibilidad",
+        "Agregar testimonios de clientes satisfechos"
+      ],
+      hashtags: ["#MarketingDigital", "#RedesSociales", "#Contenido", "#Estrategia", "#Emprendimiento"],
+      trends: ["Marketing de contenidos", "Video marketing", "Engagement orgánico"],
+      overall_score: 85
+    };
+
+    setAnalysisResults(mockResults);
+    setAnalyzing(false);
   };
 
   const handleAnalyzeFileMock = async () => {
