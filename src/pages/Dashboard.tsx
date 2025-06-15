@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button'
@@ -22,6 +23,7 @@ import DashboardLayout from '../components/DashboardLayout'
 
 const Dashboard = () => {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [scripts, setScripts] = useState([])
   const [analytics, setAnalytics] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -199,7 +201,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button 
                 className="h-20 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                onClick={() => window.location.href = '/generator'}
+                onClick={() => navigate('/generator')}
               >
                 <div className="text-center">
                   <Sparkles className="h-6 w-6 mx-auto mb-1" />
@@ -211,7 +213,7 @@ const Dashboard = () => {
               <Button 
                 variant="outline" 
                 className="h-20"
-                onClick={() => window.location.href = '/analytics'}
+                onClick={() => navigate('/analytics')}
               >
                 <div className="text-center">
                   <BarChart3 className="h-6 w-6 mx-auto mb-1" />
@@ -223,7 +225,7 @@ const Dashboard = () => {
               <Button 
                 variant="outline" 
                 className="h-20"
-                onClick={() => window.location.href = '/my-scripts'}
+                onClick={() => navigate('/my-scripts')}
               >
                 <div className="text-center">
                   <FileText className="h-6 w-6 mx-auto mb-1" />
@@ -258,7 +260,7 @@ const Dashboard = () => {
                 </p>
                 <Button 
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  onClick={() => window.location.href = '/generator'}
+                  onClick={() => navigate('/generator')}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Generar Primer Script
