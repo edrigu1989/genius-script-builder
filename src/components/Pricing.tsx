@@ -10,15 +10,15 @@ const Pricing = () => {
     {
       name: t('pricing.starter.name'),
       price: '$97',
-      period: '/mes',
+      period: t('pricing.period'),
       description: t('pricing.starter.desc'),
       features: [
-        '50 scripts por mes',
-        'Acceso a GPT-4 y Claude',
-        'Templates básicos',
-        'Analytics básicos',
-        'Soporte por email',
-        'Exportación PDF/DOCX'
+        t('pricing.starter.feature1'),
+        t('pricing.starter.feature2'),
+        t('pricing.starter.feature3'),
+        t('pricing.starter.feature4'),
+        t('pricing.starter.feature5'),
+        t('pricing.starter.feature6')
       ],
       gradient: 'from-blue-500 to-blue-600',
       popular: false
@@ -26,17 +26,17 @@ const Pricing = () => {
     {
       name: t('pricing.professional.name'),
       price: '$297',
-      period: '/mes',
+      period: t('pricing.period'),
       description: t('pricing.professional.desc'),
       features: [
-        '200 scripts por mes',
-        'Todos los modelos de IA',
-        'Personalización de marca',
-        'Analytics avanzados',
-        'Soporte prioritario',
-        'A/B Testing',
-        'Colaboración en equipo',
-        'API access'
+        t('pricing.professional.feature1'),
+        t('pricing.professional.feature2'),
+        t('pricing.professional.feature3'),
+        t('pricing.professional.feature4'),
+        t('pricing.professional.feature5'),
+        t('pricing.professional.feature6'),
+        t('pricing.professional.feature7'),
+        t('pricing.professional.feature8')
       ],
       gradient: 'from-purple-500 to-purple-600',
       popular: true
@@ -44,18 +44,18 @@ const Pricing = () => {
     {
       name: t('pricing.enterprise.name'),
       price: '$597',
-      period: '/mes',
+      period: t('pricing.period'),
       description: t('pricing.enterprise.desc'),
       features: [
-        'Scripts ilimitados',
-        'Modelos de IA premium',
-        'White-label completo',
-        'Analytics predictivos',
-        'Soporte 24/7 dedicado',
-        'Integración CRM/ERP',
-        'Gestión multi-cliente',
-        'SLA garantizado',
-        'Capacitación personalizada'
+        t('pricing.enterprise.feature1'),
+        t('pricing.enterprise.feature2'),
+        t('pricing.enterprise.feature3'),
+        t('pricing.enterprise.feature4'),
+        t('pricing.enterprise.feature5'),
+        t('pricing.enterprise.feature6'),
+        t('pricing.enterprise.feature7'),
+        t('pricing.enterprise.feature8'),
+        t('pricing.enterprise.feature9')
       ],
       gradient: 'from-green-500 to-green-600',
       popular: false

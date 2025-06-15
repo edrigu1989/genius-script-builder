@@ -37,12 +37,12 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">{t('footer.product')}</h3>
             <ul className="space-y-3">
               {[
-                'Características',
-                'Precios',
-                'Integraciones',
-                'API',
-                'Seguridad',
-                'Roadmap'
+                t('footer.features'),
+                t('footer.pricing'),
+                t('footer.integrations'),
+                t('footer.api'),
+                t('footer.security'),
+                t('footer.roadmap')
               ].map((link, index) => (
                 <li key={index}>
                   <button className="text-gray-400 hover:text-white transition-colors duration-200">
@@ -58,12 +58,12 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">{t('footer.company')}</h3>
             <ul className="space-y-3">
               {[
-                'Sobre Nosotros',
-                'Careers',
-                'Blog',
-                'Prensa',
-                'Contacto',
-                'Partners'
+                t('footer.about'),
+                t('footer.careers'),
+                t('footer.blog'),
+                t('footer.press'),
+                t('footer.contact'),
+                t('footer.partners')
               ].map((link, index) => (
                 <li key={index}>
                   <button className="text-gray-400 hover:text-white transition-colors duration-200">
@@ -83,9 +83,9 @@ const Footer = () => {
             </div>
             <div className="flex space-x-6">
               {[
-                'Términos de Servicio',
-                'Política de Privacidad',
-                'Cookies'
+                t('footer.terms'),
+                t('footer.privacy'),
+                t('footer.cookies')
               ].map((link, index) => (
                 <button
                   key={index}
