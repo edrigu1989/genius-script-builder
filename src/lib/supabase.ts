@@ -620,3 +620,38 @@ export const createPlatformInsight = async (clientId: string, insight: any) => {
   return data
 }
 
+
+// =====================================================
+// FUNCIÓN PARA GUARDAR SCRIPTS GENERADOS
+// =====================================================
+
+export const saveScript = async (scriptData: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('generated_scripts')
+      .insert({
+        client_id: scriptData.user_id,
+        title: `${scriptData.platform || scriptData.script_type} - ${scriptData.topic}`,
+        content: scriptData.content,
+        ai_model: scriptData.ai_model,
+        script_type: scriptData.script_type,
+        target_audience: scriptData.target_audience,
+        tone: scriptData.tone,
+        platform: scriptData.platform,
+        usage_data: scriptData.usage_data,
+        created_at: scriptData.created_at || new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error saving script:', error)
+    throw error
+  }
+}
+
+// Agregar saveScript al objeto api
+api.saveScript = saveScript
+

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/supabase';
+import aiService from '../lib/aiService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -53,41 +54,65 @@ const ScriptGenerator = () => {
     setSuccess('');
 
     try {
-      // Preparar datos para N8N
-      const scriptData = {
-        client_id: user?.id,
-        script_type: formData.scriptType,
+      // Preparar parámetros para IA
+      const aiParams = {
+        contentType: formData.scriptType,
         topic: formData.topic,
-        target_audience: formData.targetAudience,
+        targetAudience: formData.targetAudience,
         tone: formData.tone,
-        length: formData.length,
         platform: formData.platform,
-        additional_info: formData.additionalInfo,
-        ai_model: formData.aiModel,
-        timestamp: new Date().toISOString()
+        keywords: formData.additionalInfo ? formData.additionalInfo.split(',').map(k => k.trim()) : [],
+        callToAction: 'Generar engagement y conversiones',
+        brandVoice: 'Profesional y confiable',
+        additionalContext: formData.additionalInfo
       };
 
-      console.log('Enviando datos a N8N:', scriptData);
+      console.log('Generando contenido con IA:', aiParams);
 
-      // Llamar al webhook de N8N
-      const response = await api.generateScript(scriptData);
+      // Generar contenido con IA real
+      const result = await aiService.generateContent(aiParams, formData.aiModel);
       
-      if (response && response.script) {
-        setGeneratedScript(response.script);
-        setSuccess('¡Script generado exitosamente!');
+      if (result.success) {
+        setGeneratedScript(result.content);
+        setSuccess(`¡Script generado exitosamente con ${result.model}!`);
+        
+        // Guardar en Supabase
+        try {
+          const scriptData = {
+            user_id: user?.id,
+            script_type: formData.scriptType,
+            topic: formData.topic,
+            target_audience: formData.targetAudience,
+            tone: formData.tone,
+            platform: formData.platform,
+            content: result.content,
+            ai_model: result.model,
+            usage_data: result.usage,
+            created_at: new Date().toISOString()
+          };
+          
+          await api.saveScript(scriptData);
+          console.log('Script guardado en Supabase');
+        } catch (saveError) {
+          console.error('Error guardando script:', saveError);
+          // No mostrar error al usuario, el script se generó correctamente
+        }
       } else {
-        // Fallback con script simulado si N8N no responde
+        setError(`Error generando script: ${result.error}`);
+        
+        // Fallback con script simulado
         const mockScript = generateMockScript(formData);
         setGeneratedScript(mockScript);
-        setSuccess('Script generado (modo demo)');
+        setSuccess('Script generado (modo demo - IA no disponible)');
       }
     } catch (err) {
       console.error('Error generando script:', err);
+      setError('Error inesperado. Por favor intenta nuevamente.');
       
       // Fallback con script simulado
       const mockScript = generateMockScript(formData);
       setGeneratedScript(mockScript);
-      setSuccess('Script generado (modo demo - N8N no disponible)');
+      setSuccess('Script generado (modo demo)');
     } finally {
       setLoading(false);
     }
