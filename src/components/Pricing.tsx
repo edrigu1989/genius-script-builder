@@ -1,14 +1,17 @@
 
 import React from 'react';
 import { CheckCircle } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Pricing = () => {
+  const { t } = useLanguage();
+
   const plans = [
     {
-      name: 'Starter',
+      name: t('pricing.starter.name'),
       price: '$97',
       period: '/mes',
-      description: 'Perfect para agencias pequeñas que están comenzando',
+      description: t('pricing.starter.desc'),
       features: [
         '50 scripts por mes',
         'Acceso a GPT-4 y Claude',
@@ -21,10 +24,10 @@ const Pricing = () => {
       popular: false
     },
     {
-      name: 'Professional',
+      name: t('pricing.professional.name'),
       price: '$297',
       period: '/mes',
-      description: 'La elección más popular para agencias en crecimiento',
+      description: t('pricing.professional.desc'),
       features: [
         '200 scripts por mes',
         'Todos los modelos de IA',
@@ -39,10 +42,10 @@ const Pricing = () => {
       popular: true
     },
     {
-      name: 'Enterprise',
+      name: t('pricing.enterprise.name'),
       price: '$597',
       period: '/mes',
-      description: 'Solución completa para agencias grandes y corporativos',
+      description: t('pricing.enterprise.desc'),
       features: [
         'Scripts ilimitados',
         'Modelos de IA premium',
@@ -65,17 +68,16 @@ const Pricing = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mb-4">
-            💰 Planes y Precios
+            {t('pricing.badge')}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Elige el Plan Perfecto
+            {t('pricing.title')}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
-              para tu Agencia
+              {t('pricing.titleHighlight')}
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Planes diseñados para crecer contigo. Desde startups hasta empresas, 
-            tenemos la solución perfecta para tus necesidades de marketing.
+            {t('pricing.subtitle')}
           </p>
         </div>
 
@@ -91,7 +93,7 @@ const Pricing = () => {
               {/* Popular Badge */}
               {plan.popular && (
                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-center py-2 text-sm font-semibold">
-                  🏆 Más Popular
+                  {t('pricing.popular')}
                 </div>
               )}
 
@@ -120,12 +122,12 @@ const Pricing = () => {
                 <button
                   className={`w-full bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg`}
                 >
-                  {plan.name === 'Enterprise' ? 'Contactar Ventas' : 'Comenzar Ahora'}
+                  {plan.name === t('pricing.enterprise.name') ? t('pricing.contactSales') : t('pricing.startNow')}
                 </button>
 
                 {/* Money Back Guarantee */}
                 <p className="text-center text-sm text-gray-500 mt-4">
-                  💰 Garantía de devolución de 30 días
+                  {t('pricing.guarantee')}
                 </p>
               </div>
             </div>
@@ -134,16 +136,16 @@ const Pricing = () => {
 
         {/* FAQ Section */}
         <div className="mt-20 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">¿Preguntas sobre los precios?</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('pricing.questions')}</h3>
           <p className="text-gray-600 mb-8">
-            Nuestro equipo está aquí para ayudarte a elegir el plan perfecto para tu agencia.
+            {t('pricing.questionsDesc')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors duration-200">
-              Hablar con Ventas
+              {t('pricing.talkSales')}
             </button>
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
-              Probar Gratis 14 Días
+              {t('pricing.freeTrial')}
             </button>
           </div>
         </div>
