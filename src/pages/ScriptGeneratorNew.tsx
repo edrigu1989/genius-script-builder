@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/supabase';
-import aiService from '../lib/aiService';
+import { secureAIService } from '../lib/secureAIService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -69,12 +69,20 @@ const ScriptGenerator = () => {
 
       console.log('Generando contenido con IA:', aiParams);
 
-      // Generar contenido con IA real
-      const result = await aiService.generateContent(aiParams, formData.aiModel);
+      // Generar contenido con IA real usando servicio seguro
+      const result = await secureAIService.generateScript({
+        platform: formData.platform,
+        contentType: formData.scriptType,
+        targetAudience: formData.targetAudience,
+        productService: formData.topic,
+        tone: formData.tone,
+        duration: '60 segundos',
+        aiModel: formData.aiModel
+      });
       
       if (result.success) {
-        setGeneratedScript(result.content);
-        setSuccess(`¡Script generado exitosamente con ${result.model}!`);
+        setGeneratedScript(result.script);
+        setSuccess(`¡Script generado exitosamente con ${result.metadata.aiModel}!`);
         
         // Guardar en Supabase
         try {
@@ -85,9 +93,9 @@ const ScriptGenerator = () => {
             target_audience: formData.targetAudience,
             tone: formData.tone,
             platform: formData.platform,
-            content: result.content,
-            ai_model: result.model,
-            usage_data: result.usage,
+            content: result.script,
+            ai_model: result.metadata.aiModel,
+            usage_data: result.metadata.usage,
             created_at: new Date().toISOString()
           };
           
@@ -98,12 +106,8 @@ const ScriptGenerator = () => {
           // No mostrar error al usuario, el script se generó correctamente
         }
       } else {
-        setError(`Error generando script: ${result.error}`);
-        
-        // Fallback con script simulado
-        const mockScript = generateMockScript(formData);
-        setGeneratedScript(mockScript);
-        setSuccess('Script generado (modo demo - IA no disponible)');
+        setError(result.error || 'Error generando script');
+        setGeneratedScript(result.script); // Fallback script incluido
       }
     } catch (err) {
       console.error('Error generando script:', err);

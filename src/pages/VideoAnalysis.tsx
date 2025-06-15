@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/supabase';
-import videoAnalysisService from '../lib/videoAnalysisService';
+import { secureAIService } from '../lib/secureAIService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -118,165 +118,43 @@ const VideoAnalysis = () => {
   const startAnalysis = async () => {
     if (!selectedFile) return;
 
-    setAnalyzing(true);
-    setAnalysisProgress(0);
+    try {
+      setAnalyzing(true);
+      setAnalysisProgress(0);
 
-    // Simular proceso de análisis
-    const steps = [
-      { progress: 20, message: "Subiendo video..." },
-      { progress: 40, message: "Extrayendo audio..." },
-      { progress: 60, message: "Analizando contenido..." },
-      { progress: 80, message: "Generando insights..." },
-      { progress: 100, message: "Análisis completado" }
-    ];
+      // Simular progreso mientras se procesa
+      const progressInterval = setInterval(() => {
+        setAnalysisProgress(prev => {
+          if (prev >= 90) return prev;
+          return prev + 10;
+        });
+      }, 500);
 
-    for (const step of steps) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setAnalysisProgress(step.progress);
-      setProgressMessage(step.message);
+      // Usar servicio seguro de análisis
+      const results = await secureAIService.analyzeVideo(selectedFile, {
+        platform: 'general',
+        targetAudience: 'general',
+        industry: 'marketing'
+      });
+
+      clearInterval(progressInterval);
+      setAnalysisProgress(100);
+      setProgressMessage("Análisis completado");
+
+      setAnalysisResults(results);
+      setAnalyzing(false);
+
+    } catch (error) {
+      console.error('Error analyzing video:', error);
+      setAnalyzing(false);
+      setAnalysisProgress(0);
+      setProgressMessage("Error en el análisis");
+      
+      // Mostrar error al usuario
+      alert('Error analizando el video. Por favor intenta nuevamente.');
     }
-
-    // Simular resultados de análisis
-    const mockResults = {
-      file_info: {
-        name: selectedFile.name,
-        size: selectedFile.size,
-        duration: "2:45",
-        format: "MP4",
-        resolution: "1920x1080"
-      },
-      processing_time: 15,
-      transcript: {
-        text: "Hola, bienvenidos a nuestro canal. Hoy vamos a hablar sobre marketing digital y cómo pueden mejorar sus estrategias de contenido para obtener mejores resultados en redes sociales.",
-        confidence: 94,
-        word_count: 28,
-        duration: "2:45",
-        language: "es"
-      },
-      sentiment_analysis: {
-        overall_sentiment: "positivo",
-        confidence: 87,
-        emotions: {
-          alegría: 65,
-          confianza: 78,
-          entusiasmo: 82,
-          profesionalismo: 91
-        }
-      },
-      key_insights: {
-        main_topics: ["marketing digital", "estrategias", "redes sociales", "contenido"],
-        speaking_pace: "Moderado",
-        energy_level: "Alto",
-        clarity_score: 94
-      },
-      performance_prediction: {
-        estimated_engagement: "7.2%",
-        viral_potential: "Alto",
-        target_audience_match: "89%",
-        optimal_posting_time: "10:00 AM - 12:00 PM"
-      },
-      improvement_suggestions: [
-        {
-          category: "Contenido",
-          suggestion: "Agregar más ejemplos prácticos para aumentar el engagement",
-          impact: "Alto"
-        },
-        {
-          category: "Técnico",
-          suggestion: "Mejorar la iluminación para mayor calidad visual",
-          impact: "Medio"
-        },
-        {
-          category: "Engagement",
-          suggestion: "Incluir call-to-action más claros al final",
-          impact: "Alto"
-        }
-      ],
-      script_recommendations: [
-        "Usar más preguntas directas para involucrar a la audiencia",
-        "Incluir estadísticas relevantes para dar credibilidad",
-        "Agregar testimonios de clientes satisfechos"
-      ],
-      hashtags: ["#MarketingDigital", "#RedesSociales", "#Contenido", "#Estrategia", "#Emprendimiento"],
-      trends: ["Marketing de contenidos", "Video marketing", "Engagement orgánico"],
-      overall_score: 85
-    };
-
-    setAnalysisResults(mockResults);
-    setAnalyzing(false);
   };
 
-  const handleAnalyzeFileMock = async () => {
-    // Keep the existing mock analysis as fallback
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
-    const mockResults = {
-      file_info: {
-        name: selectedFile?.name || "video_ejemplo.mp4",
-        size: selectedFile?.size || 25600000,
-        duration: "3:45"
-      },
-      processing_time: 12,
-      transcript: {
-        text: "Hola, bienvenidos a nuestro canal. Hoy vamos a hablar sobre las mejores estrategias de marketing digital para hacer crecer tu negocio en 2024. Primero, es importante entender que el marketing digital ha evolucionado mucho en los últimos años...",
-        confidence: 94,
-        word_count: 156,
-        duration: "3:45",
-        language: "Español"
-      },
-      sentiment_analysis: {
-        overall_sentiment: "Positivo",
-        confidence: 87,
-        emotions: {
-          joy: 45,
-          trust: 32,
-          anticipation: 18,
-          surprise: 5
-        }
-      },
-      key_insights: {
-        main_topics: ["marketing digital", "estrategias", "crecimiento", "audiencia"],
-        speaking_pace: "Moderado (150 palabras/min)",
-        energy_level: "Alto",
-        clarity_score: 92
-      },
-      performance_prediction: {
-        estimated_engagement: "8.5%",
-        viral_potential: "Medio-Alto",
-        target_audience_match: "85%",
-        optimal_posting_time: "Martes 3:00 PM"
-      },
-      improvement_suggestions: [
-        {
-          category: "Contenido",
-          suggestion: "Agregar más ejemplos prácticos en los primeros 60 segundos",
-          impact: "Alto"
-        },
-        {
-          category: "Técnico",
-          suggestion: "Mejorar la calidad del audio para mayor claridad",
-          impact: "Medio"
-        },
-        {
-          category: "Engagement",
-          suggestion: "Incluir preguntas directas para fomentar comentarios",
-          impact: "Alto"
-        },
-        {
-          category: "SEO",
-          suggestion: "Optimizar título y descripción con palabras clave identificadas",
-          impact: "Medio"
-        }
-      ],
-      script_recommendations: [
-        "Crear versión corta (60s) para TikTok/Instagram Reels",
-        "Desarrollar serie de 5 videos basados en temas identificados",
-        "Generar posts de blog complementarios"
-      ]
-    };
-
-    setAnalysisResults(mockResults);
-  };
   const getSentimentColor = (sentiment) => {
     switch (sentiment.toLowerCase()) {
       case 'positivo':
