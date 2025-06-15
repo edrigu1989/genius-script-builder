@@ -13,7 +13,10 @@ import AdminPanel from "./pages/AdminPanel";
 import WordPressGenerator from "./pages/WordPressGenerator";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
-import PlatformConnections from "./components/PlatformConnections";
+import MyScripts from "./pages/MyScripts";
+import PlatformConnectionsPage from "./pages/PlatformConnections";
+import VideoAnalysis from "./pages/VideoAnalysis";
+import ScriptPerformance from "./pages/ScriptPerformance";
 import NotFound from "./pages/NotFound";
 import './i18n';
 
@@ -81,6 +84,14 @@ const AppRoutes = () => {
         } 
       />
       <Route 
+        path="/my-scripts" 
+        element={
+          <ProtectedRoute>
+            <MyScripts />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
         path="/admin" 
         element={
           <ProtectedRoute>
@@ -105,10 +116,26 @@ const AppRoutes = () => {
         } 
       />
       <Route 
+        path="/script-performance" 
+        element={
+          <ProtectedRoute>
+            <ScriptPerformance />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
         path="/connections" 
         element={
           <ProtectedRoute>
-            <PlatformConnections />
+            <PlatformConnectionsPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/video-analysis" 
+        element={
+          <ProtectedRoute>
+            <VideoAnalysis />
           </ProtectedRoute>
         } 
       />

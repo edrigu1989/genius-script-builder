@@ -208,7 +208,11 @@ const Dashboard = () => {
                 </div>
               </Button>
               
-              <Button variant="outline" className="h-20">
+              <Button 
+                variant="outline" 
+                className="h-20"
+                onClick={() => window.location.href = '/analytics'}
+              >
                 <div className="text-center">
                   <BarChart3 className="h-6 w-6 mx-auto mb-1" />
                   <div className="font-semibold">Ver Analytics</div>
@@ -216,7 +220,11 @@ const Dashboard = () => {
                 </div>
               </Button>
               
-              <Button variant="outline" className="h-20">
+              <Button 
+                variant="outline" 
+                className="h-20"
+                onClick={() => window.location.href = '/my-scripts'}
+              >
                 <div className="text-center">
                   <FileText className="h-6 w-6 mx-auto mb-1" />
                   <div className="font-semibold">Mis Scripts</div>

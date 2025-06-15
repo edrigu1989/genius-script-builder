@@ -32,7 +32,8 @@ import {
   User,
   Menu,
   Plus,
-  Globe
+  Globe,
+  TrendingUp
 } from 'lucide-react'
 
 interface DashboardLayoutProps {
@@ -66,14 +67,32 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     {
       title: 'Mis Scripts',
       icon: FileText,
-      href: '/scripts',
-      active: location.pathname === '/scripts'
+      href: '/my-scripts',
+      active: location.pathname === '/my-scripts'
     },
     {
       title: 'Analytics',
       icon: BarChart3,
       href: '/analytics',
       active: location.pathname === '/analytics'
+    },
+    {
+      title: 'Rendimiento',
+      icon: TrendingUp,
+      href: '/script-performance',
+      active: location.pathname === '/script-performance'
+    },
+    {
+      title: 'Análisis de Videos',
+      icon: Sparkles,
+      href: '/video-analysis',
+      active: location.pathname === '/video-analysis'
+    },
+    {
+      title: 'Conexiones',
+      icon: Globe,
+      href: '/connections',
+      active: location.pathname === '/connections'
     },
     {
       title: 'WordPress Generator',
