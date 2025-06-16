@@ -50,101 +50,44 @@ const ScriptGenerator = () => {
 
     setIsGenerating(true);
     
-    // Simulamos la generación de script con diferentes modelos de IA
-    const scripts = {
-      facebook: `🚀 ¡Descubre ${formData.product}! 
+    try {
+      // Llamar al endpoint que usa n8n
+      const response = await fetch('/api/generate-script', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: formData.product,
+          platform: formData.platform,
+          tone: formData.tone,
+          objective: formData.objective,
+          targetAudience: formData.target,
+          audienceData: {
+            target: formData.target,
+            objective: formData.objective
+          }
+        })
+      });
 
-¿Sabías que ${formData.target} pueden transformar completamente su estrategia de marketing?
+      if (!response.ok) {
+        throw new Error('Error generating script');
+      }
 
-✨ Con ${formData.product}, obtendrás:
-• Resultados inmediatos en tus campañas
-• ROI mejorado hasta un 300%
-• Automatización completa de procesos
+      const result = await response.json();
+      
+      if (result.success && result.script) {
+        setGeneratedScript(result.script);
+      } else {
+        throw new Error('Invalid response from script generator');
+      }
 
-💡 Miles de empresas ya confían en nosotros.
-
-👉 ¡Prueba GRATIS por 14 días!
-[Enlace de acción]
-
-#Marketing #IA #Automatización`,
-
-      instagram: `✨ ${formData.product} para ${formData.target} ✨
-
-🎯 ¿Cansado de campañas que no convierten?
-
-Con nuestra IA avanzada:
-📈 +300% ROI garantizado
-⚡ Scripts en 30 segundos
-🎨 Personalización total
-
-💫 Únete a +2,500 agencias exitosas
-
-👆 Link en bio para prueba GRATUITA
-
-#MarketingGenius #IA #Scripts #Marketing`,
-
-      linkedin: `¿Estás maximizando el potencial de tus campañas de marketing?
-
-Como profesional enfocado en ${formData.target}, sabes que el tiempo es dinero. ${formData.product} está revolucionando cómo las agencias crean contenido de alta conversión.
-
-🔹 Acceso a OpenAI, Claude, y Gemini
-🔹 Scripts profesionales en 30 segundos
-🔹 +95% de satisfacción del cliente
-
-Más de 2,500 agencias ya optimizaron sus procesos y aumentaron sus ingresos hasta un 300%.
-
-¿Listo para transformar tu agencia?
-Prueba gratuita disponible.`,
-
-      email: `Asunto: [${formData.target}] Revoluciona tus campañas en 30 segundos
-
-Hola,
-
-¿Cuánto tiempo inviertes creando scripts de marketing que realmente conviertan?
-
-Sabemos que como ${formData.target}, tu tiempo es valioso. Por eso creamos ${formData.product} - la única plataforma que genera scripts profesionales en 30 segundos usando IA avanzada.
-
-✅ Acceso a múltiples modelos de IA (OpenAI, Claude, Gemini)
-✅ Scripts optimizados para cada plataforma
-✅ ROI mejorado hasta 300%
-✅ Soporte 24/7
-
-Más de 2,500 agencias ya confían en nosotros.
-
-¿Listo para probarlo GRATIS por 14 días?
-
-[BOTÓN: Comenzar Prueba Gratuita]
-
-Saludos,
-Equipo Marketing Genius`,
-
-      youtube: `🎬 GUIÓN PARA VIDEO PROMOCIONAL
-
-HOOK (0-3 segundos):
-"¿3 horas creando UN solo script de marketing?"
-
-PROBLEMA (3-15 segundos):
-Si eres ${formData.target}, sabes lo frustrante que es crear contenido que realmente convierta. Horas de trabajo para resultados mediocres.
-
-SOLUCIÓN (15-45 segundos):
-Con ${formData.product}, generas scripts profesionales en 30 segundos. Acceso a OpenAI, Claude, Gemini. Todo en una plataforma.
-
-BENEFICIOS (45-60 segundos):
-• Scripts optimizados para cada plataforma
-• ROI mejorado hasta 300%
-• Más de 2,500 agencias satisfechas
-
-LLAMADA A LA ACCIÓN (60-75 segundos):
-Prueba GRATIS por 14 días. Link en descripción.
-
-¿Te gustó? Suscríbete para más tips de marketing con IA.`
-    };
-
-    // Simulamos delay de API
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setGeneratedScript(scripts[formData.platform as keyof typeof scripts] || scripts.facebook);
-    setIsGenerating(false);
+    } catch (error) {
+      console.error('Error generating script:', error);
+      alert('Error generando el script. Inténtalo de nuevo.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const copyToClipboard = () => {
