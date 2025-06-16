@@ -254,9 +254,20 @@ const PlatformConnections: React.FC = () => {
     }
 
     const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
-    const scope = 'tweet.read,tweet.write,users.read,offline.access';
     
-    const twitterAuthUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=twitter&code_challenge=challenge&code_challenge_method=plain`;
+    // Twitter OAuth 2.0 requiere PKCE
+    const codeVerifier = generateCodeVerifier();
+    const codeChallenge = await generateCodeChallenge(codeVerifier);
+    
+    // Guardar code_verifier en sessionStorage para el callback
+    sessionStorage.setItem('twitter_code_verifier', codeVerifier);
+    
+    const scope = encodeURIComponent('tweet.read users.read offline.access');
+    const state = 'twitter_' + Math.random().toString(36).substring(7);
+    
+    const twitterAuthUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+    
+    console.log('Twitter Auth URL:', twitterAuthUrl);
     
     const popup = window.open(twitterAuthUrl, 'twitter-auth', 'width=600,height=600,scrollbars=yes,resizable=yes');
     
@@ -266,6 +277,26 @@ const PlatformConnections: React.FC = () => {
         setTimeout(() => checkConnections(), 1000);
       }
     }, 1000);
+  };
+
+  // Funciones auxiliares para PKCE (Twitter OAuth 2.0)
+  const generateCodeVerifier = () => {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return btoa(String.fromCharCode.apply(null, Array.from(array)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  };
+
+  const generateCodeChallenge = async (verifier) => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(digest))))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
   };
 
   const connectGoogleAnalytics = async () => {
