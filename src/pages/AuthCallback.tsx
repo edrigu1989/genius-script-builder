@@ -71,27 +71,32 @@ const AuthCallback: React.FC = () => {
 
   const exchangeCodeForToken = async (platform: string, code: string) => {
     try {
-      // En una aplicación real, esto se haría en el backend
-      // Por ahora, simulamos la respuesta para que funcione
+      // TEMPORAL: Simulamos datos de token para testing
+      // En producción esto debe hacerse en el backend
+      
+      console.log(`Procesando ${platform} con código:`, code);
       
       const mockTokenData = {
         access_token: `${platform}_token_${Date.now()}`,
         refresh_token: `${platform}_refresh_${Date.now()}`,
-        expires_at: new Date(Date.now() + 3600000).toISOString(), // 1 hora
+        expires_at: new Date(Date.now() + 3600000).toISOString(),
         user_id: `${platform}_user_${Date.now()}`,
         username: `user_${platform}`,
-        scopes: ['read', 'analytics']
+        scopes: ['read', 'analytics'],
+        platform_data: {
+          name: platform,
+          connected_at: new Date().toISOString()
+        }
       };
 
-      // TODO: Implementar intercambio real de tokens
-      // Esto requiere hacer llamadas a las APIs de cada plataforma
-      // desde el backend por seguridad
+      // Simular delay de API
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       return mockTokenData;
 
     } catch (error) {
       console.error('Error intercambiando código:', error);
-      return null;
+      throw error;
     }
   };
 

@@ -222,7 +222,7 @@ const VideoAnalysisPage = () => {
           </Alert>
         )}
 
-        <Tabs defaultValue="upload" className="space-y-6">
+        <Tabs defaultValue="upload" className="space-y-6" value={analyzing || analysis ? 'results' : 'upload'}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upload">Subir Video</TabsTrigger>
             <TabsTrigger value="url">Desde URL</TabsTrigger>
