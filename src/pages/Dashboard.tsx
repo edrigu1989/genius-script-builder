@@ -1,346 +1,531 @@
-import React, { useState, useEffect } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
-import { api } from '../lib/supabase'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
+import RealTimeAnalytics from '../lib/realTimeAnalytics';
+import DashboardLayout from '../components/DashboardLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { Progress } from '../components/ui/progress';
 import { 
-  BarChart3, 
+  TrendingUp, 
+  Users, 
   FileText, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  Plus,
-  Download,
+  Zap,
+  BarChart3,
+  PlusCircle,
   Eye,
+  Heart,
+  MessageCircle,
+  Share,
+  ArrowUpRight,
+  ArrowDownRight,
+  Clock,
+  Target,
   Sparkles,
-  TrendingUp,
-  Users,
-  Zap
-} from 'lucide-react'
-import DashboardLayout from '../components/DashboardLayout'
+  Brain,
+  Video,
+  Settings,
+  Link
+} from 'lucide-react';
 
 const Dashboard = () => {
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const [scripts, setScripts] = useState([])
-  const [analytics, setAnalytics] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [recentScripts, setRecentScripts] = useState([]);
+  const [connections, setConnections] = useState([]);
 
   useEffect(() => {
     if (user) {
-      loadDashboardData()
+      loadDashboardData();
     }
-  }, [user])
+  }, [user]);
 
   const loadDashboardData = async () => {
     try {
-      setLoading(true)
-      // Simular datos mientras no tengamos la integración completa
+      setLoading(true);
+      
+      // Inicializar analytics
+      const analyticsService = new RealTimeAnalytics(user.id);
+      const dashboardData = await analyticsService.getPerformanceDashboard();
+      setAnalytics(dashboardData);
+
+      // Cargar scripts recientes
+      await loadRecentScripts();
+      
+      // Cargar conexiones
+      await loadConnections();
+      
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadRecentScripts = async () => {
+    try {
+      // Simular scripts recientes
       const mockScripts = [
         {
-          id: '1',
-          script_type: 'social_media',
-          topic: 'Lanzamiento de producto',
-          status: 'approved',
-          created_at: '2024-06-14T10:00:00Z',
-          ai_model_used: 'advanced'
+          id: 1,
+          title: "Post para Instagram - Estrategias de Marketing",
+          platform: "Instagram",
+          status: "Publicado",
+          engagement: 4.2,
+          created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
         },
         {
-          id: '2',
-          script_type: 'email',
-          topic: 'Newsletter semanal',
-          status: 'pending',
-          created_at: '2024-06-13T15:30:00Z',
-          ai_model_used: 'professional'
+          id: 2,
+          title: "Thread de Twitter - Tips de Productividad",
+          platform: "Twitter",
+          status: "Borrador",
+          engagement: 0,
+          created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
         },
         {
-          id: '3',
-          script_type: 'landing_page',
-          topic: 'Página de servicios',
-          status: 'generated',
-          created_at: '2024-06-12T09:15:00Z',
-          ai_model_used: 'creative'
+          id: 3,
+          title: "Video Script - Tutorial de Ventas",
+          platform: "YouTube",
+          status: "Programado",
+          engagement: 0,
+          created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
         }
-      ]
-
-      const mockAnalytics = {
-        scripts_generated: 15,
-        scripts_approved: 12,
-        scripts_pending: 2,
-        avg_generation_time: 28
-      }
-
-      setScripts(mockScripts)
-      setAnalytics(mockAnalytics)
+      ];
+      
+      setRecentScripts(mockScripts);
     } catch (error) {
-      console.error('Error loading dashboard data:', error)
-    } finally {
-      setLoading(false)
+      console.error('Error loading recent scripts:', error);
     }
-  }
+  };
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      approved: { label: 'Aprobado', variant: 'default', icon: CheckCircle, color: 'text-green-600' },
-      pending: { label: 'Pendiente', variant: 'secondary', icon: Clock, color: 'text-yellow-600' },
-      generated: { label: 'Generado', variant: 'outline', icon: Sparkles, color: 'text-blue-600' },
-      rejected: { label: 'Rechazado', variant: 'destructive', icon: XCircle, color: 'text-red-600' }
+  const loadConnections = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('social_connections')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_active', true);
+
+      if (error) throw error;
+      setConnections(data || []);
+    } catch (error) {
+      console.error('Error loading connections:', error);
+      setConnections([]);
     }
+  };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.generated
-    const Icon = config.icon
+  // Funciones de navegación corregidas
+  const handleNavigateToAnalytics = () => {
+    navigate('/analytics');
+  };
 
-    return (
-      <Badge variant={config.variant as any} className="flex items-center gap-1">
-        <Icon className={`h-3 w-3 ${config.color}`} />
-        {config.label}
-      </Badge>
-    )
-  }
+  const handleNavigateToScripts = () => {
+    navigate('/my-scripts');
+  };
 
-  const getScriptTypeLabel = (type: string) => {
-    const types = {
-      social_media: 'Redes Sociales',
-      email: 'Email Marketing',
-      landing_page: 'Landing Page',
-      blog_post: 'Blog Post',
-      ad_copy: 'Publicidad'
+  const handleNavigateToGenerator = () => {
+    navigate('/script-generator');
+  };
+
+  const handleNavigateToConnections = () => {
+    navigate('/platform-connections');
+  };
+
+  const handleNavigateToVideoAnalysis = () => {
+    navigate('/video-analysis');
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Publicado':
+        return 'bg-green-100 text-green-800';
+      case 'Programado':
+        return 'bg-blue-100 text-blue-800';
+      case 'Borrador':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
-    return types[type as keyof typeof types] || type
-  }
+  };
+
+  const getPlatformColor = (platform) => {
+    switch (platform) {
+      case 'Instagram':
+        return 'text-pink-600';
+      case 'Twitter':
+        return 'text-blue-400';
+      case 'YouTube':
+        return 'text-red-600';
+      case 'LinkedIn':
+        return 'text-blue-700';
+      case 'Facebook':
+        return 'text-blue-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  const formatTimeAgo = (dateString) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Hace menos de 1 hora';
+    if (diffInHours < 24) return `Hace ${diffInHours} horas`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `Hace ${diffInDays} días`;
+  };
 
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="space-y-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            ¡Bienvenido, {user?.user_metadata?.full_name || user?.email}!
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Aquí tienes un resumen de tu actividad en MarketingGenius
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600">Bienvenido de vuelta, {user?.email?.split('@')[0] || 'Usuario'}</p>
+          </div>
+          <Button 
+            onClick={handleNavigateToGenerator}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          >
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Crear Script
+          </Button>
         </div>
 
-        {/* Métricas principales */}
+        {/* Métricas Principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Scripts Generados</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{analytics?.scripts_generated || 0}</div>
-              <p className="text-xs text-muted-foreground">Este mes</p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Scripts Creados</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {analytics?.metrics?.totalPosts || 0}
+                  </p>
+                </div>
+                <div className="p-3 bg-blue-100 rounded-full">
+                  <FileText className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm">
+                <ArrowUpRight className="h-4 w-4 text-green-600 mr-1" />
+                <span className="text-green-600 font-medium">+12%</span>
+                <span className="text-gray-600 ml-1">vs mes anterior</span>
+              </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Scripts Aprobados</CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{analytics?.scripts_approved || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                {analytics?.scripts_generated ? 
-                  `${Math.round((analytics.scripts_approved / analytics.scripts_generated) * 100)}% de éxito` : 
-                  '0% de éxito'
-                }
-              </p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Engagement Promedio</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {analytics?.metrics?.avgEngagement || 0}%
+                  </p>
+                </div>
+                <div className="p-3 bg-green-100 rounded-full">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm">
+                <ArrowUpRight className="h-4 w-4 text-green-600 mr-1" />
+                <span className="text-green-600 font-medium">+8.2%</span>
+                <span className="text-gray-600 ml-1">vs semana anterior</span>
+              </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pendientes</CardTitle>
-              <Clock className="h-4 w-4 text-yellow-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{analytics?.scripts_pending || 0}</div>
-              <p className="text-xs text-muted-foreground">En revisión</p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Plataformas Conectadas</p>
+                  <p className="text-2xl font-bold text-gray-900">{connections.length}</p>
+                </div>
+                <div className="p-3 bg-purple-100 rounded-full">
+                  <Users className="h-6 w-6 text-purple-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm">
+                <span className="text-gray-600">
+                  {connections.length > 0 ? 'Todas activas' : 'Conecta tus redes'}
+                </span>
+              </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Tiempo Promedio</CardTitle>
-              <Zap className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{analytics?.avg_generation_time || 0}s</div>
-              <p className="text-xs text-muted-foreground">Por script</p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Revenue Total</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ${analytics?.metrics?.totalRevenue?.toLocaleString() || 0}
+                  </p>
+                </div>
+                <div className="p-3 bg-yellow-100 rounded-full">
+                  <Zap className="h-6 w-6 text-yellow-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm">
+                <ArrowUpRight className="h-4 w-4 text-green-600 mr-1" />
+                <span className="text-green-600 font-medium">+24%</span>
+                <span className="text-gray-600 ml-1">vs mes anterior</span>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Acciones rápidas */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Acciones Rápidas
-            </CardTitle>
-            <CardDescription>
-              Genera nuevo contenido o gestiona tus scripts existentes
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button 
-                className="h-20 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                onClick={() => navigate('/generator')}
-              >
-                <div className="text-center">
-                  <Sparkles className="h-6 w-6 mx-auto mb-1" />
-                  <div className="font-semibold">Generar Script</div>
-                  <div className="text-xs opacity-90">Con IA avanzada</div>
+        {/* Scripts Recientes y Acciones Rápidas */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Scripts Recientes */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Scripts Recientes</CardTitle>
+                  <CardDescription>Tus últimos contenidos generados</CardDescription>
                 </div>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-20"
-                onClick={() => navigate('/analytics')}
-              >
-                <div className="text-center">
-                  <BarChart3 className="h-6 w-6 mx-auto mb-1" />
-                  <div className="font-semibold">Ver Analytics</div>
-                  <div className="text-xs text-gray-600">Métricas detalladas</div>
-                </div>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-20"
-                onClick={() => navigate('/my-scripts')}
-              >
-                <div className="text-center">
-                  <FileText className="h-6 w-6 mx-auto mb-1" />
-                  <div className="font-semibold">Mis Scripts</div>
-                  <div className="text-xs text-gray-600">Gestionar contenido</div>
-                </div>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Scripts recientes */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Scripts Recientes
-            </CardTitle>
-            <CardDescription>
-              Tus últimos scripts generados y su estado actual
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {scripts.length === 0 ? (
-              <div className="text-center py-8">
-                <Sparkles className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  ¡Comienza a generar scripts!
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Aún no tienes scripts generados. Crea tu primer script con IA.
-                </p>
                 <Button 
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  onClick={() => navigate('/generator')}
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleNavigateToScripts}
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Generar Primer Script
+                  Ver Todos
                 </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {scripts.map((script: any) => (
-                  <div key={script.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h4 className="font-semibold text-gray-900">{script.topic}</h4>
-                        {getStatusBadge(script.status)}
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentScripts.map((script) => (
+                    <div key={script.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">{script.title}</h4>
+                        <div className="flex items-center space-x-4 mt-1">
+                          <span className={`text-sm ${getPlatformColor(script.platform)}`}>
+                            {script.platform}
+                          </span>
+                          <Badge className={getStatusColor(script.status)} variant="secondary">
+                            {script.status}
+                          </Badge>
+                          <span className="text-sm text-gray-500">
+                            {formatTimeAgo(script.created_at)}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span>{getScriptTypeLabel(script.script_type)}</span>
-                        <span>•</span>
-                        <span>{new Date(script.created_at).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4 mr-1" />
-                        Ver
-                      </Button>
-                      {script.status === 'approved' && (
-                        <Button variant="outline" size="sm">
-                          <Download className="h-4 w-4 mr-1" />
-                          Descargar
-                        </Button>
+                      {script.status === 'Publicado' && (
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-green-600">
+                            {script.engagement}% engagement
+                          </p>
+                        </div>
                       )}
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  ))}
+                  
+                  {recentScripts.length === 0 && (
+                    <div className="text-center py-8">
+                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No hay scripts aún</h3>
+                      <p className="text-gray-600 mb-4">Crea tu primer script para comenzar</p>
+                      <Button onClick={handleNavigateToGenerator}>
+                        <PlusCircle className="h-4 w-4 mr-2" />
+                        Crear Primer Script
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-        {/* Tips y recursos */}
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-900">
-              <TrendingUp className="h-5 w-5" />
-              Tips para Maximizar Resultados
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <h4 className="font-semibold text-blue-900">🎯 Optimiza tus prompts</h4>
-                <p className="text-sm text-blue-800">
-                  Sé específico con tu audiencia objetivo y el tono deseado para obtener mejores resultados.
-                </p>
+          {/* Acciones Rápidas */}
+          <div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Acciones Rápidas</CardTitle>
+                <CardDescription>Herramientas más utilizadas</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={handleNavigateToGenerator}
+                >
+                  <Brain className="h-4 w-4 mr-3" />
+                  Generar Script con IA
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={handleNavigateToVideoAnalysis}
+                >
+                  <Video className="h-4 w-4 mr-3" />
+                  Analizar Video
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={handleNavigateToAnalytics}
+                >
+                  <BarChart3 className="h-4 w-4 mr-3" />
+                  Ver Analytics
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={handleNavigateToConnections}
+                >
+                  <Link className="h-4 w-4 mr-3" />
+                  Conectar Redes Sociales
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={handleNavigateToScripts}
+                >
+                  <FileText className="h-4 w-4 mr-3" />
+                  Mis Scripts
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Progreso del Mes */}
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Target className="h-5 w-5 mr-2" />
+                  Progreso del Mes
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Scripts Creados</span>
+                    <span>{recentScripts.length}/20</span>
+                  </div>
+                  <Progress value={(recentScripts.length / 20) * 100} />
+                </div>
+                
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Plataformas Conectadas</span>
+                    <span>{connections.length}/6</span>
+                  </div>
+                  <Progress value={(connections.length / 6) * 100} />
+                </div>
+                
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Engagement Objetivo</span>
+                    <span>4.2%/5.0%</span>
+                  </div>
+                  <Progress value={84} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Tendencias y Insights */}
+        {analytics?.trends && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Sparkles className="h-5 w-5 mr-2" />
+                Tendencias e Insights
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <Heart className="h-8 w-8 text-red-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {analytics.trends.engagement?.current || 0}%
+                  </p>
+                  <p className="text-sm text-gray-600">Engagement Promedio</p>
+                  <div className="flex items-center justify-center mt-1">
+                    {analytics.trends.engagement?.trend === 'up' ? (
+                      <ArrowUpRight className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <ArrowDownRight className="h-4 w-4 text-red-600" />
+                    )}
+                    <span className={`text-sm ml-1 ${
+                      analytics.trends.engagement?.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {Math.abs(analytics.trends.engagement?.change || 0).toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <Users className="h-8 w-8 text-blue-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {analytics.trends.followers?.current?.toLocaleString() || 0}
+                  </p>
+                  <p className="text-sm text-gray-600">Seguidores Totales</p>
+                  <div className="flex items-center justify-center mt-1">
+                    <ArrowUpRight className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-green-600 ml-1">
+                      +{Math.floor(analytics.trends.followers?.change || 0)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <Zap className="h-8 w-8 text-yellow-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ${analytics.trends.revenue?.current?.toLocaleString() || 0}
+                  </p>
+                  <p className="text-sm text-gray-600">Revenue del Mes</p>
+                  <div className="flex items-center justify-center mt-1">
+                    {analytics.trends.revenue?.trend === 'up' ? (
+                      <ArrowUpRight className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <ArrowDownRight className="h-4 w-4 text-red-600" />
+                    )}
+                    <span className={`text-sm ml-1 ${
+                      analytics.trends.revenue?.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      ${Math.abs(analytics.trends.revenue?.change || 0).toFixed(0)}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-2">
-                <h4 className="font-semibold text-blue-900">⚡ Prueba diferentes estilos</h4>
-                <p className="text-sm text-blue-800">
-                  Experimenta con diferentes tonos y formatos para encontrar lo que mejor funciona.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-semibold text-blue-900">📊 Revisa tus analytics</h4>
-                <p className="text-sm text-blue-800">
-                  Analiza qué tipos de scripts funcionan mejor para optimizar tu estrategia.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-semibold text-blue-900">🚀 Automatiza tu flujo</h4>
-                <p className="text-sm text-blue-800">
-                  Configura templates y workflows para generar contenido más eficientemente.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default Dashboard
-
+export default Dashboard;
