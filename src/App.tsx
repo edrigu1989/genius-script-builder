@@ -18,6 +18,7 @@ import PlatformConnectionsPage from "./pages/PlatformConnections";
 import VideoAnalysis from "./pages/VideoAnalysis";
 import ScriptPerformance from "./pages/ScriptPerformance";
 import NotFound from "./pages/NotFound";
+import AuthCallback from "./pages/AuthCallback";
 import './i18n';
 
 const queryClient = new QueryClient();
@@ -65,6 +66,9 @@ const AppRoutes = () => {
           </PublicRoute>
         } 
       />
+      
+      {/* Ruta para OAuth callback - NO protegida */}
+      <Route path="/auth/callback" element={<AuthCallback />} />
       
       {/* Rutas protegidas */}
       <Route 

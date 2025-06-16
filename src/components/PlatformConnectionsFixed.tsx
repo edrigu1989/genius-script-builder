@@ -1,3 +1,6 @@
+// SOLUCIÓN ESPECÍFICA PARA TU APLICACIÓN
+// Archivo: src/components/PlatformConnectionsFixed.tsx
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,10 +17,11 @@ interface Platform {
   connectUrl?: string;
 }
 
-const PlatformConnections: React.FC = () => {
+const PlatformConnectionsFixed: React.FC = () => {
   const { t } = useTranslation();
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [connectedCount, setConnectedCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     initializePlatforms();
@@ -27,13 +31,24 @@ const PlatformConnections: React.FC = () => {
   const initializePlatforms = () => {
     const platformList: Platform[] = [
       {
-        id: 'meta',
+        id: 'facebook',
         name: t('connections.facebook.title'),
-        icon: '📘📷',
+        icon: '📘',
         benefits: [
           t('connections.facebook.benefit1'),
           t('connections.facebook.benefit2'),
           t('connections.facebook.benefit3')
+        ],
+        isConnected: false
+      },
+      {
+        id: 'instagram',
+        name: 'Instagram Business',
+        icon: '📷',
+        benefits: [
+          'Stories analytics',
+          'Post insights',
+          'Audience data'
         ],
         isConnected: false
       },
@@ -61,7 +76,7 @@ const PlatformConnections: React.FC = () => {
       },
       {
         id: 'tiktok',
-        name: 'TikTok',
+        name: 'TikTok Business',
         icon: '🎵',
         benefits: [
           'Video analytics',
@@ -80,17 +95,6 @@ const PlatformConnections: React.FC = () => {
           'Real-time trends'
         ],
         isConnected: false
-      },
-      {
-        id: 'analytics',
-        name: 'Google Analytics',
-        icon: '📊',
-        benefits: [
-          'Web traffic',
-          'Conversions',
-          'User behavior'
-        ],
-        isConnected: false
       }
     ];
     
@@ -106,7 +110,7 @@ const PlatformConnections: React.FC = () => {
       const { data: connections, error } = await supabase
         .from('social_connections')
         .select('provider')
-        .eq('user_id', user.id); // CORREGIDO: usar user_id en lugar de client_id
+        .eq('user_id', user.id); // CORREGIDO: usar user_id
 
       if (error) {
         console.error('Error checking connections:', error);
@@ -127,34 +131,39 @@ const PlatformConnections: React.FC = () => {
   };
 
   const connectPlatform = async (platformId: string) => {
-    switch (platformId) {
-      case 'facebook':
-      case 'meta':
-        await connectFacebook();
-        break;
-      case 'instagram':
-        await connectFacebook(); // Instagram usa la misma API que Facebook
-        break;
-      case 'youtube':
-        await connectYouTube();
-        break;
-      case 'linkedin':
-        await connectLinkedIn();
-        break;
-      case 'tiktok':
-        await connectTikTok();
-        break;
-      case 'twitter':
-        await connectTwitter();
-        break;
-      case 'analytics':
-        await connectGoogleAnalytics();
-        break;
-      default:
-        console.log(`Connection for ${platformId} not implemented yet`);
+    setLoading(true);
+    try {
+      switch (platformId) {
+        case 'facebook':
+          await connectFacebook();
+          break;
+        case 'instagram':
+          await connectInstagram();
+          break;
+        case 'youtube':
+          await connectYouTube();
+          break;
+        case 'linkedin':
+          await connectLinkedIn();
+          break;
+        case 'tiktok':
+          await connectTikTok();
+          break;
+        case 'twitter':
+          await connectTwitter();
+          break;
+        default:
+          console.log(`Connection for ${platformId} not implemented yet`);
+      }
+    } catch (error) {
+      console.error(`Error connecting ${platformId}:`, error);
+      alert(`Error conectando ${platformId}. Por favor intenta de nuevo.`);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // CORREGIDO: Funciones de conexión que abren OAuth correctamente
   const connectFacebook = async () => {
     const clientId = import.meta.env.VITE_FACEBOOK_APP_ID;
     if (!clientId) {
@@ -178,6 +187,11 @@ const PlatformConnections: React.FC = () => {
         setTimeout(() => checkConnections(), 1000);
       }
     }, 1000);
+  };
+
+  const connectInstagram = async () => {
+    // Instagram Business usa la misma API que Facebook
+    await connectFacebook();
   };
 
   const connectYouTube = async () => {
@@ -268,29 +282,6 @@ const PlatformConnections: React.FC = () => {
     }, 1000);
   };
 
-  const connectGoogleAnalytics = async () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    if (!clientId) {
-      alert('Google Client ID no configurado. Configura VITE_GOOGLE_CLIENT_ID en las variables de entorno.');
-      return;
-    }
-
-    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
-    const scope = 'https://www.googleapis.com/auth/analytics.readonly';
-    
-    const analyticsAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&access_type=offline&state=analytics`;
-    
-    const popup = window.open(analyticsAuthUrl, 'analytics-auth', 'width=600,height=600,scrollbars=yes,resizable=yes');
-    
-    const checkClosed = setInterval(() => {
-      if (popup?.closed) {
-        clearInterval(checkClosed);
-        setTimeout(() => checkConnections(), 1000);
-      }
-    }, 1000);
-  };
-
-  // Función para desconectar plataforma
   const disconnectPlatform = async (platformId: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -360,11 +351,12 @@ const PlatformConnections: React.FC = () => {
                 <div className="flex gap-2">
                   <Button 
                     onClick={() => connectPlatform(platform.id)}
-                    disabled={platform.isConnected}
+                    disabled={platform.isConnected || loading}
                     className="flex-1"
                     variant={platform.isConnected ? "outline" : "default"}
                   >
-                    {platform.isConnected ? '✅ Conectado' : `🔗 ${t('connections.connect')}`}
+                    {loading ? '⏳ Conectando...' : 
+                     platform.isConnected ? '✅ Conectado' : `🔗 ${t('connections.connect')}`}
                   </Button>
                   
                   {platform.isConnected && (
@@ -399,17 +391,6 @@ const PlatformConnections: React.FC = () => {
             <p className="text-center text-gray-600">
               {connectedCount} de {platforms.length} plataformas conectadas
             </p>
-            
-            <div className="space-y-2 text-sm">
-              <p className="flex items-center gap-2">
-                <span>🎯</span>
-                <strong>Conecta 3+ plataformas para insights avanzados</strong>
-              </p>
-              <p className="flex items-center gap-2">
-                <span>🚀</span>
-                <strong>Conecta todas para análisis completo</strong>
-              </p>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -435,5 +416,5 @@ const PlatformConnections: React.FC = () => {
   );
 };
 
-export default PlatformConnections;
+export default PlatformConnectionsFixed;
 
