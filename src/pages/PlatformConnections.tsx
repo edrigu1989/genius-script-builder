@@ -1,483 +1,420 @@
+// SOLUCIÓN ESPECÍFICA PARA TU APLICACIÓN
+// Archivo: src/components/PlatformConnectionsFixed.tsx
+
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
-import DashboardLayout from '../components/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import { Switch } from '../components/ui/switch';
-import { Alert, AlertDescription } from '../components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { 
-  Facebook, 
-  Instagram, 
-  Twitter, 
-  Linkedin, 
-  Youtube,
-  Music,
-  CheckCircle,
-  AlertCircle,
-  Settings,
-  Zap,
-  Globe,
-  Users,
-  BarChart3,
-  RefreshCw,
-  Plus,
-  Trash2
-} from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from '@/lib/supabase';
 
-const PlatformConnectionsPage = () => {
-  const { user } = useAuth();
-  const [connections, setConnections] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [connecting, setConnecting] = useState(null);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+interface Platform {
+  id: string;
+  name: string;
+  icon: string;
+  benefits: string[];
+  isConnected: boolean;
+  connectUrl?: string;
+}
 
-  // Define available platforms
-  const platforms = [
-    {
-      id: 'facebook',
-      name: 'Facebook',
-      icon: Facebook,
-      color: 'bg-blue-600',
-      description: 'Publica posts, gestiona páginas y analiza engagement',
-      features: ['Posts automáticos', 'Gestión de páginas', 'Analytics detallados', 'Programación de contenido'],
-      status: 'active'
-    },
-    {
-      id: 'instagram',
-      name: 'Instagram Business',
-      icon: Instagram,
-      color: 'bg-pink-600',
-      description: 'Comparte fotos, stories y gestiona tu presencia visual',
-      features: ['Posts de fotos/videos', 'Stories automáticas', 'Insights detallados', 'Hashtags optimizados'],
-      status: 'active'
-    },
-    {
-      id: 'twitter',
-      name: 'Twitter/X',
-      icon: Twitter,
-      color: 'bg-blue-400',
-      description: 'Publica tweets, hilos y mantente al día con tendencias',
-      features: ['Tweets automáticos', 'Hilos programados', 'Trending topics', 'Engagement tracking'],
-      status: 'active'
-    },
-    {
-      id: 'linkedin',
-      name: 'LinkedIn',
-      icon: Linkedin,
-      color: 'bg-blue-700',
-      description: 'Contenido profesional y networking empresarial',
-      features: ['Posts profesionales', 'Artículos largos', 'Network building', 'B2B analytics'],
-      status: 'active'
-    },
-    {
-      id: 'tiktok',
-      name: 'TikTok Business',
-      icon: Music,
-      color: 'bg-black',
-      description: 'Videos virales y contenido de entretenimiento',
-      features: ['Videos cortos', 'Trending sounds', 'Viral analytics', 'Creator tools'],
-      status: 'beta'
-    },
-    {
-      id: 'youtube',
-      name: 'YouTube',
-      icon: Youtube,
-      color: 'bg-red-600',
-      description: 'Videos largos, tutoriales y contenido educativo',
-      features: ['Video uploads', 'Playlist management', 'Analytics avanzados', 'Monetización'],
-      status: 'active'
-    }
-  ];
+const PlatformConnectionsFixed: React.FC = () => {
+  const { t } = useTranslation();
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [connectedCount, setConnectedCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      loadConnections();
-    }
-  }, [user]);
+    initializePlatforms();
+    checkConnections();
+  }, [t]);
 
-  const loadConnections = async () => {
+  const initializePlatforms = () => {
+    const platformList: Platform[] = [
+      {
+        id: 'facebook',
+        name: t('connections.facebook.title'),
+        icon: '📘',
+        benefits: [
+          t('connections.facebook.benefit1'),
+          t('connections.facebook.benefit2'),
+          t('connections.facebook.benefit3')
+        ],
+        isConnected: false
+      },
+      {
+        id: 'instagram',
+        name: 'Instagram Business',
+        icon: '📷',
+        benefits: [
+          'Stories analytics',
+          'Post insights',
+          'Audience data'
+        ],
+        isConnected: false
+      },
+      {
+        id: 'youtube',
+        name: t('connections.youtube.title'),
+        icon: '📺',
+        benefits: [
+          t('connections.youtube.benefit1'),
+          t('connections.youtube.benefit2'),
+          t('connections.youtube.benefit3')
+        ],
+        isConnected: false
+      },
+      {
+        id: 'linkedin',
+        name: 'LinkedIn',
+        icon: '💼',
+        benefits: [
+          'Professional analytics',
+          'B2B engagement',
+          'Business reach'
+        ],
+        isConnected: false
+      },
+      {
+        id: 'tiktok',
+        name: 'TikTok Business',
+        icon: '🎵',
+        benefits: [
+          'Video analytics',
+          'Virality metrics',
+          'Gen Z trends'
+        ],
+        isConnected: false
+      },
+      {
+        id: 'twitter',
+        name: 'Twitter / X',
+        icon: '🐦',
+        benefits: [
+          'Tweet analytics',
+          'Impressions and engagement',
+          'Real-time trends'
+        ],
+        isConnected: false
+      }
+    ];
+    
+    setPlatforms(platformList);
+  };
+
+  const checkConnections = async () => {
     try {
-      setLoading(true);
-      const { data, error } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // CORREGIDO: Usar social_connections en lugar de platform_connections
+      const { data: connections, error } = await supabase
         .from('social_connections')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true);
-      
-      if (error) throw error;
-      setConnections(data || []);
-    } catch (err) {
-      console.error('Error loading connections:', err);
-      setError('Error cargando conexiones');
+        .select('provider')
+        .eq('user_id', user.id); // CORREGIDO: usar user_id
+
+      if (error) {
+        console.error('Error checking connections:', error);
+        return;
+      }
+
+      if (connections) {
+        const connectedPlatforms = connections.map(c => c.provider);
+        setPlatforms(prev => prev.map(p => ({
+          ...p,
+          isConnected: connectedPlatforms.includes(p.id)
+        })));
+        setConnectedCount(connections.length);
+      }
+    } catch (error) {
+      console.error('Error checking connections:', error);
+    }
+  };
+
+  const connectPlatform = async (platformId: string) => {
+    setLoading(true);
+    try {
+      switch (platformId) {
+        case 'facebook':
+          await connectFacebook();
+          break;
+        case 'instagram':
+          await connectInstagram();
+          break;
+        case 'youtube':
+          await connectYouTube();
+          break;
+        case 'linkedin':
+          await connectLinkedIn();
+          break;
+        case 'tiktok':
+          await connectTikTok();
+          break;
+        case 'twitter':
+          await connectTwitter();
+          break;
+        default:
+          console.log(`Connection for ${platformId} not implemented yet`);
+      }
+    } catch (error) {
+      console.error(`Error connecting ${platformId}:`, error);
+      alert(`Error conectando ${platformId}. Por favor intenta de nuevo.`);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleConnect = async (platformId) => {
-    try {
-      setConnecting(platformId);
-      setError('');
-      setSuccess('');
-      
-      const platform = platforms.find(p => p.id === platformId);
-      
-      const { data, error } = await supabase
-        .from('social_connections')
-        .insert({
-          user_id: user.id,
-          platform: platformId,
-          platform_username: `user_${platformId}`,
-          access_token: `token_${Date.now()}`,
-          refresh_token: `refresh_${Date.now()}`,
-          is_active: true,
-          connection_metadata: {
-            followers: Math.floor(Math.random() * 10000) + 1000,
-            following: Math.floor(Math.random() * 1000) + 100,
-            posts: Math.floor(Math.random() * 500) + 50
-          }
-        })
-        .select();
-      
-      if (error) throw error;
-      
-      await loadConnections();
-      setSuccess(`Conectado exitosamente a ${platform.name}`);
-    } catch (err) {
-      console.error(`Error connecting to ${platformId}:`, err);
-      setError(`Error conectando a ${platformId}: ${err.message}`);
-    } finally {
-      setConnecting(null);
+  // CORREGIDO: Funciones de conexión que abren OAuth correctamente
+  const connectFacebook = async () => {
+    const clientId = import.meta.env.VITE_FACEBOOK_APP_ID;
+    if (!clientId) {
+      alert('Facebook App ID no configurado. Configura VITE_FACEBOOK_APP_ID en las variables de entorno.');
+      return;
     }
+
+    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
+    const scope = 'pages_manage_posts,pages_read_engagement,instagram_basic,instagram_manage_insights';
+    
+    const facebookAuthUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=facebook`;
+    
+    // Abrir en ventana popup
+    const popup = window.open(facebookAuthUrl, 'facebook-auth', 'width=600,height=600,scrollbars=yes,resizable=yes');
+    
+    // Escuchar cuando se cierre la ventana
+    const checkClosed = setInterval(() => {
+      if (popup?.closed) {
+        clearInterval(checkClosed);
+        // Recargar conexiones después de cerrar popup
+        setTimeout(() => checkConnections(), 1000);
+      }
+    }, 1000);
   };
 
-  const handleDisconnect = async (connectionId) => {
+  const connectInstagram = async () => {
+    // Instagram Business usa la misma API que Facebook
+    await connectFacebook();
+  };
+
+  const connectYouTube = async () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      alert('Google Client ID no configurado. Configura VITE_GOOGLE_CLIENT_ID en las variables de entorno.');
+      return;
+    }
+
+    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
+    const scope = 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/yt-analytics.readonly';
+    
+    const youtubeAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&access_type=offline&state=youtube`;
+    
+    const popup = window.open(youtubeAuthUrl, 'youtube-auth', 'width=600,height=600,scrollbars=yes,resizable=yes');
+    
+    const checkClosed = setInterval(() => {
+      if (popup?.closed) {
+        clearInterval(checkClosed);
+        setTimeout(() => checkConnections(), 1000);
+      }
+    }, 1000);
+  };
+
+  const connectLinkedIn = async () => {
+    const clientId = import.meta.env.VITE_LINKEDIN_CLIENT_ID;
+    if (!clientId) {
+      alert('LinkedIn Client ID no configurado. Configura VITE_LINKEDIN_CLIENT_ID en las variables de entorno.');
+      return;
+    }
+
+    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
+    const scope = 'r_organization_social,rw_organization_admin';
+    
+    const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=linkedin`;
+    
+    const popup = window.open(linkedinAuthUrl, 'linkedin-auth', 'width=600,height=600,scrollbars=yes,resizable=yes');
+    
+    const checkClosed = setInterval(() => {
+      if (popup?.closed) {
+        clearInterval(checkClosed);
+        setTimeout(() => checkConnections(), 1000);
+      }
+    }, 1000);
+  };
+
+  const connectTikTok = async () => {
+    const clientId = import.meta.env.VITE_TIKTOK_CLIENT_ID;
+    if (!clientId) {
+      alert('TikTok Client ID no configurado. Configura VITE_TIKTOK_CLIENT_ID en las variables de entorno.');
+      return;
+    }
+
+    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
+    const scope = 'user.info.basic,video.list';
+    
+    const tiktokAuthUrl = `https://www.tiktok.com/auth/authorize/?client_key=${clientId}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}&state=tiktok`;
+    
+    const popup = window.open(tiktokAuthUrl, 'tiktok-auth', 'width=600,height=600,scrollbars=yes,resizable=yes');
+    
+    const checkClosed = setInterval(() => {
+      if (popup?.closed) {
+        clearInterval(checkClosed);
+        setTimeout(() => checkConnections(), 1000);
+      }
+    }, 1000);
+  };
+
+  const connectTwitter = async () => {
+    const clientId = import.meta.env.VITE_TWITTER_CLIENT_ID;
+    if (!clientId) {
+      alert('Twitter Client ID no configurado. Configura VITE_TWITTER_CLIENT_ID en las variables de entorno.');
+      return;
+    }
+
+    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
+    const scope = 'tweet.read,tweet.write,users.read,offline.access';
+    
+    const twitterAuthUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=twitter&code_challenge=challenge&code_challenge_method=plain`;
+    
+    const popup = window.open(twitterAuthUrl, 'twitter-auth', 'width=600,height=600,scrollbars=yes,resizable=yes');
+    
+    const checkClosed = setInterval(() => {
+      if (popup?.closed) {
+        clearInterval(checkClosed);
+        setTimeout(() => checkConnections(), 1000);
+      }
+    }, 1000);
+  };
+
+  const disconnectPlatform = async (platformId: string) => {
     try {
-      setLoading(true);
-      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const { error } = await supabase
         .from('social_connections')
-        .update({ is_active: false })
-        .eq('id', connectionId);
+        .delete()
+        .eq('user_id', user.id)
+        .eq('provider', platformId);
+
+      if (error) {
+        console.error('Error disconnecting:', error);
+        return;
+      }
+
+      // Actualizar UI
+      setPlatforms(prev => prev.map(p => 
+        p.id === platformId ? { ...p, isConnected: false } : p
+      ));
+      setConnectedCount(prev => prev - 1);
       
-      if (error) throw error;
-      
-      await loadConnections();
-      setSuccess('Desconectado exitosamente');
-    } catch (err) {
-      console.error('Error disconnecting:', err);
-      setError(`Error desconectando: ${err.message}`);
-    } finally {
-      setLoading(false);
+      alert(`${platformId} desconectado exitosamente`);
+    } catch (error) {
+      console.error('Error disconnecting platform:', error);
     }
   };
 
-  const getPlatformConnection = (platformId) => {
-    return connections.find(conn => conn.platform === platformId && conn.is_active);
-  };
-
-  if (loading) {
-    return (
-      <DashboardLayout>
-        <div className="space-y-8">
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
+  const progressPercentage = (connectedCount / platforms.length) * 100;
 
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
-        {error && (
-          <Alert className="border-red-200 bg-red-50">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
-          </Alert>
-        )}
-        
-        {success && (
-          <Alert className="border-green-200 bg-green-50">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800">{success}</AlertDescription>
-          </Alert>
-        )}
-
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Conexiones de Plataformas</h1>
-            <p className="text-gray-600">Conecta tus redes sociales para publicar y analizar contenido automáticamente</p>
-          </div>
-          <Button 
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            onClick={() => loadConnections()}
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Sincronizar Todo
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <CheckCircle className="h-8 w-8 text-green-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Conectadas</p>
-                  <p className="text-2xl font-bold text-gray-900">{connections.filter(c => c.is_active).length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Users className="h-8 w-8 text-blue-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Seguidores Totales</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {connections.reduce((acc, conn) => acc + (conn.connection_metadata?.followers || 0), 0).toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <BarChart3 className="h-8 w-8 text-purple-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Posts Publicados</p>
-                  <p className="text-2xl font-bold text-gray-900">47</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Zap className="h-8 w-8 text-yellow-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Engagement Rate</p>
-                  <p className="text-2xl font-bold text-gray-900">4.2%</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs defaultValue="platforms" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="platforms">Plataformas Disponibles</TabsTrigger>
-            <TabsTrigger value="connected">Cuentas Conectadas</TabsTrigger>
-            <TabsTrigger value="settings">Configuración</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="platforms" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {platforms.map((platform) => {
-                const Icon = platform.icon;
-                const connection = getPlatformConnection(platform.id);
-                const isConnected = !!connection;
-                
-                return (
-                  <Card key={platform.id} className={`relative overflow-hidden ${isConnected ? 'ring-2 ring-green-500' : ''}`}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className={`p-2 rounded-lg ${platform.color} text-white`}>
-                            <Icon className="h-6 w-6" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg">{platform.name}</CardTitle>
-                            {platform.status === 'beta' && (
-                              <Badge variant="outline" className="text-xs">Beta</Badge>
-                            )}
-                          </div>
-                        </div>
-                        {isConnected && (
-                          <CheckCircle className="h-5 w-5 text-green-600" />
-                        )}
-                      </div>
-                      <CardDescription>{platform.description}</CardDescription>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <h4 className="text-sm font-semibold">Características:</h4>
-                        <ul className="text-sm text-gray-600 space-y-1">
-                          {platform.features.map((feature, index) => (
-                            <li key={index} className="flex items-center">
-                              <CheckCircle className="h-3 w-3 text-green-500 mr-2" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      
-                      {isConnected ? (
-                        <div className="space-y-3">
-                          <div className="p-3 bg-green-50 rounded-lg">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-sm font-medium text-green-800">
-                                  Conectado como {connection.platform_username}
-                                </p>
-                                <p className="text-xs text-green-600">
-                                  {connection.connection_metadata?.followers?.toLocaleString()} seguidores
-                                </p>
-                              </div>
-                              <Badge className="bg-green-100 text-green-800">Activo</Badge>
-                            </div>
-                          </div>
-                          
-                          <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="flex-1">
-                              <Settings className="h-4 w-4 mr-1" />
-                              Configurar
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleDisconnect(connection.id)}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <Button 
-                          className="w-full"
-                          onClick={() => handleConnect(platform.id)}
-                          disabled={connecting === platform.id}
-                        >
-                          {connecting === platform.id ? (
-                            <>
-                              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                              Conectando...
-                            </>
-                          ) : (
-                            <>
-                              <Plus className="h-4 w-4 mr-2" />
-                              Conectar {platform.name}
-                            </>
-                          )}
-                        </Button>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="connected" className="space-y-6">
-            {connections.length === 0 ? (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay cuentas conectadas</h3>
-                  <p className="text-gray-600 mb-4">
-                    Conecta tus redes sociales para comenzar a publicar contenido automáticamente
-                  </p>
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Conectar Primera Cuenta
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {connections.map((connection) => {
-                  const platform = platforms.find(p => p.id === connection.platform);
-                  const Icon = platform?.icon || Globe;
-                  
-                  return (
-                    <Card key={connection.id}>
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className={`p-3 rounded-lg ${platform?.color || 'bg-gray-600'} text-white`}>
-                              <Icon className="h-6 w-6" />
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold">{platform?.name || connection.platform}</h3>
-                              <p className="text-sm text-gray-600">@{connection.platform_username}</p>
-                              <p className="text-xs text-gray-500">
-                                {connection.connection_metadata?.followers?.toLocaleString()} seguidores
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center space-x-3">
-                            <Badge className="bg-green-100 text-green-800">Conectado</Badge>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleDisconnect(connection.id)}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              Desconectar
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="settings" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Configuración de Publicación</CardTitle>
-                <CardDescription>
-                  Configura cómo y cuándo se publican tus contenidos en las redes sociales
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-semibold">Publicación automática</h4>
-                    <p className="text-sm text-gray-600">Publica contenido automáticamente cuando se genera</p>
-                  </div>
-                  <Switch />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-semibold">Optimización de horarios</h4>
-                    <p className="text-sm text-gray-600">Publica en los mejores horarios según analytics</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-semibold">Notificaciones de publicación</h4>
-                    <p className="text-sm text-gray-600">Recibe notificaciones cuando se publique contenido</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+    <div className="platform-connections p-6">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold mb-2">{t('connections.title')}</h2>
+        <p className="text-gray-600">{t('connections.subtitle')}</p>
       </div>
-    </DashboardLayout>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {platforms.map((platform) => (
+          <Card key={platform.id} className="relative">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{platform.icon}</span>
+                  <CardTitle className="text-lg">{platform.name}</CardTitle>
+                </div>
+                <Badge 
+                  variant={platform.isConnected ? "default" : "secondary"}
+                  className={platform.isConnected ? "bg-green-500" : ""}
+                >
+                  {platform.isConnected ? t('connections.status.connected') : t('connections.status.disconnected')}
+                </Badge>
+              </div>
+            </CardHeader>
+            
+            <CardContent>
+              <div className="space-y-4">
+                <ul className="space-y-2">
+                  {platform.benefits.map((benefit, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <span className="text-green-500 mt-0.5">✅</span>
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => connectPlatform(platform.id)}
+                    disabled={platform.isConnected || loading}
+                    className="flex-1"
+                    variant={platform.isConnected ? "outline" : "default"}
+                  >
+                    {loading ? '⏳ Conectando...' : 
+                     platform.isConnected ? '✅ Conectado' : `🔗 ${t('connections.connect')}`}
+                  </Button>
+                  
+                  {platform.isConnected && (
+                    <Button 
+                      onClick={() => disconnectPlatform(platform.id)}
+                      variant="destructive"
+                      size="sm"
+                    >
+                      ❌
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Connection Progress */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>📈 {t('Your connection progress')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div 
+                className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+            <p className="text-center text-gray-600">
+              {connectedCount} de {platforms.length} plataformas conectadas
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Privacy Notice */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardContent className="pt-6">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">🔒</span>
+            <div>
+              <h4 className="font-semibold mb-2">Tu privacidad es importante</h4>
+              <ul className="text-sm space-y-1 text-gray-700">
+                <li>✅ Solo leemos métricas de rendimiento</li>
+                <li>✅ NUNCA publicamos contenido por ti</li>
+                <li>✅ Puedes desconectar en cualquier momento</li>
+                <li>✅ Los datos están encriptados y seguros</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
-export default PlatformConnectionsPage;
+export default PlatformConnectionsFixed;
+
