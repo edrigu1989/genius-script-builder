@@ -16,12 +16,12 @@ const Header = () => {
   };
 
   const handleAuthClick = () => {
-    navigate('/auth');
+    navigate('/login');
     setIsMenuOpen(false);
   };
 
   const handleGeneratorClick = () => {
-    navigate('/generator');
+    navigate('/script-generator');
     setIsMenuOpen(false);
   };
 

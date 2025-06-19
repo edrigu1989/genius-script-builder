@@ -13,7 +13,7 @@ const Hero = () => {
   };
 
   const goToGenerator = () => {
-    navigate('/generator');
+    navigate('/login');
   };
 
   return (

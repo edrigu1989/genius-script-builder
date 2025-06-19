@@ -8,7 +8,7 @@ const CTA = () => {
   const navigate = useNavigate();
 
   const goToGenerator = () => {
-    navigate('/generator');
+    navigate('/login');
   };
 
   return (
