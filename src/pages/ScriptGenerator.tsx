@@ -4,6 +4,7 @@ import { ArrowLeft, Sparkles, Copy, Download } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from '../components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import DashboardLayout from '../components/DashboardLayout';
 
 const ScriptGenerator = () => {
   const { t } = useLanguage();
@@ -106,37 +107,16 @@ const ScriptGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Volver al inicio
-            </button>
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold text-sm">MG</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">Marketing Genius</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Generador de Scripts de Marketing
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block text-2xl mt-1">
               Powered by IA
             </span>
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
+          <p className="text-gray-600 dark:text-gray-300 mt-2">
             Crea scripts profesionales en 30 segundos con múltiples modelos de IA
           </p>
         </div>
@@ -290,7 +270,7 @@ const ScriptGenerator = () => {
         </div>
 
         {/* Features Demo */}
-        <div className="mt-16 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border dark:border-gray-700">
+        <div className="mt-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border dark:border-gray-700">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
             Funcionalidades Disponibles en la Versión Completa
           </h3>
@@ -313,7 +293,7 @@ const ScriptGenerator = () => {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
