@@ -306,10 +306,16 @@ export class AdvancedVideoAnalyzer {
     const hashtags = new Set(["#Video", "#ContentMarketing"]);
     if (transcription.toLowerCase().includes("marketing")) hashtags.add("#MarketingDigital");
     if (transcription.toLowerCase().includes("negocio")) hashtags.add("#Emprendimiento");
-    if (visualAnalysis.tags) visualAnalysis.tags.slice(0,3).forEach(tag => hashtags.add(`#${tag.replace(/\s+/g, \'\
-')}`));
-    if (visualAnalysis.keyObjects) visualAnalysis.keyObjects.slice(0,2).forEach(obj => hashtags.add(`#${obj.name.replace(/\s+/g, 
-'')}`));
+    if (visualAnalysis.tags) {
+      visualAnalysis.tags.slice(0,3).forEach(tag => {
+        hashtags.add(`#${tag.replace(/\s+/g, '')}`);
+      });
+    }
+    if (visualAnalysis.keyObjects) {
+      visualAnalysis.keyObjects.slice(0,2).forEach(obj => {
+        hashtags.add(`#${obj.name.replace(/\s+/g, '')}`);
+      });
+    }
     return Array.from(hashtags).slice(0, 10);
   }
 
@@ -330,5 +336,4 @@ export class AdvancedVideoAnalyzer {
     return { day: days[dayIndex], time: times[timeIndex] };
   }
 }
-
 
