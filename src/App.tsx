@@ -14,7 +14,8 @@ import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import WordPressGenerator from "./pages/WordPressGenerator";
 import PlatformConnections from "./pages/PlatformConnections";
-import NotFound from "./pages/NotFound";
+import SocialMediaAPIs from './pages/SocialMediaAPIs';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/wordpress-generator" element={<WordPressGenerator />} />
+              <Route path="/social-apis" element={<SocialMediaAPIs />} />
               <Route path="/connections" element={<PlatformConnections />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

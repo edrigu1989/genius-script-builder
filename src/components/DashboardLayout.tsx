@@ -88,6 +88,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       active: location.pathname === '/video-analysis'
     },
     {
+      title: 'APIs Sociales',
+      icon: Globe,
+      href: '/social-apis',
+      active: location.pathname === '/social-apis'
+    },
+    {
       title: 'Conexiones',
       icon: Globe,
       href: '/connections',
