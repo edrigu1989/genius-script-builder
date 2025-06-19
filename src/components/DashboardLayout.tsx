@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useTheme } from '../contexts/ThemeContext'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar'
+import { ThemeToggle } from './ThemeToggle'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,6 +44,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, signOut } = useAuth()
+  const { isDark } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -116,12 +119,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     .toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <SidebarProvider>
         <div className="flex h-screen">
           {/* Sidebar */}
-          <Sidebar className="border-r bg-white">
-            <SidebarHeader className="border-b p-4">
+          <Sidebar className="border-r bg-white dark:bg-gray-800 dark:border-gray-700">
+            <SidebarHeader className="border-b p-4 dark:border-gray-700">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
@@ -138,8 +141,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       onClick={() => navigate(item.href)}
                       className={`w-full justify-start ${
                         item.active 
-                          ? 'bg-blue-50 text-blue-700 border-blue-200' 
-                          : 'hover:bg-gray-50'
+                          ? isDark 
+                            ? 'bg-gray-700 text-blue-400 border-blue-800' 
+                            : 'bg-blue-50 text-blue-700 border-blue-200'
+                          : isDark
+                            ? 'hover:bg-gray-700'
+                            : 'hover:bg-gray-50'
                       }`}
                     >
                       <item.icon className="mr-3 h-4 w-4" />
@@ -155,13 +162,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="border-t p-4">
+            <SidebarFooter className="border-t p-4 dark:border-gray-700">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="w-full justify-start">
                     <Avatar className="h-8 w-8 mr-3">
                       <AvatarImage src="" />
-                      <AvatarFallback className="bg-blue-100 text-blue-700">
+                      <AvatarFallback className={isDark ? "bg-blue-900 text-blue-200" : "bg-blue-100 text-blue-700"}>
                         {userInitials}
                       </AvatarFallback>
                     </Avatar>
@@ -169,7 +176,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       <span className="text-sm font-medium">
                         {user?.user_metadata?.full_name || 'Usuario'}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         {user?.email}
                       </span>
                     </div>
@@ -199,20 +206,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {/* Main Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Top Header */}
-            <header className="bg-white border-b px-6 py-4 flex items-center justify-between">
+            <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex items-center justify-between">
               <div className="flex items-center">
                 <SidebarTrigger className="md:hidden mr-4">
                   <Menu className="h-6 w-6" />
                 </SidebarTrigger>
-                <h1 className="text-xl font-semibold text-gray-900">
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                   {menuItems.find(item => item.active)?.title || 'Dashboard'}
                 </h1>
               </div>
               
               <div className="flex items-center space-x-4">
+                <ThemeToggle />
                 <Button 
                   onClick={() => navigate('/generator')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Nuevo Script
@@ -221,7 +229,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             </header>
 
             {/* Page Content */}
-            <main className="flex-1 overflow-auto p-6">
+            <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900">
               {children}
             </main>
           </div>
