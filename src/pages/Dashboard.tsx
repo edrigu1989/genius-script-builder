@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import RealTimeAnalytics from '../lib/realTimeAnalytics';
+import createAnalytics from '../lib/realTimeAnalytics';
 import DashboardLayout from '../components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -48,9 +48,10 @@ const Dashboard = () => {
     try {
       setLoading(true);
       
-      // Inicializar analytics
-      const analyticsService = new RealTimeAnalytics(user.id);
-      const dashboardData = await analyticsService.getPerformanceDashboard();
+      // Inicializar analytics de forma segura
+      const analyticsService = createAnalytics(user.id);
+      await analyticsService.initialize();
+      const dashboardData = await analyticsService.getUnifiedAnalytics();
       setAnalytics(dashboardData);
 
       // Cargar scripts recientes
