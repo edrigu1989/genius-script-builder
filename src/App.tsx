@@ -21,7 +21,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Dashboard />} />
-            <Route path="/video-analysis" element={<VideoAnalysis />} />
+            <Route path="/video-analysis" element={<VideoAnalysisAdvanced />} />
             <Route path="/video-analysis-advanced" element={<VideoAnalysisAdvanced />} />
             <Route path="/script-generator" element={<ScriptGenerator />} />
             <Route path="/webhook-settings" element={<WebhookSettings />} />

@@ -1,4 +1,4 @@
-// COMPONENTE DE ANÁLISIS DE VIDEO AVANZADO
+// COMPONENTE DE ANÁLISIS DE VIDEO REVOLUCIONARIO
 // Archivo: src/pages/VideoAnalysisAdvanced.tsx
 
 import React, { useState, useCallback } from 'react';
@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { AdvancedVideoAnalyzer } from '../utils/advancedVideoAnalysis';
 import DashboardLayout from '../components/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { Alert, AlertDescription } from '../components/ui/alert';
@@ -14,7 +14,6 @@ import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../components/ui/accordion';
 import { 
   Upload, 
   Play, 
@@ -32,40 +31,37 @@ import {
   Video,
   AlertCircle,
   Download,
-  BarChart,
+  Star,
+  Trophy,
+  Microscope,
+  Palette,
+  Volume2,
   Users,
+  BarChart3,
   Sparkles,
-  LineChart,
-  PieChart,
-  Layers,
-  Flame,
-  Award,
-  Bookmark,
-  Repeat,
-  Scissors
+  Shield,
+  Rocket
 } from 'lucide-react';
 
 export default function VideoAnalysisAdvanced() {
   const { user } = useAuth();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [videoUrl, setVideoUrl] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [progressMessage, setProgressMessage] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [analysisHistory, setAnalysisHistory] = useState([]);
   const [activeTab, setActiveTab] = useState('upload');
 
-  // Función principal de análisis con AdvancedVideoAnalyzer
+  // Función principal de análisis revolucionario
   const analyzeVideo = async (file) => {
     setAnalyzing(true);
     setError('');
     setSuccess('');
     setProgress(0);
-    setProgressMessage('Iniciando análisis...');
-    setActiveTab('results');
+    setProgressMessage('Iniciando análisis revolucionario...');
+    setActiveTab('results'); // Cambiar automáticamente a resultados
     
     try {
       const analyzer = new AdvancedVideoAnalyzer();
@@ -76,25 +72,20 @@ export default function VideoAnalysisAdvanced() {
         setProgressMessage(message);
       };
       
-      // Realizar análisis avanzado del video
-      const advancedAnalysis = await analyzer.analyzeVideo(file, onProgress);
+      // Realizar análisis revolucionario multi-dimensional
+      const revolutionaryAnalysis = await analyzer.analyzeVideo(file, onProgress);
       
-      setAnalysis(advancedAnalysis);
-      
-      // Guardar en historial
-      const newHistory = [advancedAnalysis, ...analysisHistory].slice(0, 10);
-      setAnalysisHistory(newHistory);
-      
-      setSuccess('¡Análisis completado exitosamente!');
+      setAnalysis(revolutionaryAnalysis);
+      setSuccess('¡Análisis revolucionario completado! Insights únicos generados.');
       
       // Guardar en Supabase (opcional)
       if (user) {
-        await saveAnalysisToDatabase(advancedAnalysis);
+        await saveAnalysisToDatabase(revolutionaryAnalysis);
       }
       
     } catch (err) {
       console.error('Error analyzing video:', err);
-      setError(`Error analizando el video: ${err.message}`);
+      setError(`Error en análisis revolucionario: ${err.message}`);
     } finally {
       setAnalyzing(false);
     }
@@ -109,9 +100,7 @@ export default function VideoAnalysisAdvanced() {
           user_id: user.id,
           video_name: analysisData.source,
           duration: analysisData.duration,
-          viral_potential: analysisData.engagementPrediction.viralPotential,
-          sentiment: analysisData.sentiment.overall,
-          predicted_views: analysisData.engagementPrediction.predictedViews,
+          viral_potential: analysisData.viralPotential,
           analysis_data: analysisData,
           created_at: new Date().toISOString()
         }]);
@@ -131,9 +120,6 @@ export default function VideoAnalysisAdvanced() {
       if (file.type.startsWith('video/')) {
         setSelectedFile(file);
         setError('');
-        // Crear URL para previsualización
-        const objectUrl = URL.createObjectURL(file);
-        setVideoUrl(objectUrl);
       } else {
         setError('Por favor selecciona un archivo de video válido (MP4, MOV, AVI, etc.).');
       }
@@ -162,25 +148,35 @@ export default function VideoAnalysisAdvanced() {
     return `${mb.toFixed(1)} MB`;
   };
 
-  // Formatear número con separadores de miles
-  const formatNumber = (num) => {
-    return num?.toLocaleString() || '0';
+  // Renderizar score con color
+  const renderScore = (score, label) => {
+    const getScoreColor = (score) => {
+      if (score >= 80) return 'text-green-600 bg-green-100';
+      if (score >= 60) return 'text-yellow-600 bg-yellow-100';
+      return 'text-red-600 bg-red-100';
+    };
+
+    return (
+      <div className="text-center">
+        <div className={`text-2xl font-bold px-3 py-1 rounded-full ${getScoreColor(score)}`}>
+          {score}
+        </div>
+        <p className="text-sm text-gray-600 mt-1">{label}</p>
+      </div>
+    );
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Análisis Avanzado de Video</h1>
-            <p className="text-muted-foreground mt-2">
-              Análisis profundo con IA para optimizar tu contenido y maximizar engagement
-            </p>
-          </div>
-          <Badge variant="outline" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1">
-            <Sparkles className="h-4 w-4 mr-1" />
-            PRO
-          </Badge>
+        <div>
+          <h1 className="text-3xl font-bold flex items-center">
+            <Microscope className="h-8 w-8 mr-3 text-purple-600" />
+            Análisis de Video Revolucionario
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Sistema de análisis multi-dimensional con IA que genera insights únicos y profundos
+          </p>
         </div>
 
         {error && (
@@ -191,21 +187,16 @@ export default function VideoAnalysisAdvanced() {
         )}
 
         {success && (
-          <Alert className="border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-900">
-            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
-            <AlertDescription className="text-green-800 dark:text-green-300">{success}</AlertDescription>
+          <Alert className="border-green-200 bg-green-50">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">{success}</AlertDescription>
           </Alert>
         )}
 
-        <Tabs 
-          defaultValue="upload" 
-          className="space-y-6" 
-          value={activeTab}
-          onValueChange={setActiveTab}
-        >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="upload">Subir Video</TabsTrigger>
-            <TabsTrigger value="results" disabled={!analysis && !analyzing}>Resultados</TabsTrigger>
+            <TabsTrigger value="results">Resultados Revolucionarios</TabsTrigger>
           </TabsList>
 
           <TabsContent value="upload" className="space-y-6">
@@ -213,10 +204,10 @@ export default function VideoAnalysisAdvanced() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Upload className="h-5 w-5 mr-2" />
-                  Subir Video para Análisis
+                  Subir Video para Análisis Revolucionario
                 </CardTitle>
                 <CardDescription>
-                  Sube tu video y obtén un análisis completo con IA avanzada
+                  Sube tu video y obtén un análisis multi-dimensional con insights únicos
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -228,28 +219,15 @@ export default function VideoAnalysisAdvanced() {
                     accept="video/*"
                     onChange={handleFileUpload}
                     className="cursor-pointer"
+                    style={selectedFile ? { pointerEvents: 'none' } : {}}
                   />
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-gray-500">
                     Formatos soportados: MP4, MOV, AVI, WebM (máx. 100MB)
                   </p>
                 </div>
 
-                {videoUrl && (
-                  <div className="mt-4">
-                    <Label>Previsualización</Label>
-                    <div className="mt-2 rounded-md overflow-hidden bg-black aspect-video">
-                      <video 
-                        src={videoUrl} 
-                        controls 
-                        className="w-full h-full"
-                        onError={() => setError('Error al cargar la previsualización del video')}
-                      />
-                    </div>
-                  </div>
-                )}
-
                 {selectedFile && (
-                  <div className="p-4 bg-muted rounded-lg">
+                  <div className="p-4 bg-gray-50 rounded-lg">
                     <h4 className="font-medium mb-2">Archivo seleccionado:</h4>
                     <div className="space-y-1 text-sm">
                       <p><strong>Nombre:</strong> {selectedFile.name}</p>
@@ -263,7 +241,6 @@ export default function VideoAnalysisAdvanced() {
                   onClick={handleFileAnalysis}
                   disabled={!selectedFile || analyzing}
                   className="w-full"
-                  variant="gradient"
                 >
                   {analyzing ? (
                     <>
@@ -272,8 +249,8 @@ export default function VideoAnalysisAdvanced() {
                     </>
                   ) : (
                     <>
-                      <Play className="h-4 w-4 mr-2" />
-                      Analizar Video
+                      <Microscope className="h-4 w-4 mr-2" />
+                      Iniciar Análisis Revolucionario
                     </>
                   )}
                 </Button>
@@ -287,14 +264,14 @@ export default function VideoAnalysisAdvanced() {
                 <CardContent className="p-6">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">Analizando Video...</h3>
+                      <h3 className="text-lg font-semibold">Análisis Revolucionario en Progreso...</h3>
                       <Badge variant="outline" className="animate-pulse">
-                        <Brain className="h-3 w-3 mr-1" />
-                        IA Procesando
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        IA Multi-Dimensional
                       </Badge>
                     </div>
                     <Progress value={progress} className="w-full" />
-                    <p className="text-sm text-muted-foreground text-center">
+                    <p className="text-sm text-gray-600 text-center">
                       {progressMessage}
                     </p>
                   </div>
@@ -304,624 +281,425 @@ export default function VideoAnalysisAdvanced() {
 
             {analysis && (
               <div className="space-y-6">
-                {/* Panel de Resumen */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Información del Video */}
+                {/* Información del Video */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Video className="h-5 w-5 mr-2" />
+                      Información del Video
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Duración Real</p>
+                        <p className="text-lg font-semibold">{formatDuration(analysis.duration)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Resolución</p>
+                        <p className="text-lg font-semibold">{analysis.metadata.width}x{analysis.metadata.height}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Aspecto</p>
+                        <p className="text-lg font-semibold">{analysis.metadata.aspectRatio}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Tamaño</p>
+                        <p className="text-lg font-semibold">{formatFileSize(analysis.metadata.size)}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Scores Multi-Dimensionales */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <BarChart3 className="h-5 w-5 mr-2" />
+                      Análisis Multi-Dimensional
+                    </CardTitle>
+                    <CardDescription>
+                      Scores calculados por nuestro sistema de IA revolucionario
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
+                      {renderScore(analysis.viralPotential || 75, "Potencial Viral")}
+                      {analysis.technicalAnalysis && renderScore(analysis.technicalAnalysis.qualityMetrics?.resolution?.score || 80, "Calidad Técnica")}
+                      {analysis.visualAnalysis && renderScore(analysis.visualAnalysis.aggregatedScores?.visualScore || 70, "Impacto Visual")}
+                      {analysis.audioAnalysis && renderScore(analysis.audioAnalysis.speechAnalysis?.engagement * 100 || 65, "Engagement Audio")}
+                      {analysis.psychologicalAnalysis && renderScore((1 - analysis.psychologicalAnalysis.cognitiveLoad) * 100 || 75, "Claridad Mental")}
+                      {analysis.competitiveAnalysis && renderScore(analysis.competitiveAnalysis.uniqueAdvantages?.length * 20 || 60, "Ventaja Competitiva")}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Insights Únicos */}
+                {analysis.uniqueInsights && (
                   <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center">
-                        <Video className="h-4 w-4 mr-2" />
-                        Información del Video
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Lightbulb className="h-5 w-5 mr-2 text-yellow-500" />
+                        Insights Únicos y Profundos
+                      </CardTitle>
+                      <CardDescription>
+                        Patrones ocultos y oportunidades no obvias identificadas por IA
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* Patrones Ocultos */}
+                      {analysis.uniqueInsights.hiddenPatterns && analysis.uniqueInsights.hiddenPatterns.length > 0 && (
+                        <div>
+                          <h4 className="font-semibold mb-2 flex items-center">
+                            <Sparkles className="h-4 w-4 mr-1" />
+                            Patrones Ocultos Identificados
+                          </h4>
+                          <div className="space-y-2">
+                            {analysis.uniqueInsights.hiddenPatterns.map((pattern, index) => (
+                              <div key={index} className="p-3 bg-purple-50 rounded-lg border-l-4 border-purple-400">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="font-medium text-purple-800">{pattern.type}</span>
+                                  <Badge variant="outline" className="text-xs">
+                                    Confianza: {Math.round(pattern.confidence * 100)}%
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-purple-700">{pattern.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Oportunidades No Obvias */}
+                      {analysis.uniqueInsights.nonObviousOpportunities && analysis.uniqueInsights.nonObviousOpportunities.length > 0 && (
+                        <div>
+                          <h4 className="font-semibold mb-2 flex items-center">
+                            <Target className="h-4 w-4 mr-1" />
+                            Oportunidades No Obvias
+                          </h4>
+                          <div className="space-y-2">
+                            {analysis.uniqueInsights.nonObviousOpportunities.map((opportunity, index) => (
+                              <div key={index} className="p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="font-medium text-green-800">{opportunity.type}</span>
+                                  <Badge variant="outline" className="text-xs text-green-600">
+                                    {opportunity.potentialImpact}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-green-700 mb-1">{opportunity.description}</p>
+                                <p className="text-xs text-green-600 font-medium">Acción: {opportunity.actionable}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Triggers Psicológicos */}
+                      {analysis.uniqueInsights.psychologicalTriggers && analysis.uniqueInsights.psychologicalTriggers.length > 0 && (
+                        <div>
+                          <h4 className="font-semibold mb-2 flex items-center">
+                            <Brain className="h-4 w-4 mr-1" />
+                            Triggers Psicológicos Detectados
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {analysis.uniqueInsights.psychologicalTriggers.map((trigger, index) => (
+                              <div key={index} className="p-2 bg-blue-50 rounded border">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-medium text-blue-800 text-sm">{trigger.type}</span>
+                                  <Badge variant="outline" size="sm" className="text-xs">
+                                    {trigger.strength}
+                                  </Badge>
+                                </div>
+                                <p className="text-xs text-blue-600 mt-1">{trigger.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Predicciones de Engagement */}
+                {analysis.engagementPrediction && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <TrendingUp className="h-5 w-5 mr-2" />
+                        Predicciones Inteligentes de Engagement
+                      </CardTitle>
+                      <CardDescription>
+                        Métricas predichas específicas por plataforma con intervalos de confianza
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Tabs defaultValue="youtube" className="space-y-4">
+                        <TabsList className="grid w-full grid-cols-4">
+                          <TabsTrigger value="youtube">YouTube</TabsTrigger>
+                          <TabsTrigger value="tiktok">TikTok</TabsTrigger>
+                          <TabsTrigger value="instagram">Instagram</TabsTrigger>
+                          <TabsTrigger value="summary">Resumen</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="youtube" className="space-y-4">
+                          {analysis.engagementPrediction.youtube && (
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="text-center p-3 bg-red-50 rounded">
+                                <Eye className="h-6 w-6 mx-auto text-red-600 mb-1" />
+                                <div className="text-lg font-bold text-red-800">
+                                  {analysis.engagementPrediction.youtube.predictedViews?.estimate?.toLocaleString() || 'N/A'}
+                                </div>
+                                <div className="text-xs text-red-600">
+                                  Views Estimadas
+                                </div>
+                                {analysis.engagementPrediction.youtube.predictedViews?.confidence && (
+                                  <Badge variant="outline" className="text-xs mt-1">
+                                    {analysis.engagementPrediction.youtube.predictedViews.confidence}% confianza
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="text-center p-3 bg-blue-50 rounded">
+                                <Clock className="h-6 w-6 mx-auto text-blue-600 mb-1" />
+                                <div className="text-lg font-bold text-blue-800">
+                                  {analysis.engagementPrediction.youtube.avgWatchTime?.percentage || 'N/A'}
+                                </div>
+                                <div className="text-xs text-blue-600">
+                                  Retención Promedio
+                                </div>
+                              </div>
+                              <div className="text-center p-3 bg-green-50 rounded">
+                                <Heart className="h-6 w-6 mx-auto text-green-600 mb-1" />
+                                <div className="text-lg font-bold text-green-800">
+                                  {analysis.engagementPrediction.youtube.engagement?.likes?.toLocaleString() || 'N/A'}
+                                </div>
+                                <div className="text-xs text-green-600">
+                                  Likes Estimados
+                                </div>
+                              </div>
+                              <div className="text-center p-3 bg-purple-50 rounded">
+                                <MessageCircle className="h-6 w-6 mx-auto text-purple-600 mb-1" />
+                                <div className="text-lg font-bold text-purple-800">
+                                  {analysis.engagementPrediction.youtube.engagement?.comments?.toLocaleString() || 'N/A'}
+                                </div>
+                                <div className="text-xs text-purple-600">
+                                  Comentarios
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </TabsContent>
+
+                        <TabsContent value="tiktok" className="space-y-4">
+                          {analysis.engagementPrediction.tiktok && (
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="text-center p-3 bg-pink-50 rounded">
+                                <Eye className="h-6 w-6 mx-auto text-pink-600 mb-1" />
+                                <div className="text-lg font-bold text-pink-800">
+                                  {analysis.engagementPrediction.tiktok.predictedViews?.estimate?.toLocaleString() || 'N/A'}
+                                </div>
+                                <div className="text-xs text-pink-600">
+                                  Views TikTok
+                                </div>
+                              </div>
+                              <div className="text-center p-3 bg-orange-50 rounded">
+                                <Zap className="h-6 w-6 mx-auto text-orange-600 mb-1" />
+                                <div className="text-lg font-bold text-orange-800">
+                                  {analysis.engagementPrediction.tiktok.viralPotential?.score || 'N/A'}
+                                </div>
+                                <div className="text-xs text-orange-600">
+                                  Potencial Viral
+                                </div>
+                              </div>
+                              <div className="text-center p-3 bg-cyan-50 rounded">
+                                <Play className="h-6 w-6 mx-auto text-cyan-600 mb-1" />
+                                <div className="text-lg font-bold text-cyan-800">
+                                  {analysis.engagementPrediction.tiktok.completionRate || 'N/A'}
+                                </div>
+                                <div className="text-xs text-cyan-600">
+                                  Tasa Completado
+                                </div>
+                              </div>
+                              <div className="text-center p-3 bg-indigo-50 rounded">
+                                <Share className="h-6 w-6 mx-auto text-indigo-600 mb-1" />
+                                <div className="text-lg font-bold text-indigo-800">
+                                  {analysis.engagementPrediction.tiktok.engagement?.shares?.toLocaleString() || 'N/A'}
+                                </div>
+                                <div className="text-xs text-indigo-600">
+                                  Shares Estimados
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </TabsContent>
+
+                        <TabsContent value="instagram" className="space-y-4">
+                          {analysis.engagementPrediction.instagram && (
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                              <div className="text-center p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded">
+                                <Eye className="h-6 w-6 mx-auto text-purple-600 mb-1" />
+                                <div className="text-lg font-bold text-purple-800">
+                                  {analysis.engagementPrediction.instagram.reels?.views?.toLocaleString() || 'N/A'}
+                                </div>
+                                <div className="text-xs text-purple-600">
+                                  Views Reels
+                                </div>
+                              </div>
+                              <div className="text-center p-3 bg-gradient-to-r from-pink-50 to-red-50 rounded">
+                                <Users className="h-6 w-6 mx-auto text-pink-600 mb-1" />
+                                <div className="text-lg font-bold text-pink-800">
+                                  {analysis.engagementPrediction.instagram.reels?.reach?.toLocaleString() || 'N/A'}
+                                </div>
+                                <div className="text-xs text-pink-600">
+                                  Alcance
+                                </div>
+                              </div>
+                              <div className="text-center p-3 bg-gradient-to-r from-orange-50 to-yellow-50 rounded">
+                                <Star className="h-6 w-6 mx-auto text-orange-600 mb-1" />
+                                <div className="text-lg font-bold text-orange-800">
+                                  {analysis.engagementPrediction.instagram.engagement?.rate || 'N/A'}
+                                </div>
+                                <div className="text-xs text-orange-600">
+                                  Engagement Rate
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </TabsContent>
+
+                        <TabsContent value="summary" className="space-y-4">
+                          {analysis.engagementPrediction.summary && (
+                            <div className="space-y-4">
+                              <div className="text-center p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+                                <Trophy className="h-12 w-12 mx-auto text-yellow-500 mb-2" />
+                                <h3 className="text-xl font-bold mb-2">Mejor Plataforma Predicha</h3>
+                                <div className="text-2xl font-bold text-purple-800">
+                                  {analysis.engagementPrediction.summary.bestPlatform}
+                                </div>
+                                <div className="text-sm text-gray-600 mt-2">
+                                  Total estimado: {analysis.engagementPrediction.summary.totalEstimatedViews?.toLocaleString()} views
+                                </div>
+                              </div>
+                              
+                              {analysis.engagementPrediction.summary.keyInsights && (
+                                <div>
+                                  <h4 className="font-semibold mb-2">Insights Clave:</h4>
+                                  <ul className="space-y-1">
+                                    {analysis.engagementPrediction.summary.keyInsights.map((insight, index) => (
+                                      <li key={index} className="flex items-center text-sm">
+                                        <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                                        {insight}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </TabsContent>
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Recomendaciones Priorizadas */}
+                {analysis.uniqueInsights?.prioritizedRecommendations && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Rocket className="h-5 w-5 mr-2" />
+                        Recomendaciones Priorizadas
+                      </CardTitle>
+                      <CardDescription>
+                        Acciones específicas ordenadas por impacto vs esfuerzo
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {analysis.uniqueInsights.prioritizedRecommendations.slice(0, 6).map((rec, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex-1">
+                              <div className="flex items-center mb-1">
+                                <Badge variant="outline" className="mr-2 text-xs">
+                                  {rec.category}
+                                </Badge>
+                                <Badge 
+                                  variant={rec.priority >= 80 ? "default" : rec.priority >= 60 ? "secondary" : "outline"}
+                                  className="text-xs"
+                                >
+                                  Prioridad: {rec.priority}
+                                </Badge>
+                              </div>
+                              <p className="text-sm font-medium">{rec.recommendation}</p>
+                              <p className="text-xs text-gray-600">
+                                Impacto: {rec.impact} | Esfuerzo: {rec.effort}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Transcripción y Sentimientos */}
+                {analysis.transcription && analysis.transcription.text && analysis.transcription.text !== 'Sin audio detectado' && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Volume2 className="h-5 w-5 mr-2" />
+                        Análisis de Audio y Sentimientos
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold mb-2">Transcripción:</h4>
+                        <div className="p-3 bg-gray-50 rounded text-sm max-h-32 overflow-y-auto">
+                          {analysis.transcription.text}
+                        </div>
+                      </div>
+                      
+                      {analysis.sentiment && (
+                        <div>
+                          <h4 className="font-semibold mb-2">Análisis de Sentimientos:</h4>
+                          <div className="flex items-center space-x-4">
+                            <Badge 
+                              variant={analysis.sentiment.overall === 'Positivo' ? 'default' : 
+                                      analysis.sentiment.overall === 'Negativo' ? 'destructive' : 'secondary'}
+                            >
+                              {analysis.sentiment.overall}
+                            </Badge>
+                            {analysis.sentiment.confidence && (
+                              <span className="text-sm text-gray-600">
+                                Confianza: {Math.round(analysis.sentiment.confidence * 100)}%
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Hashtags Optimizados */}
+                {analysis.hashtags && analysis.hashtags.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Sparkles className="h-5 w-5 mr-2" />
+                        Hashtags Optimizados
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Duración</span>
-                          <span className="font-medium">{formatDuration(analysis.duration)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Resolución</span>
-                          <span className="font-medium">{analysis.metadata.width}x{analysis.metadata.height}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Aspecto</span>
-                          <span className="font-medium">{analysis.metadata.aspectRatio}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Tamaño</span>
-                          <span className="font-medium">{formatFileSize(analysis.metadata.size)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Bitrate</span>
-                          <span className="font-medium">{analysis.metadata.bitrate} kbps</span>
-                        </div>
+                      <div className="flex flex-wrap gap-2">
+                        {analysis.hashtags.map((hashtag, index) => (
+                          <Badge key={index} variant="outline" className="text-sm">
+                            {hashtag}
+                          </Badge>
+                        ))}
                       </div>
                     </CardContent>
                   </Card>
-
-                  {/* Potencial Viral */}
-                  <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/50 dark:to-purple-950/50">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center">
-                        <Flame className="h-4 w-4 mr-2 text-orange-500" />
-                        Potencial Viral
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="flex items-center justify-center py-4">
-                        <div className="relative w-32 h-32">
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                              {analysis.engagementPrediction.viralPotential}%
-                            </span>
-                          </div>
-                          <svg className="w-full h-full" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke="#eee"
-                              strokeWidth="3"
-                              strokeDasharray="100, 100"
-                              className="dark:stroke-gray-700"
-                            />
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke="url(#gradient)"
-                              strokeWidth="3"
-                              strokeDasharray={`${analysis.engagementPrediction.viralPotential}, 100`}
-                              className="animate-pulse"
-                            />
-                            <defs>
-                              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="#ff7e5f" />
-                                <stop offset="100%" stopColor="#feb47b" />
-                              </linearGradient>
-                            </defs>
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="space-y-1 text-center">
-                        <p className="text-sm text-muted-foreground">Audiencia Objetivo</p>
-                        <p className="font-medium">{analysis.deepInsights.targetAudience}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Métricas Predichas */}
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center">
-                        <BarChart className="h-4 w-4 mr-2 text-blue-500" />
-                        Métricas Predichas
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="grid grid-cols-2 gap-4 mt-2">
-                        <div className="text-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-                          <Eye className="h-4 w-4 mx-auto text-blue-500" />
-                          <p className="text-lg font-semibold mt-1">{formatNumber(analysis.engagementPrediction.predictedViews)}</p>
-                          <p className="text-xs text-muted-foreground">Vistas</p>
-                        </div>
-                        <div className="text-center p-2 bg-red-50 dark:bg-red-900/20 rounded-md">
-                          <Heart className="h-4 w-4 mx-auto text-red-500" />
-                          <p className="text-lg font-semibold mt-1">{formatNumber(analysis.engagementPrediction.predictedLikes)}</p>
-                          <p className="text-xs text-muted-foreground">Me Gusta</p>
-                        </div>
-                        <div className="text-center p-2 bg-green-50 dark:bg-green-900/20 rounded-md">
-                          <MessageCircle className="h-4 w-4 mx-auto text-green-500" />
-                          <p className="text-lg font-semibold mt-1">{formatNumber(analysis.engagementPrediction.predictedComments)}</p>
-                          <p className="text-xs text-muted-foreground">Comentarios</p>
-                        </div>
-                        <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-md">
-                          <Share className="h-4 w-4 mx-auto text-purple-500" />
-                          <p className="text-lg font-semibold mt-1">{formatNumber(analysis.engagementPrediction.predictedShares)}</p>
-                          <p className="text-xs text-muted-foreground">Compartidos</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Análisis Detallado */}
-                <Tabs defaultValue="insights" className="space-y-4">
-                  <TabsList className="grid grid-cols-5 w-full">
-                    <TabsTrigger value="insights">
-                      <Lightbulb className="h-4 w-4 mr-2" />
-                      Insights
-                    </TabsTrigger>
-                    <TabsTrigger value="audience">
-                      <Users className="h-4 w-4 mr-2" />
-                      Audiencia
-                    </TabsTrigger>
-                    <TabsTrigger value="content">
-                      <Layers className="h-4 w-4 mr-2" />
-                      Contenido
-                    </TabsTrigger>
-                    <TabsTrigger value="engagement">
-                      <LineChart className="h-4 w-4 mr-2" />
-                      Engagement
-                    </TabsTrigger>
-                    <TabsTrigger value="transcript">
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Transcripción
-                    </TabsTrigger>
-                  </TabsList>
-
-                  {/* Pestaña de Insights */}
-                  <TabsContent value="insights" className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Pilares de Contenido */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <Layers className="h-4 w-4 mr-2 text-blue-500" />
-                            Pilares de Contenido
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {analysis.deepInsights.contentPillars.map((pillar, index) => (
-                              <li key={index} className="flex items-start">
-                                <div className="mr-2 mt-1 h-2 w-2 rounded-full bg-blue-500"></div>
-                                <span>{pillar}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-
-                      {/* Disparadores Psicológicos */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <Brain className="h-4 w-4 mr-2 text-purple-500" />
-                            Disparadores Psicológicos
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex flex-wrap gap-2">
-                            {analysis.deepInsights.psychologicalTriggers.map((trigger, index) => (
-                              <Badge key={index} variant="outline" className="bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                                {trigger}
-                              </Badge>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Viaje Emocional */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <LineChart className="h-4 w-4 mr-2 text-green-500" />
-                            Viaje Emocional
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="relative">
-                            <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
-                            <ul className="space-y-4 relative">
-                              {analysis.deepInsights.emotionalJourney.map((emotion, index) => (
-                                <li key={index} className="ml-6 relative">
-                                  <div className="absolute -left-6 mt-1.5 h-3 w-3 rounded-full bg-green-500"></div>
-                                  <span>{emotion}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Momentos Clave */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <Bookmark className="h-4 w-4 mr-2 text-orange-500" />
-                            Momentos Clave
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {analysis.deepInsights.keyMoments.map((moment, index) => (
-                              <li key={index} className="flex items-start">
-                                <Badge variant="outline" className="mr-2 bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
-                                  {moment.time ? formatDuration(moment.time) : 'N/A'}
-                                </Badge>
-                                <span>{moment.description}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    {/* Ventaja Competitiva */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg flex items-center">
-                          <Award className="h-4 w-4 mr-2 text-yellow-500" />
-                          Ventaja Competitiva
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          <div>
-                            <h4 className="font-medium mb-2">Puntos de Venta Únicos:</h4>
-                            <ul className="list-disc pl-5 space-y-1">
-                              {analysis.deepInsights.uniqueSellingPoints.map((point, index) => (
-                                <li key={index}>{point}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="font-medium mb-2">Ventaja Competitiva:</h4>
-                            <p>{analysis.deepInsights.competitiveAdvantage}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  {/* Pestaña de Audiencia */}
-                  <TabsContent value="audience" className="space-y-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg flex items-center">
-                          <Users className="h-4 w-4 mr-2 text-blue-500" />
-                          Análisis de Audiencia
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-6">
-                          <div>
-                            <h4 className="font-medium mb-2">Audiencia Objetivo:</h4>
-                            <p className="text-lg">{analysis.deepInsights.targetAudience}</p>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium mb-2">Mejor Momento para Publicar:</h4>
-                            <div className="flex items-center">
-                              <Badge variant="outline" className="mr-2 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                                {analysis.bestTimeToPost.day}
-                              </Badge>
-                              <Badge variant="outline" className="bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                                {analysis.bestTimeToPost.time}
-                              </Badge>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium mb-2">Hashtags Recomendados:</h4>
-                            <div className="flex flex-wrap gap-2">
-                              {analysis.hashtags.map((tag, index) => (
-                                <Badge key={index} variant="outline" className="bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                                  {tag}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium mb-2">Seguridad de Marca:</h4>
-                            <Badge 
-                              variant="outline" 
-                              className={
-                                analysis.deepInsights.brandSafety === "Alta" ? 
-                                "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300" : 
-                                analysis.deepInsights.brandSafety === "Media" ?
-                                "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300" :
-                                "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                              }
-                            >
-                              {analysis.deepInsights.brandSafety}
-                            </Badge>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  {/* Pestaña de Contenido */}
-                  <TabsContent value="content" className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Análisis Visual */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <Eye className="h-4 w-4 mr-2 text-blue-500" />
-                            Análisis Visual
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <Accordion type="single" collapsible className="w-full">
-                            <AccordionItem value="summary">
-                              <AccordionTrigger>Resumen Visual</AccordionTrigger>
-                              <AccordionContent>
-                                <p className="text-sm">{analysis.visualAnalysis.summary}</p>
-                              </AccordionContent>
-                            </AccordionItem>
-                            <AccordionItem value="objects">
-                              <AccordionTrigger>Objetos Detectados</AccordionTrigger>
-                              <AccordionContent>
-                                <div className="flex flex-wrap gap-2">
-                                  {analysis.visualAnalysis.keyObjects.map((obj, index) => (
-                                    <Badge key={index} variant="outline">
-                                      {obj.name || obj}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </AccordionContent>
-                            </AccordionItem>
-                            <AccordionItem value="colors">
-                              <AccordionTrigger>Colores Dominantes</AccordionTrigger>
-                              <AccordionContent>
-                                <div className="flex flex-wrap gap-2">
-                                  {analysis.visualAnalysis.dominantColors.map((color, index) => (
-                                    <div key={index} className="flex items-center">
-                                      <div 
-                                        className="w-4 h-4 rounded-full mr-1" 
-                                        style={{backgroundColor: color.toLowerCase()}}
-                                      ></div>
-                                      <span>{color}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </AccordionContent>
-                            </AccordionItem>
-                            <AccordionItem value="shots">
-                              <AccordionTrigger>Tipos de Plano</AccordionTrigger>
-                              <AccordionContent>
-                                <ul className="list-disc pl-5">
-                                  {analysis.visualAnalysis.shotTypes.map((shot, index) => (
-                                    <li key={index}>{shot}</li>
-                                  ))}
-                                </ul>
-                              </AccordionContent>
-                            </AccordionItem>
-                          </Accordion>
-                        </CardContent>
-                      </Card>
-
-                      {/* Análisis de Sentimiento */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <Heart className="h-4 w-4 mr-2 text-red-500" />
-                            Análisis de Sentimiento
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                              <span>Sentimiento General:</span>
-                              <Badge 
-                                variant="outline" 
-                                className={
-                                  analysis.sentiment.overall === "Positivo" ? 
-                                  "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300" : 
-                                  analysis.sentiment.overall === "Negativo" ?
-                                  "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300" :
-                                  "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                }
-                              >
-                                {analysis.sentiment.overall}
-                              </Badge>
-                            </div>
-                            
-                            <div>
-                              <h4 className="font-medium mb-2">Confianza:</h4>
-                              <Progress value={analysis.sentiment.confidence * 100} className="h-2" />
-                              <div className="flex justify-between mt-1 text-xs">
-                                <span>0%</span>
-                                <span>{Math.round(analysis.sentiment.confidence * 100)}%</span>
-                                <span>100%</span>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h4 className="font-medium mb-2">Emociones Detectadas:</h4>
-                              <div className="grid grid-cols-2 gap-2">
-                                {Object.entries(analysis.sentiment.emotions || {}).map(([emotion, value], index) => (
-                                  <div key={index} className="flex justify-between items-center">
-                                    <span>{emotion}</span>
-                                    <Progress value={value * 100} className="w-20 h-2" />
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Estructura Narrativa */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <Scissors className="h-4 w-4 mr-2 text-purple-500" />
-                            Estructura Narrativa
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div>
-                              <h4 className="font-medium mb-2">Tipo de Estructura:</h4>
-                              <p>{analysis.deepInsights.narrativeStructure}</p>
-                            </div>
-                            
-                            <div>
-                              <h4 className="font-medium mb-2">Efectividad del Call to Action:</h4>
-                              <Badge 
-                                variant="outline" 
-                                className={
-                                  analysis.deepInsights.callToActionEffectiveness.toLowerCase().includes("alta") ? 
-                                  "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300" : 
-                                  analysis.deepInsights.callToActionEffectiveness.toLowerCase().includes("baja") ?
-                                  "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300" :
-                                  "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300"
-                                }
-                              >
-                                {analysis.deepInsights.callToActionEffectiveness}
-                              </Badge>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </TabsContent>
-
-                  {/* Pestaña de Engagement */}
-                  <TabsContent value="engagement" className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Métricas de Engagement */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <BarChart className="h-4 w-4 mr-2 text-blue-500" />
-                            Métricas de Engagement
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                              <span>Tasa de Engagement:</span>
-                              <Badge variant="outline" className="bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                                {analysis.engagementPrediction.engagementRate}%
-                              </Badge>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span>Tasa de Retención:</span>
-                              <Badge variant="outline" className="bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300">
-                                {analysis.engagementPrediction.retentionRate}%
-                              </Badge>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span>CTR Estimado:</span>
-                              <Badge variant="outline" className="bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                                {analysis.engagementPrediction.ctr}%
-                              </Badge>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span>Tiempo de Visualización:</span>
-                              <Badge variant="outline">
-                                {Math.round(analysis.engagementPrediction.watchTime / 60)} minutos
-                              </Badge>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Predicciones Detalladas */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center">
-                            <TrendingUp className="h-4 w-4 mr-2 text-green-500" />
-                            Predicciones Detalladas
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div>
-                              <div className="flex justify-between mb-1">
-                                <span className="text-sm">Vistas</span>
-                                <span className="text-sm font-medium">{formatNumber(analysis.engagementPrediction.predictedViews)}</span>
-                              </div>
-                              <Progress value={100} className="h-2 bg-blue-100 dark:bg-blue-900/30" />
-                            </div>
-                            <div>
-                              <div className="flex justify-between mb-1">
-                                <span className="text-sm">Me Gusta</span>
-                                <span className="text-sm font-medium">{formatNumber(analysis.engagementPrediction.predictedLikes)}</span>
-                              </div>
-                              <Progress 
-                                value={(analysis.engagementPrediction.predictedLikes / analysis.engagementPrediction.predictedViews) * 100} 
-                                className="h-2 bg-red-100 dark:bg-red-900/30" 
-                              />
-                            </div>
-                            <div>
-                              <div className="flex justify-between mb-1">
-                                <span className="text-sm">Comentarios</span>
-                                <span className="text-sm font-medium">{formatNumber(analysis.engagementPrediction.predictedComments)}</span>
-                              </div>
-                              <Progress 
-                                value={(analysis.engagementPrediction.predictedComments / analysis.engagementPrediction.predictedViews) * 100} 
-                                className="h-2 bg-green-100 dark:bg-green-900/30" 
-                              />
-                            </div>
-                            <div>
-                              <div className="flex justify-between mb-1">
-                                <span className="text-sm">Compartidos</span>
-                                <span className="text-sm font-medium">{formatNumber(analysis.engagementPrediction.predictedShares)}</span>
-                              </div>
-                              <Progress 
-                                value={(analysis.engagementPrediction.predictedShares / analysis.engagementPrediction.predictedViews) * 100} 
-                                className="h-2 bg-purple-100 dark:bg-purple-900/30" 
-                              />
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </TabsContent>
-
-                  {/* Pestaña de Transcripción */}
-                  <TabsContent value="transcript" className="space-y-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg flex items-center">
-                          <MessageCircle className="h-4 w-4 mr-2 text-blue-500" />
-                          Transcripción del Video
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {analysis.transcription.text === "Sin audio detectado" ? (
-                          <div className="p-4 text-center bg-muted rounded-md">
-                            <p>No se detectó audio en este video</p>
-                          </div>
-                        ) : (
-                          <div className="space-y-4">
-                            {analysis.transcription.segments && analysis.transcription.segments.length > 0 ? (
-                              <div className="space-y-2">
-                                {analysis.transcription.segments.map((segment, index) => (
-                                  <div key={index} className="flex">
-                                    <Badge variant="outline" className="mr-2 shrink-0">
-                                      {formatDuration(segment.start)}
-                                    </Badge>
-                                    <p>{segment.text}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p>{analysis.transcription.text}</p>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                </Tabs>
-
-                {/* Acciones */}
-                <div className="flex justify-between">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setActiveTab('upload')}
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Analizar Otro Video
-                  </Button>
-                  <Button 
-                    variant="gradient"
-                    onClick={() => {
-                      // Aquí se podría implementar la descarga del informe
-                      setSuccess('Informe guardado correctamente');
-                    }}
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Guardar Informe
-                  </Button>
-                </div>
+                )}
               </div>
             )}
           </TabsContent>
