@@ -42,12 +42,13 @@ const SocialMediaAPIs = () => {
     setResults(null);
 
     try {
-      const response = await fetch(`/api/social/${platform}`, {
+      const response = await fetch('/api/social-media', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          platform,
           action,
           ...params
         })
