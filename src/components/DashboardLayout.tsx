@@ -1,239 +1,277 @@
-import React, { useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import { useTheme } from '../contexts/ThemeContext'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Button } from '../components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar'
-import { ThemeToggle } from './ThemeToggle'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from '../components/ui/sidebar'
-import {
-  LayoutDashboard,
-  FileText,
-  BarChart3,
-  Settings,
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { 
+  LayoutDashboard, 
+  Plus, 
+  Video, 
+  BarChart3, 
+  LogOut, 
   Sparkles,
-  LogOut,
   User,
   Menu,
-  Plus,
-  Globe,
-  TrendingUp,
-  Video,
-  Zap
-} from 'lucide-react'
+  X,
+  Sun,
+  Moon,
+  Zap,
+  Brain,
+  TrendingUp
+} from 'lucide-react';
+import { Button } from './ui/button';
+import { Avatar, AvatarFallback } from './ui/avatar';
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const { user, signOut } = useAuth()
-  const { isDark } = useTheme()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { user, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSignOut = async () => {
-    await signOut()
-    navigate('/')
-  }
+    await signOut();
+    navigate('/');
+  };
 
   const menuItems = [
     {
       title: 'Dashboard',
       icon: LayoutDashboard,
       href: '/dashboard',
-      active: location.pathname === '/dashboard'
+      active: location.pathname === '/dashboard',
+      description: 'Vista general y accesos rápidos'
     },
     {
       title: 'Generar Script',
       icon: Plus,
       href: '/script-generator',
-      active: location.pathname === '/script-generator'
-    },
-    {
-      title: 'Mis Scripts',
-      icon: FileText,
-      href: '/my-scripts',
-      active: location.pathname === '/my-scripts'
-    },
-    {
-      title: 'Analytics',
-      icon: BarChart3,
-      href: '/analytics',
-      active: location.pathname === '/analytics'
+      active: location.pathname === '/script-generator',
+      description: 'Crea scripts virales con IA evolutiva'
     },
     {
       title: 'Análisis de Videos',
       icon: Video,
       href: '/video-analysis',
-      active: location.pathname === '/video-analysis'
+      active: location.pathname === '/video-analysis',
+      description: 'Predice el éxito de tus videos'
     },
     {
-      title: 'APIs Sociales',
-      icon: Globe,
-      href: '/social-apis',
-      active: location.pathname === '/social-apis'
-    },
-    {
-      title: 'Conexiones',
-      icon: Globe,
-      href: '/connections',
-      active: location.pathname === '/connections'
-    },
-    {
-      title: 'WordPress Generator',
-      icon: Globe,
-      href: '/wordpress-generator',
-      active: location.pathname === '/wordpress-generator',
-      premium: true
-    },
-    {
-      title: 'Configuración N8N',
-      icon: Zap,
-      href: '/webhook-settings',
-      active: location.pathname === '/webhook-settings'
-    },
-    {
-      title: 'Configuración',
-      icon: Settings,
-      href: '/settings',
-      active: location.pathname === '/settings'
+      title: 'Analytics',
+      icon: BarChart3,
+      href: '/analytics',
+      active: location.pathname === '/analytics',
+      description: 'Métricas y retroalimentación'
     }
-  ]
+  ];
 
   const userInitials = user?.user_metadata?.full_name
     ?.split(' ')
     .map((n: string) => n[0])
     .join('')
-    .toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'
+    .toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U';
+
+  const getPageTitle = () => {
+    const currentItem = menuItems.find(item => item.active);
+    return currentItem?.title || 'Dashboard';
+  };
+
+  const getPageIcon = () => {
+    const currentItem = menuItems.find(item => item.active);
+    const IconComponent = currentItem?.icon || LayoutDashboard;
+    return <IconComponent className="w-6 h-6" />;
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <SidebarProvider>
-        <div className="flex h-screen">
-          {/* Sidebar */}
-          <Sidebar className="border-r bg-white dark:bg-gray-800 dark:border-gray-700">
-            <SidebarHeader className="border-b p-4 dark:border-gray-700">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100">
+      <div className="flex h-screen">
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <div className={`
+          fixed lg:static inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl lg:shadow-none
+          transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}>
+          {/* Sidebar Header */}
+          <div className="border-b p-6 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-bold text-lg">MarketingGenius</span>
+                <div>
+                  <h1 className="font-bold text-lg">Genius Script</h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Builder 3.0</p>
+                </div>
               </div>
-            </SidebarHeader>
-            
-            <SidebarContent className="p-4">
-              <SidebarMenu>
-                {menuItems.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      onClick={() => navigate(item.href)}
-                      className={`w-full justify-start ${
-                        item.active 
-                          ? isDark 
-                            ? 'bg-gray-700 text-blue-400 border-blue-800' 
-                            : 'bg-blue-50 text-blue-700 border-blue-200'
-                          : isDark
-                            ? 'hover:bg-gray-700'
-                            : 'hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <item.icon className="mr-2 h-4 w-4" />
-                        <span>{item.title}</span>
-                        {item.premium && (
-                          <span className="ml-2 px-1.5 py-0.5 text-xs bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded">PRO</span>
-                        )}
-                      </div>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarContent>
-            
-            <SidebarFooter className="border-t p-4 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Avatar>
-                    <AvatarFallback>{userInitials}</AvatarFallback>
-                    <AvatarImage src={user?.user_metadata?.avatar_url} />
-                  </Avatar>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden p-1 h-8 w-8"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+          
+          {/* Navigation Menu */}
+          <div className="p-4 space-y-2">
+            {menuItems.map((item) => (
+              <button
+                key={item.href}
+                onClick={() => {
+                  navigate(item.href);
+                  setSidebarOpen(false);
+                }}
+                className={`
+                  w-full flex items-start space-x-3 p-4 rounded-xl transition-all duration-200
+                  ${item.active 
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105' 
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-102'
+                  }
+                `}
+              >
+                <item.icon className={`w-5 h-5 mt-0.5 ${item.active ? 'text-white' : 'text-gray-600 dark:text-gray-400'}`} />
+                <div className="text-left">
+                  <div className={`font-medium ${item.active ? 'text-white' : 'text-gray-900 dark:text-gray-100'}`}>
+                    {item.title}
+                  </div>
+                  <div className={`text-xs ${item.active ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}`}>
+                    {item.description}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Quick Stats */}
+          <div className="p-4 mx-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl">
+            <h3 className="font-semibold text-sm mb-3 text-gray-700 dark:text-gray-300">Estado del Sistema</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center space-x-1">
+                  <Brain className="w-3 h-3 text-blue-500" />
+                  <span>IA Evolutiva</span>
+                </span>
+                <span className="text-green-600 dark:text-green-400 font-medium">Activa</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center space-x-1">
+                  <TrendingUp className="w-3 h-3 text-purple-500" />
+                  <span>Precisión</span>
+                </span>
+                <span className="text-blue-600 dark:text-blue-400 font-medium">87.3%</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center space-x-1">
+                  <Zap className="w-3 h-3 text-yellow-500" />
+                  <span>Última Actualización</span>
+                </span>
+                <span className="text-gray-600 dark:text-gray-400">Hoy</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* User section */}
+          <div className="mt-auto p-4 border-t dark:border-gray-700">
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+              <Avatar className="w-10 h-10">
+                <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-semibold">
+                  {userInitials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">
+                  {user?.user_metadata?.full_name || user?.email}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Usuario Premium</p>
+              </div>
+              <div className="flex space-x-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleTheme}
+                  className="p-1 h-8 w-8"
+                  title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+                >
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="p-1 h-8 w-8 text-red-500 hover:text-red-600"
+                  title="Cerrar sesión"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Header */}
+          <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b dark:border-gray-700 p-4 sticky top-0 z-30">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSidebarOpen(true)}
+                  className="lg:hidden p-2"
+                >
+                  <Menu className="w-5 h-5" />
+                </Button>
+                
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white">
+                    {getPageIcon()}
+                  </div>
                   <div>
-                    <p className="text-sm font-medium">{user?.user_metadata?.full_name || user?.email}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {user?.email}
+                    <h1 className="text-xl font-bold">{getPageTitle()}</h1>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {menuItems.find(item => item.active)?.description}
                     </p>
                   </div>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-full">
-                      <User className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/settings')}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Configuración</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Cerrar Sesión</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
-            </SidebarFooter>
-          </Sidebar>
-
+              
+              <div className="flex items-center space-x-3">
+                {/* Status Indicator */}
+                <div className="hidden md:flex items-center space-x-2 px-3 py-1 bg-green-100 dark:bg-green-900/20 rounded-full">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-green-700 dark:text-green-300">
+                    Sistema Activo
+                  </span>
+                </div>
+              </div>
+            </div>
+          </header>
+          
           {/* Main Content */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <SidebarTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SidebarTrigger>
-                <h1 className="text-xl font-bold ml-2">Dashboard</h1>
-              </div>
-              <div className="flex items-center space-x-2">
-                <ThemeToggle />
-                <Button variant="gradient" size="sm" onClick={() => navigate('/script-generator')}>
-                  <Plus className="h-4 w-4 mr-1" /> Nuevo Script
-                </Button>
-              </div>
-            </header>
-            <main className="flex-1 overflow-auto p-6">
+          <main className="flex-1 overflow-auto p-6">
+            <div className="max-w-7xl mx-auto">
               {children}
-            </main>
-          </div>
+            </div>
+          </main>
         </div>
-      </SidebarProvider>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default DashboardLayout
+export default DashboardLayout;
 
