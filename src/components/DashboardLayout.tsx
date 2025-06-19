@@ -35,7 +35,9 @@ import {
   Menu,
   Plus,
   Globe,
-  TrendingUp
+  TrendingUp,
+  Video,
+  Zap
 } from 'lucide-react'
 
 interface DashboardLayoutProps {
@@ -58,14 +60,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     {
       title: 'Dashboard',
       icon: LayoutDashboard,
-      href: '/dashboard',
-      active: location.pathname === '/dashboard'
+      href: '/',
+      active: location.pathname === '/'
     },
     {
       title: 'Generar Script',
       icon: Plus,
-      href: '/generator',
-      active: location.pathname === '/generator'
+      href: '/script-generator',
+      active: location.pathname === '/script-generator'
     },
     {
       title: 'Mis Scripts',
@@ -82,20 +84,33 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     {
       title: 'Rendimiento',
       icon: TrendingUp,
-      href: '/script-performance',
-      active: location.pathname === '/script-performance'
+      href: '/rendimiento',
+      active: location.pathname === '/rendimiento'
     },
     {
       title: 'Análisis de Videos',
-      icon: Sparkles,
+      icon: Video,
       href: '/video-analysis',
       active: location.pathname === '/video-analysis'
     },
     {
+      title: 'Análisis Avanzado',
+      icon: Sparkles,
+      href: '/video-analysis-advanced',
+      active: location.pathname === '/video-analysis-advanced',
+      premium: true
+    },
+    {
       title: 'Conexiones',
       icon: Globe,
-      href: '/connections',
-      active: location.pathname === '/connections'
+      href: '/conexiones',
+      active: location.pathname === '/conexiones'
+    },
+    {
+      title: 'Configuración N8N',
+      icon: Zap,
+      href: '/webhook-settings',
+      active: location.pathname === '/webhook-settings'
     },
     {
       title: 'WordPress Generator',
@@ -149,87 +164,75 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                             : 'hover:bg-gray-50'
                       }`}
                     >
-                      <item.icon className="mr-3 h-4 w-4" />
-                      <span>{item.title}</span>
-                      {item.premium && (
-                        <span className="ml-auto text-xs bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full">
-                          PRO
-                        </span>
-                      )}
+                      <div className="flex items-center">
+                        <item.icon className="mr-2 h-4 w-4" />
+                        <span>{item.title}</span>
+                        {item.premium && (
+                          <span className="ml-2 px-1.5 py-0.5 text-xs bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded">PRO</span>
+                        )}
+                      </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
             </SidebarContent>
-
+            
             <SidebarFooter className="border-t p-4 dark:border-gray-700">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Avatar className="h-8 w-8 mr-3">
-                      <AvatarImage src="" />
-                      <AvatarFallback className={isDark ? "bg-blue-900 text-blue-200" : "bg-blue-100 text-blue-700"}>
-                        {userInitials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col items-start">
-                      <span className="text-sm font-medium">
-                        {user?.user_metadata?.full_name || 'Usuario'}
-                      </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {user?.email}
-                      </span>
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/settings')}>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Perfil</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/settings')}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Configuración</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Cerrar Sesión</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Avatar>
+                    <AvatarFallback>{userInitials}</AvatarFallback>
+                    <AvatarImage src={user?.user_metadata?.avatar_url} />
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium">{user?.user_metadata?.full_name || user?.email}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {user?.email}
+                    </p>
+                  </div>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full">
+                      <User className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/settings')}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Configuración</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Cerrar Sesión</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </SidebarFooter>
           </Sidebar>
 
           {/* Main Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Top Header */}
-            <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex items-center justify-between">
+            <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-4 flex items-center justify-between">
               <div className="flex items-center">
-                <SidebarTrigger className="md:hidden mr-4">
-                  <Menu className="h-6 w-6" />
+                <SidebarTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                  </Button>
                 </SidebarTrigger>
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                  {menuItems.find(item => item.active)?.title || 'Dashboard'}
-                </h1>
+                <h1 className="text-xl font-bold ml-2">Dashboard</h1>
               </div>
-              
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
                 <ThemeToggle />
-                <Button 
-                  onClick={() => navigate('/generator')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nuevo Script
+                <Button variant="gradient" size="sm" onClick={() => navigate('/script-generator')}>
+                  <Plus className="h-4 w-4 mr-1" /> Nuevo Script
                 </Button>
               </div>
             </header>
-
-            {/* Page Content */}
-            <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900">
+            <main className="flex-1 overflow-auto p-6">
               {children}
             </main>
           </div>

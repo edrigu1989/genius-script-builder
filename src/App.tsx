@@ -1,181 +1,38 @@
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { LanguageProvider } from "./contexts/LanguageContext";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Index from "./pages/Index";
-import ScriptGeneratorNew from "./pages/ScriptGeneratorNew";
-import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
-import AdminPanel from "./pages/AdminPanel";
-import WordPressGenerator from "./pages/WordPressGenerator";
+import VideoAnalysis from "./pages/VideoAnalysis";
+import VideoAnalysisAdvanced from "./pages/VideoAnalysisAdvanced";
+import ScriptGenerator from "./pages/ScriptGenerator";
+import Login from "./pages/Login";
+import WebhookSettings from "./pages/WebhookSettings";
+import MyScripts from "./pages/MyScripts";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
-import MyScripts from "./pages/MyScripts";
-import PlatformConnectionsPage from "./pages/PlatformConnections";
-import VideoAnalysis from "./pages/VideoAnalysis";
-import ScriptPerformance from "./pages/ScriptPerformance";
-import NotFound from "./pages/NotFound";
-import AuthCallback from "./pages/AuthCallback";
-import './i18n';
+import WordPressGenerator from "./pages/WordPressGenerator";
 
-const queryClient = new QueryClient();
-
-// Componente para rutas protegidas
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400"></div>
-      </div>
-    );
-  }
-  
-  return user ? <>{children}</> : <Navigate to="/auth" />;
-};
-
-// Componente para rutas públicas (redirige si ya está autenticado)
-const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400"></div>
-      </div>
-    );
-  }
-  
-  return user ? <Navigate to="/dashboard" /> : <>{children}</>;
-};
-
-const AppRoutes = () => {
+function App() {
   return (
-    <Routes>
-      {/* Rutas públicas */}
-      <Route path="/" element={<Index />} />
-      <Route 
-        path="/auth" 
-        element={
-          <PublicRoute>
-            <Auth />
-          </PublicRoute>
-        } 
-      />
-      
-      {/* Ruta para OAuth callback - NO protegida */}
-      <Route path="/auth/callback" element={<AuthCallback />} />
-      
-      {/* Rutas protegidas */}
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/generator" 
-        element={
-          <ProtectedRoute>
-            <ScriptGeneratorNew />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/my-scripts" 
-        element={
-          <ProtectedRoute>
-            <MyScripts />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/admin" 
-        element={
-          <ProtectedRoute>
-            <AdminPanel />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/analytics" 
-        element={
-          <ProtectedRoute>
-            <Analytics />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/settings" 
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/script-performance" 
-        element={
-          <ProtectedRoute>
-            <ScriptPerformance />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/connections" 
-        element={
-          <ProtectedRoute>
-            <PlatformConnectionsPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/video-analysis" 
-        element={
-          <ProtectedRoute>
-            <VideoAnalysis />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/wordpress-generator" 
-        element={
-          <ProtectedRoute>
-            <WordPressGenerator />
-          </ProtectedRoute>
-        } 
-      />
-      
-      {/* Ruta por defecto */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/video-analysis" element={<VideoAnalysis />} />
+          <Route path="/video-analysis-advanced" element={<VideoAnalysisAdvanced />} />
+          <Route path="/script-generator" element={<ScriptGenerator />} />
+          <Route path="/webhook-settings" element={<WebhookSettings />} />
+          <Route path="/my-scripts" element={<MyScripts />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/wordpress-generator" element={<WordPressGenerator />} />
+        </Routes>
+        <Toaster />
+      </Router>
+    </ThemeProvider>
   );
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <LanguageProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-          </LanguageProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+}
 
 export default App;
 
