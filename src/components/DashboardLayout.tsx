@@ -82,35 +82,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       active: location.pathname === '/analytics'
     },
     {
-      title: 'Rendimiento',
-      icon: TrendingUp,
-      href: '/rendimiento',
-      active: location.pathname === '/rendimiento'
-    },
-    {
       title: 'Análisis de Videos',
       icon: Video,
       href: '/video-analysis',
       active: location.pathname === '/video-analysis'
     },
     {
-      title: 'Análisis Avanzado',
-      icon: Sparkles,
-      href: '/video-analysis-advanced',
-      active: location.pathname === '/video-analysis-advanced',
-      premium: true
-    },
-    {
       title: 'Conexiones',
       icon: Globe,
-      href: '/conexiones',
-      active: location.pathname === '/conexiones'
-    },
-    {
-      title: 'Configuración N8N',
-      icon: Zap,
-      href: '/webhook-settings',
-      active: location.pathname === '/webhook-settings'
+      href: '/connections',
+      active: location.pathname === '/connections'
     },
     {
       title: 'WordPress Generator',
@@ -118,6 +99,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       href: '/wordpress-generator',
       active: location.pathname === '/wordpress-generator',
       premium: true
+    },
+    {
+      title: 'Configuración N8N',
+      icon: Zap,
+      href: '/webhook-settings',
+      active: location.pathname === '/webhook-settings'
     },
     {
       title: 'Configuración',

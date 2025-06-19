@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
-import VideoAnalysis from "./pages/VideoAnalysis";
 import VideoAnalysisAdvanced from "./pages/VideoAnalysisAdvanced";
 import ScriptGenerator from "./pages/ScriptGenerator";
 import Login from "./pages/Login";
@@ -12,6 +11,8 @@ import MyScripts from "./pages/MyScripts";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import WordPressGenerator from "./pages/WordPressGenerator";
+import PlatformConnections from "./pages/PlatformConnections";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -22,13 +23,14 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/video-analysis" element={<VideoAnalysisAdvanced />} />
-            <Route path="/video-analysis-advanced" element={<VideoAnalysisAdvanced />} />
             <Route path="/script-generator" element={<ScriptGenerator />} />
             <Route path="/webhook-settings" element={<WebhookSettings />} />
             <Route path="/my-scripts" element={<MyScripts />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/wordpress-generator" element={<WordPressGenerator />} />
+            <Route path="/connections" element={<PlatformConnections />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster />
         </Router>
