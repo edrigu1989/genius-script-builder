@@ -1,6 +1,7 @@
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "./components/ui/toaster";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import VideoAnalysis from "./pages/VideoAnalysis";
 import VideoAnalysisAdvanced from "./pages/VideoAnalysisAdvanced";
@@ -15,21 +16,23 @@ import WordPressGenerator from "./pages/WordPressGenerator";
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/video-analysis" element={<VideoAnalysis />} />
-          <Route path="/video-analysis-advanced" element={<VideoAnalysisAdvanced />} />
-          <Route path="/script-generator" element={<ScriptGenerator />} />
-          <Route path="/webhook-settings" element={<WebhookSettings />} />
-          <Route path="/my-scripts" element={<MyScripts />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/wordpress-generator" element={<WordPressGenerator />} />
-        </Routes>
-        <Toaster />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/video-analysis" element={<VideoAnalysis />} />
+            <Route path="/video-analysis-advanced" element={<VideoAnalysisAdvanced />} />
+            <Route path="/script-generator" element={<ScriptGenerator />} />
+            <Route path="/webhook-settings" element={<WebhookSettings />} />
+            <Route path="/my-scripts" element={<MyScripts />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/wordpress-generator" element={<WordPressGenerator />} />
+          </Routes>
+          <Toaster />
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
