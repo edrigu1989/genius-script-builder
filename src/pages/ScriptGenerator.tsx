@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
+import { AnimatedIcon } from '../components/AnimatedIcons.jsx';
 import { 
   Sparkles, 
   PenTool, 
@@ -130,7 +131,7 @@ const ScriptGenerator: React.FC = () => {
           hook: platform === 'tiktok' 
             ? "¿Sabías que el 90% de las personas cometen este error todos los días?"
             : platform === 'instagram'
-            ? "Este secreto cambió mi vida en solo 7 días 👇"
+            ? "Este secreto cambió mi vida en solo 7 días"
             : "La historia que estás a punto de escuchar te va a sorprender...",
           body: platform === 'tiktok' ? [
             "Hoy te voy a enseñar el secreto que cambió mi vida completamente.",
@@ -140,7 +141,7 @@ const ScriptGenerator: React.FC = () => {
             "Pero cuando descubrí esta técnica, todo cambió en solo 7 días.",
             "Y lo mejor de todo es que cualquiera puede hacerlo."
           ] : platform === 'instagram' ? [
-            "Swipe para ver el antes y después 👆",
+            "Swipe para ver el antes y después",
             "Este método me ayudó a conseguir resultados increíbles.",
             "La clave está en ser consistente y seguir estos pasos.",
             "Primero: identifica tu objetivo principal.",
@@ -270,10 +271,10 @@ const ScriptGenerator: React.FC = () => {
 
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
-      case 'tiktok': return '🎵';
-      case 'instagram': return '📸';
-      case 'facebook': return '👥';
-      default: return '📱';
+      case 'tiktok': return 'social';
+      case 'instagram': return 'social';
+      case 'facebook': return 'social';
+      default: return 'social';
     }
   };
 
@@ -293,10 +294,10 @@ const ScriptGenerator: React.FC = () => {
         <div className="text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl flex items-center justify-center mr-4">
-              <Sparkles className="w-6 h-6 text-white" />
+              <AnimatedIcon iconKey="script" size="w-6 h-6" className="filter brightness-0 invert" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              ✨ Script Generator
+              Script Generator
             </h1>
           </div>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -563,7 +564,10 @@ const ScriptGenerator: React.FC = () => {
                 {/* CTA */}
                 <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-500">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-green-800 dark:text-green-200">📢 Call to Action</h4>
+                    <div className="flex items-center space-x-2">
+                      <AnimatedIcon iconKey="engagement" size="w-5 h-5" />
+                      <h4 className="font-semibold text-green-800 dark:text-green-200">Call to Action</h4>
+                    </div>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -578,7 +582,10 @@ const ScriptGenerator: React.FC = () => {
                 {/* Hashtags */}
                 <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border-l-4 border-purple-500">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-purple-800 dark:text-purple-200"># Hashtags</h4>
+                    <div className="flex items-center space-x-2">
+                      <AnimatedIcon iconKey="trending" size="w-5 h-5" />
+                      <h4 className="font-semibold text-purple-800 dark:text-purple-200">Hashtags</h4>
+                    </div>
                     <Button
                       variant="ghost"
                       size="sm"

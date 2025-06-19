@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
+import { AnimatedIcon } from '../components/AnimatedIcons.jsx';
 import { 
   Upload, 
   Play, 
@@ -259,10 +260,10 @@ const VideoAnalysisAdvanced: React.FC = () => {
         <div className="text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center mr-4">
-              <Brain className="w-6 h-6 text-white" />
+              <AnimatedIcon iconKey="video" size="w-6 h-6" className="filter brightness-0 invert" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              🔮 Video Predictor
+              Video Predictor
             </h1>
           </div>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -285,9 +286,12 @@ const VideoAnalysisAdvanced: React.FC = () => {
               
               {selectedFile ? (
                 <div className="space-y-2">
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                    📹 {selectedFile.name}
-                  </p>
+                  <div className="flex items-center justify-center space-x-2">
+                    <AnimatedIcon iconKey="video" size="w-5 h-5" />
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {selectedFile.name}
+                    </p>
+                  </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
@@ -373,11 +377,32 @@ const VideoAnalysisAdvanced: React.FC = () => {
                   {analysisResult.overall_score}/100
                 </div>
                 <CardDescription className="text-lg mt-2">
-                  {analysisResult.overall_score >= 90 ? '🔥 Excelente potencial viral' :
-                   analysisResult.overall_score >= 80 ? '⭐ Muy buen potencial' :
-                   analysisResult.overall_score >= 70 ? '👍 Buen potencial' :
-                   analysisResult.overall_score >= 60 ? '⚠️ Potencial moderado' :
-                   '❌ Necesita optimización'}
+                  {analysisResult.overall_score >= 90 ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <AnimatedIcon iconKey="rocket" size="w-6 h-6" />
+                      <span>Excelente potencial viral</span>
+                    </div>
+                  ) : analysisResult.overall_score >= 80 ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <AnimatedIcon iconKey="checkmark" size="w-6 h-6" />
+                      <span>Muy buen potencial</span>
+                    </div>
+                  ) : analysisResult.overall_score >= 70 ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <AnimatedIcon iconKey="target" size="w-6 h-6" />
+                      <span>Buen potencial</span>
+                    </div>
+                  ) : analysisResult.overall_score >= 60 ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <AnimatedIcon iconKey="clock" size="w-6 h-6" />
+                      <span>Potencial moderado</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center space-x-2">
+                      <AnimatedIcon iconKey="lightbulb" size="w-6 h-6" />
+                      <span>Necesita optimización</span>
+                    </div>
+                  )}
                 </CardDescription>
               </CardHeader>
             </Card>
