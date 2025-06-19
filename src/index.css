@@ -148,7 +148,13 @@
   
   /* Mejoras para inputs */
   .dark input, .dark textarea, .dark select {
-    @apply bg-gray-800 border-gray-700 text-white placeholder:text-gray-500;
+    @apply bg-gray-800 border-gray-700 text-white;
   }
+}
+
+/* Estilos adicionales para placeholders en modo oscuro */
+.dark input::placeholder, 
+.dark textarea::placeholder {
+  color: rgba(156, 163, 175, 1); /* text-gray-500 equivalente */
 }
 
