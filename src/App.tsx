@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import VideoAnalysisAdvanced from "./pages/VideoAnalysisAdvanced";
 import ScriptGenerator from "./pages/ScriptGenerator";
@@ -23,7 +24,8 @@ function App() {
           <Router>
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/video-analysis" element={<VideoAnalysisAdvanced />} />
               <Route path="/script-generator" element={<ScriptGenerator />} />
               <Route path="/webhook-settings" element={<WebhookSettings />} />

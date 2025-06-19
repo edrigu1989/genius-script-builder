@@ -60,8 +60,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     {
       title: 'Dashboard',
       icon: LayoutDashboard,
-      href: '/',
-      active: location.pathname === '/'
+      href: '/dashboard',
+      active: location.pathname === '/dashboard'
     },
     {
       title: 'Generar Script',
