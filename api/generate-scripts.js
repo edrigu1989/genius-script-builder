@@ -1,10 +1,28 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+export default async function handler(req, res) {
+  // Configurar CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
-// Inicializar Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
-async function generateScripts(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
+    const { GoogleGenerativeAI } = await import('@google/generative-ai');
+    
+    // Inicializar Gemini AI
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
     const { topic, platform, tone, targetAudience } = req.body;
 
     if (!topic) {
@@ -112,6 +130,4 @@ Asegúrate de que los scripts sean únicos, creativos y optimizados para generar
     });
   }
 }
-
-module.exports = { generateScripts };
 

@@ -1,11 +1,28 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+export default async function handler(req, res) {
+  // Configurar CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
-// CONFIGURACIÓN DE GEMINI API PARA ANÁLISIS DE VIDEO
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
-// FUNCIÓN PRINCIPAL PARA ANALIZAR VIDEOS
-async function analyzeVideo(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
+    const { GoogleGenerativeAI } = await import('@google/generative-ai');
+    
+    // CONFIGURACIÓN DE GEMINI API PARA ANÁLISIS DE VIDEO
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
     console.log('🎬 Iniciando análisis de video con Gemini API');
     
     const { videoUrl, analysisType = 'complete', customPrompt } = req.body;
@@ -230,6 +247,4 @@ function extractViralityScore(text) {
   const scoreMatch = text.match(/(?:score|puntuación).*?(\d+)(?:\/100|%)/i);
   return scoreMatch ? parseInt(scoreMatch[1]) : null;
 }
-
-module.exports = analyzeVideo;
 
