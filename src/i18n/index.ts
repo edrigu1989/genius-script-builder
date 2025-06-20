@@ -31,7 +31,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'es', // Spanish as default
-    debug: false,
+    debug: true, // Enable debug for troubleshooting
     
     interpolation: {
       escapeValue: false
@@ -39,9 +39,25 @@ i18n
     
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage']
+      caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng'
+    },
+
+    // Add react options for better integration
+    react: {
+      useSuspense: false,
+      bindI18n: 'languageChanged loaded',
+      bindI18nStore: 'added removed',
+      transEmptyNodeValue: '',
+      transSupportBasicHtmlNodes: true,
+      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i']
     }
   });
+
+// Expose i18n to window for debugging
+if (typeof window !== 'undefined') {
+  (window as any).i18n = i18n;
+}
 
 export default i18n;
 

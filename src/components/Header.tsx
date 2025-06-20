@@ -43,19 +43,19 @@ const Header = () => {
               onClick={() => scrollToSection('features')}
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
             >
-              {t('header.features')}
+              {t('nav.features', 'Features')}
             </button>
             <button
               onClick={() => scrollToSection('pricing')}
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
             >
-              {t('header.pricing')}
+              {t('nav.pricing', 'Pricing')}
             </button>
             <button
               onClick={() => scrollToSection('stats')}
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
             >
-              {t('header.stats')}
+              {t('nav.stats', 'Stats')}
             </button>
           </nav>
 
@@ -66,19 +66,19 @@ const Header = () => {
               onClick={handleAuthClick}
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
             >
-              {t('header.login')}
+              {t('nav.login', 'Sign In')}
             </button>
             <button 
               onClick={handleGeneratorClick}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
             >
-              {t('header.demo')}
+              {t('nav.demo', 'Watch Demo')}
             </button>
             <button 
               onClick={handleAuthClick}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 transform hover:scale-105"
             >
-              {t('header.start')}
+              {t('nav.start', 'Start Free')}
             </button>
           </div>
 
@@ -99,19 +99,19 @@ const Header = () => {
                 onClick={() => scrollToSection('features')}
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left"
               >
-                {t('header.features')}
+                {t('nav.features', 'Features')}
               </button>
               <button
                 onClick={() => scrollToSection('pricing')}
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left"
               >
-                {t('header.pricing')}
+                {t('nav.pricing', 'Pricing')}
               </button>
               <button
                 onClick={() => scrollToSection('stats')}
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left"
               >
-                {t('header.stats')}
+                {t('nav.stats', 'Stats')}
               </button>
               <div className="flex flex-col space-y-2 pt-4 border-t">
                 <div className="flex justify-center pb-2">
@@ -121,19 +121,19 @@ const Header = () => {
                   onClick={handleAuthClick}
                   className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-left"
                 >
-                  {t('header.login')}
+                  {t('nav.login', 'Sign In')}
                 </button>
                 <button 
                   onClick={handleGeneratorClick}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-center"
                 >
-                  {t('header.demo')}
+                  {t('nav.demo', 'Watch Demo')}
                 </button>
                 <button 
                   onClick={handleAuthClick}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 text-center"
                 >
-                  {t('header.start')}
+                  {t('nav.start', 'Start Free')}
                 </button>
               </div>
             </div>
