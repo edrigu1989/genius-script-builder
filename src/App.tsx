@@ -2,6 +2,7 @@ import { Toaster } from "./components/ui/toaster";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { useTranslation } from 'react-i18next';
 import './i18n';
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
@@ -16,6 +17,8 @@ import TermsOfService from "./pages/TermsOfService";
 import FinetuningOnboarding from "./pages/FinetuningOnboarding";
 
 function App() {
+  const { t } = useTranslation();
+  
   return (
     <ThemeProvider>
       <AuthProvider>
@@ -32,7 +35,7 @@ function App() {
               <Route path="/finetuning" element={<FinetuningOnboarding />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="*" element={<div className="flex items-center justify-center min-h-screen"><div className="text-center"><h1 className="text-2xl font-bold mb-4">Página no encontrada</h1><p>La página que buscas no existe.</p></div></div>} />
+              <Route path="*" element={<div className="flex items-center justify-center min-h-screen"><div className="text-center"><h1 className="text-2xl font-bold mb-4">{t('home.page_not_found')}</h1><p>{t('home.page_not_found_desc')}</p></div></div>} />
             </Routes>
             <Toaster />
           </Router>

@@ -1,7 +1,7 @@
-// UTILIDAD PARA CONECTAR FRONTEND CON APIS EVOLUTIVAS
-// Maneja todas las llamadas a las APIs consolidadas
+// UTILIDAD PARA CONECTAR FRONTEND CON API DE GEMINI
+// Maneja todas las llamadas a la API de Gemini de forma optimizada
 
-class EvolutiveAPIClient {
+class GeminiAPIClient {
   constructor() {
     this.baseURL = '/api';
     this.retryAttempts = 3;
@@ -15,24 +15,30 @@ class EvolutiveAPIClient {
     formData.append('platform', platform);
     formData.append('action', 'analyze_video');
 
-    return this.makeRequest('/video-analysis', {
+    return this.makeRequest('/analyze-video', {
       method: 'POST',
       body: formData
     });
   }
 
-  // GENERAR SCRIPT
+  // GENERAR SCRIPT CON GEMINI
   async generateScript(params) {
     const payload = {
-      action: 'generate_script',
+      videoAnalysis: {
+        viralityScore: params.viralityScore || 75,
+        insights: params.insights || [`Contenido sobre ${params.topic}`],
+        recommendations: params.recommendations || ['Usar hook fuerte', 'Incluir CTA claro']
+      },
       platform: params.platform || 'tiktok',
-      topic: params.topic,
-      style: params.style || 'casual',
-      target_audience: params.target_audience || '',
-      duration: params.duration || '30'
+      businessProfile: {
+        type: params.businessType || 'General',
+        audience: params.target_audience || 'General audience',
+        voice: params.style || 'casual',
+        industry: params.industry || 'Content Creation'
+      }
     };
 
-    return this.makeRequest('/script-generation', {
+    return this.makeRequest('/generate-scripts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -41,23 +47,9 @@ class EvolutiveAPIClient {
     });
   }
 
-  // OBTENER CONOCIMIENTO ACTUALIZADO
-  async getKnowledgeUpdate(platform) {
-    return this.makeRequest('/knowledge-base', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'get_trends',
-        platform
-      })
-    });
-  }
-
-  // PREDECIR ENGAGEMENT
+  // PREDECIR ENGAGEMENT CON GEMINI
   async predictEngagement(content, platform) {
-    return this.makeRequest('/video-analysis', {
+    return this.makeRequest('/analyze-video', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -65,51 +57,6 @@ class EvolutiveAPIClient {
       body: JSON.stringify({
         action: 'predict_engagement',
         content,
-        platform
-      })
-    });
-  }
-
-  // OPTIMIZAR SCRIPT
-  async optimizeScript(script, platform, feedback = {}) {
-    return this.makeRequest('/script-generation', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'optimize_script',
-        script,
-        platform,
-        feedback
-      })
-    });
-  }
-
-  // ENVIAR FEEDBACK PARA APRENDIZAJE
-  async sendFeedback(scriptId, actualResults) {
-    return this.makeRequest('/knowledge-base', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'update_knowledge',
-        script_id: scriptId,
-        results: actualResults
-      })
-    });
-  }
-
-  // OBTENER TENDENCIAS ACTUALES
-  async getCurrentTrends(platform) {
-    return this.makeRequest('/knowledge-base', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'get_current_trends',
         platform
       })
     });
@@ -223,50 +170,20 @@ class EvolutiveAPIClient {
 
     return errorMessages[error.code] || error.message || 'Error desconocido';
   }
-
-  // CACHE SIMPLE PARA OPTIMIZAR REQUESTS
-  cache = new Map();
-  
-  getCacheKey(endpoint, params) {
-    return `${endpoint}_${JSON.stringify(params)}`;
-  }
-
-  setCache(key, data, ttl = 300000) { // 5 minutos por defecto
-    this.cache.set(key, {
-      data,
-      expires: Date.now() + ttl
-    });
-  }
-
-  getCache(key) {
-    const cached = this.cache.get(key);
-    if (cached && cached.expires > Date.now()) {
-      return cached.data;
-    }
-    this.cache.delete(key);
-    return null;
-  }
 }
 
 // INSTANCIA GLOBAL
-const apiClient = new EvolutiveAPIClient();
+const geminiClient = new GeminiAPIClient();
 
 // FUNCIONES DE CONVENIENCIA PARA EL FRONTEND
 export const videoAnalysis = {
-  analyze: (file, platform) => apiClient.analyzeVideo(file, platform),
-  predict: (content, platform) => apiClient.predictEngagement(content, platform)
+  analyze: (file, platform) => geminiClient.analyzeVideo(file, platform),
+  predict: (content, platform) => geminiClient.predictEngagement(content, platform)
 };
 
 export const scriptGeneration = {
-  generate: (params) => apiClient.generateScript(params),
-  optimize: (script, platform, feedback) => apiClient.optimizeScript(script, platform, feedback)
+  generate: (params) => geminiClient.generateScript(params)
 };
 
-export const knowledgeBase = {
-  getTrends: (platform) => apiClient.getCurrentTrends(platform),
-  sendFeedback: (scriptId, results) => apiClient.sendFeedback(scriptId, results),
-  getUpdate: (platform) => apiClient.getKnowledgeUpdate(platform)
-};
-
-export default apiClient;
+export default geminiClient;
 

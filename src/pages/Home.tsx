@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
@@ -23,6 +24,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 const Home: React.FC = () => {
   const { user } = useAuth();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Si el usuario está logueado, mostrar dashboard dual
@@ -37,17 +39,16 @@ const Home: React.FC = () => {
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Genius Script Builder 3.0
+                {t('home.title')}
               </h1>
             </div>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Predice el éxito de tus videos y genera scripts virales con IA evolutiva
+              {t('home.subtitle')}
             </p>
           </div>
 
           {/* Opciones Principales */}
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
-            
             {/* PREDICTOR */}
             <Card className="group hover:shadow-2xl transition-all duration-300 border-2 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer transform hover:scale-105"
                   onClick={() => navigate('/video-analysis')}>
@@ -56,36 +57,36 @@ const Home: React.FC = () => {
                   <Video className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                  🔮 Video Predictor
+                  🔮 {t('home.video_predictor')}
                 </CardTitle>
                 <CardDescription className="text-lg text-gray-600 dark:text-gray-300">
-                  Analiza tus videos y predice su éxito antes de publicar
+                  {t('home.video_predictor_desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <TrendingUp className="w-5 h-5 text-blue-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Score de viralidad 0-100</span>
+                    <span className="text-gray-700 dark:text-gray-300">{t('home.virality_score')}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Target className="w-5 h-5 text-blue-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Predicción por plataforma</span>
+                    <span className="text-gray-700 dark:text-gray-300">{t('home.platform_prediction')}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Brain className="w-5 h-5 text-blue-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Sugerencias de optimización</span>
+                    <span className="text-gray-700 dark:text-gray-300">{t('home.optimization_suggestions')}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Zap className="w-5 h-5 text-blue-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Análisis en tiempo real</span>
+                    <span className="text-gray-700 dark:text-gray-300">{t('home.realtime_analysis')}</span>
                   </div>
                 </div>
                 
                 <div className="pt-4 border-t dark:border-gray-700">
                   <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold py-3 rounded-xl">
                     <Upload className="w-5 h-5 mr-2" />
-                    Analizar Video
+                    {t('home.analyze_video')}
                   </Button>
                 </div>
               </CardContent>
@@ -99,36 +100,36 @@ const Home: React.FC = () => {
                   <PenTool className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                  ✨ Script Generator
+                  ✨ {t('home.script_generator')}
                 </CardTitle>
                 <CardDescription className="text-lg text-gray-600 dark:text-gray-300">
-                  Genera scripts virales con IA evolutiva actualizada
+                  {t('home.script_generator_desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Brain className="w-5 h-5 text-purple-500" />
-                    <span className="text-gray-700 dark:text-gray-300">IA con conocimiento actualizado</span>
+                    <span className="text-gray-700 dark:text-gray-300">{t('home.updated_ai')}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <TrendingUp className="w-5 h-5 text-purple-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Basado en tendencias actuales</span>
+                    <span className="text-gray-700 dark:text-gray-300">{t('home.current_trends')}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Target className="w-5 h-5 text-purple-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Optimizado por plataforma</span>
+                    <span className="text-gray-700 dark:text-gray-300">{t('home.platform_optimized')}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Zap className="w-5 h-5 text-purple-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Predicción de performance</span>
+                    <span className="text-gray-700 dark:text-gray-300">{t('home.performance_prediction')}</span>
                   </div>
                 </div>
                 
                 <div className="pt-4 border-t dark:border-gray-700">
                   <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-xl">
                     <Sparkles className="w-5 h-5 mr-2" />
-                    Generar Script
+                    {t('home.generate_script')}
                   </Button>
                 </div>
               </CardContent>
@@ -139,41 +140,30 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12">
             <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
               <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">98%</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Precisión</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">{t('home.precision')}</div>
             </div>
             <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
               <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">24/7</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Actualizado</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">{t('home.updated')}</div>
             </div>
             <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
               <div className="text-2xl font-bold text-green-600 dark:text-green-400">3</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Plataformas</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">{t('home.platforms')}</div>
             </div>
             <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">∞</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Evolutivo</div>
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">5+</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">{t('home.models')}</div>
             </div>
           </div>
 
-          {/* Accesos Rápidos */}
+          {/* Acceso rápido al dashboard */}
           <div className="text-center">
-            <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Accesos Rápidos</h3>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/dashboard')}
-                className="hover:bg-blue-50 dark:hover:bg-blue-900"
-              >
-                📊 Dashboard
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/analytics')}
-                className="hover:bg-purple-50 dark:hover:bg-purple-900"
-              >
-                📈 Analytics
-              </Button>
-            </div>
+            <Button 
+              onClick={() => navigate('/dashboard')}
+              className="bg-gradient-to-r from-gray-700 to-gray-900 hover:from-gray-800 hover:to-black text-white px-8 py-3 rounded-xl font-semibold"
+            >
+              {t('nav.dashboard')}
+            </Button>
           </div>
         </div>
       </div>
@@ -182,7 +172,7 @@ const Home: React.FC = () => {
 
   // Si no está logueado, mostrar landing page
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-white">
       <Header />
       <Hero />
       <Features />
