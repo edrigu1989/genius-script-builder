@@ -82,14 +82,54 @@ Formato de respuesta (SOLO este JSON, sin texto adicional):
     const cleanText = text.replace(/```json\n?/g, '').replace(/```/g, '').trim();
 
     try {
+      console.log('🔍 Intentando parsear JSON...');
+      console.log('📝 Texto limpio recibido:', cleanText);
+      console.log('📏 Longitud del texto:', cleanText.length);
+      
       const parsed = JSON.parse(cleanText);
+      console.log('✅ JSON parseado exitosamente');
+      console.log('📊 Estructura parseada:', JSON.stringify(parsed, null, 2));
+      
       res.json(parsed);
     } catch (err) {
-      console.warn('Fallo al parsear, respuesta cruda:', cleanText);
+      console.error('❌ ERROR AL PARSEAR JSON:');
+      console.error('🔍 Tipo de error:', err.name);
+      console.error('📝 Mensaje de error:', err.message);
+      console.error('📍 Posición del error:', err.message.match(/position (\d+)/)?.[1] || 'No especificada');
+      console.error('📄 Respuesta cruda completa:', cleanText);
+      console.error('🔤 Primeros 200 caracteres:', cleanText.substring(0, 200));
+      console.error('🔤 Últimos 200 caracteres:', cleanText.substring(cleanText.length - 200));
+      
+      // Intentar identificar el problema específico
+      if (cleanText.includes('```')) {
+        console.error('⚠️ PROBLEMA: Aún contiene markdown code blocks');
+      }
+      if (!cleanText.startsWith('{')) {
+        console.error('⚠️ PROBLEMA: No comienza con {');
+      }
+      if (!cleanText.endsWith('}')) {
+        console.error('⚠️ PROBLEMA: No termina con }');
+      }
+      if (cleanText.includes('\n')) {
+        console.error('⚠️ INFO: Contiene saltos de línea');
+      }
+      
       res.status(200).json({
-        success: true,
+        success: false,
+        error: 'JSON parsing failed',
+        details: {
+          errorType: err.name,
+          errorMessage: err.message,
+          responseLength: cleanText.length,
+          responsePreview: cleanText.substring(0, 200),
+          responseSuffix: cleanText.substring(cleanText.length - 200)
+        },
         scripts: [],
-        recommendations: ["La IA no pudo generar el resultado en formato correcto."]
+        recommendations: [
+          "La IA no pudo generar el resultado en formato JSON correcto.",
+          `Error específico: ${err.message}`,
+          "Intenta con un tema más específico o diferente."
+        ]
       });
     }
 
