@@ -59,7 +59,7 @@ const ScriptGenerator: React.FC = () => {
     try {
       // Progreso de generación
       const steps = [
-        'Conectando con Gemini AI...',
+        'Conectando con IA avanzada...',
         'Analizando el tema proporcionado...',
         'Generando estructura optimizada...',
         'Aplicando técnicas de engagement...',
@@ -72,7 +72,7 @@ const ScriptGenerator: React.FC = () => {
         setCurrentStep(steps[i]);
         setGenerationProgress((i + 1) * (100 / steps.length));
         
-        // En el paso 3, hacer la llamada real a Gemini API
+        // En el paso 3, hacer la llamada real a la API
         if (i === 2) {
           try {
             const response = await fetch('/api/generate-scripts', {
@@ -99,16 +99,16 @@ const ScriptGenerator: React.FC = () => {
             if (response.ok) {
               const result = await response.json();
               if (result.success) {
-                // Usar datos reales de Gemini
+                // Usar datos reales de la API
                 setGeneratedScript(result.scripts);
                 setIsGenerating(false);
                 setGenerationProgress(100);
-                setCurrentStep('¡Scripts generados con Gemini AI!');
+                setCurrentStep('¡Scripts generados con IA avanzada!');
                 return;
               }
             }
           } catch (apiError) {
-            console.log('Error con Gemini API:', apiError);
+            console.log('Error con la API:', apiError);
             throw apiError;
           }
         }
@@ -193,7 +193,7 @@ Generado el: ${new Date().toLocaleString()}
               Configuración del Script
             </CardTitle>
             <CardDescription>
-              Configura los parámetros para generar scripts optimizados con Gemini AI
+              Configura los parámetros para generar scripts optimizados con IA avanzada
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">

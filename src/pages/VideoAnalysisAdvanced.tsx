@@ -69,7 +69,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
 
     setIsAnalyzing(true);
     setAnalysisProgress(0);
-    setCurrentStep('Inicializando análisis con Gemini AI...');
+    setCurrentStep('Inicializando análisis con IA avanzada...');
 
     try {
       // Validar archivo
@@ -79,7 +79,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
 
       // Progreso de análisis real
       const steps = [
-        'Conectando con Gemini AI...',
+        'Conectando con IA avanzada...',
         'Subiendo video al servidor...',
         'Analizando contenido visual con IA...',
         'Procesando audio y transcripción...',
@@ -93,7 +93,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
         setCurrentStep(steps[i]);
         setAnalysisProgress((i + 1) * (100 / steps.length));
         
-        // En el paso 3, hacer la llamada real a Gemini API
+        // En el paso 3, hacer la llamada real a la API
         if (i === 2) {
           try {
             const formData = new FormData();
@@ -108,17 +108,17 @@ const VideoAnalysisAdvanced: React.FC = () => {
             if (response.ok) {
               const result = await response.json();
               if (result.success) {
-                // Usar datos reales de Gemini
+                // Usar datos reales de la API
                 setAnalysisResult(result.analysis);
                 setIsAnalyzing(false);
                 setAnalysisProgress(100);
-                setCurrentStep('¡Análisis completado con Gemini AI!');
+                setCurrentStep('¡Análisis completado con IA avanzada!');
                 return;
               }
             }
           } catch (apiError) {
-            console.error('Error con Gemini API:', apiError);
-            throw new Error('Error al analizar el video con Gemini AI');
+            console.error('Error con la API:', apiError);
+            throw new Error('Error al analizar el video con IA avanzada');
           }
         }
         
@@ -170,7 +170,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
             </h1>
           </div>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Analiza tu video con Gemini AI y predice su éxito antes de publicarlo
+            Analiza tu video con IA avanzada y predice su éxito antes de publicarlo
           </p>
         </div>
 
@@ -222,7 +222,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
                     {isAnalyzing ? (
                       <>
                         <Brain className="w-4 h-4 mr-2 animate-pulse" />
-                        Analizando con Gemini AI...
+                        Analizando con IA...
                       </>
                     ) : (
                       <>
@@ -252,7 +252,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Analizando con Gemini AI</h3>
+                  <h3 className="text-lg font-semibold">Analizando con IA Avanzada</h3>
                   <span className="text-sm text-gray-600 dark:text-gray-300">
                     {analysisProgress.toFixed(0)}%
                   </span>
@@ -270,7 +270,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
             <Alert>
               <Info className="h-4 w-4" />
               <AlertDescription>
-                Análisis completado con Gemini AI. Los resultados se basan en el análisis real de tu video.
+                Análisis completado con IA avanzada. Los resultados se basan en el análisis real de tu video.
               </AlertDescription>
             </Alert>
 
@@ -466,7 +466,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Zap className="w-5 h-5 mr-2 text-purple-600" />
-                    Insights Únicos de Gemini AI
+                    Insights Únicos de IA Avanzada
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
