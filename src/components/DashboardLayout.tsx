@@ -224,25 +224,25 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
-          <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b dark:border-gray-700 p-4 sticky top-0 z-30">
+          <header className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 p-4 sticky top-0 z-30 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden p-2"
+                  className="lg:hidden p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <Menu className="w-5 h-5" />
                 </Button>
                 
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white">
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white shadow-md">
                     {getPageIcon()}
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold">{getPageTitle()}</h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <h1 className="text-xl font-bold text-gray-900 dark:text-white">{getPageTitle()}</h1>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       {menuItems.find(item => item.active)?.description}
                     </p>
                   </div>
@@ -251,11 +251,45 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               
               <div className="flex items-center space-x-3">
                 {/* Status Indicator */}
-                <div className="hidden md:flex items-center space-x-2 px-3 py-1 bg-green-100 dark:bg-green-900/20 rounded-full">
+                <div className="hidden md:flex items-center space-x-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-full border border-green-200 dark:border-green-800">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-xs font-medium text-green-700 dark:text-green-300">
                     Sistema Activo
                   </span>
+                </div>
+                
+                {/* User Menu */}
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleTheme}
+                    className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+                  >
+                    {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  </Button>
+                  
+                  <div className="flex items-center space-x-2 px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-semibold">
+                        {userInitials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200 hidden sm:block">
+                      {user?.user_metadata?.full_name?.split(' ')[0] || 'Usuario'}
+                    </span>
+                  </div>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSignOut}
+                    className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    title="Cerrar sesión"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             </div>

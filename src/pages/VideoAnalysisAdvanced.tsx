@@ -282,20 +282,31 @@ const VideoAnalysisAdvanced: React.FC = () => {
         {/* Upload Section */}
         <Card className="border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
           <CardContent className="p-8">
-            <div
-              className="text-center cursor-pointer"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Upload className="w-8 h-8 text-white" />
+            {!selectedFile ? (
+              <div
+                className="text-center cursor-pointer"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Upload className="w-8 h-8 text-white" />
+                </div>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Arrastra tu video aquí o haz clic para seleccionar
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Formatos soportados: MP4, MOV, AVI (máx. 100MB)
+                </p>
               </div>
-              
-              {selectedFile ? (
+            ) : (
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-8 h-8 text-white" />
+                </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-center space-x-2">
-                    <AnimatedIcon iconKey="video" size="w-5 h-5" />
+                    <Camera className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       {selectedFile.name}
                     </p>
@@ -303,51 +314,65 @@ const VideoAnalysisAdvanced: React.FC = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
-                  <div className="flex justify-center space-x-4 mt-4">
-                    <Button
-                      onClick={analyzeVideo}
-                      disabled={isAnalyzing}
-                      className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
-                    >
-                      {isAnalyzing ? (
-                        <>
-                          <Zap className="w-4 h-4 mr-2 animate-spin" />
-                          Analizando...
-                        </>
-                      ) : (
-                        <>
-                          <Brain className="w-4 h-4 mr-2" />
-                          Analizar Video
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => setSelectedFile(null)}
-                    >
-                      Cambiar Video
-                    </Button>
-                  </div>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Arrastra tu video aquí o haz clic para seleccionar
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Formatos soportados: MP4, MOV, AVI (máx. 100MB)
-                  </p>
+                
+                {/* Platform Selection */}
+                <div className="flex justify-center space-x-2 my-4">
+                  {[
+                    { id: 'tiktok', name: 'TikTok', color: 'bg-black text-white' },
+                    { id: 'instagram', name: 'Instagram', color: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' },
+                    { id: 'facebook', name: 'Facebook', color: 'bg-blue-600 text-white' }
+                  ].map((platform) => (
+                    <Button
+                      key={platform.id}
+                      variant={selectedPlatform === platform.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedPlatform(platform.id)}
+                      className={selectedPlatform === platform.id ? platform.color : ''}
+                    >
+                      {platform.name}
+                    </Button>
+                  ))}
                 </div>
-              )}
-              
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="video/*"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-            </div>
+
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    onClick={analyzeVideo}
+                    disabled={isAnalyzing}
+                    className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                  >
+                    {isAnalyzing ? (
+                      <>
+                        <Zap className="w-4 h-4 mr-2 animate-spin" />
+                        Analizando con Gemini AI...
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="w-4 h-4 mr-2" />
+                        Analizar con Gemini AI
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      setAnalysisResult(null);
+                    }}
+                  >
+                    Cambiar Video
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="video/*"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
           </CardContent>
         </Card>
 

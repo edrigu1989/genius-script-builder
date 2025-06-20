@@ -9,6 +9,10 @@ import VideoAnalysisAdvanced from "./pages/VideoAnalysisAdvanced";
 import ScriptGenerator from "./pages/ScriptGenerator";
 import Login from "./pages/Login";
 import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
+import Pricing from "./pages/Pricing";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 function App() {
   return (
@@ -23,6 +27,10 @@ function App() {
               <Route path="/video-analysis" element={<VideoAnalysisAdvanced />} />
               <Route path="/script-generator" element={<ScriptGenerator />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="*" element={<div className="flex items-center justify-center min-h-screen"><div className="text-center"><h1 className="text-2xl font-bold mb-4">Página no encontrada</h1><p>La página que buscas no existe.</p></div></div>} />
             </Routes>
             <Toaster />
