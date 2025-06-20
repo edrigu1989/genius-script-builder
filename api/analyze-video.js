@@ -1,4 +1,4 @@
-import formidable from 'formidable';
+import { IncomingForm } from 'formidable';
 import fs from 'fs';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ success: false, error: 'API key not configured' });
     }
 
-    const form = new formidable.IncomingForm({
+    const form = new IncomingForm({
       maxFileSize: 100 * 1024 * 1024, // 100MB
       keepExtensions: true,
     });
