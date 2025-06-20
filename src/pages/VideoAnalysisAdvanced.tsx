@@ -100,7 +100,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
             formData.append('video', selectedFile);
             formData.append('platform', selectedPlatform);
 
-            const response = await fetch('/api/analyze-video', {
+            const response = await fetch('/api/analyze-video-hybrid', {
               method: 'POST',
               body: formData,
             });
