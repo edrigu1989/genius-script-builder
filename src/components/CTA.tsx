@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Zap, Shield, DollarSign } from 'lucide-react';
 
 const CTA = () => {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const goToGenerator = () => {

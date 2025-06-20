@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '../contexts/LanguageContext';
-import LanguageToggle from './LanguageToggle';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from './LanguageSelector';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const scrollToSection = (sectionId: string) => {
@@ -61,7 +61,7 @@ const Header = () => {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <LanguageToggle />
+            <LanguageSelector />
             <button 
               onClick={handleAuthClick}
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
@@ -115,7 +115,7 @@ const Header = () => {
               </button>
               <div className="flex flex-col space-y-2 pt-4 border-t">
                 <div className="flex justify-center pb-2">
-                  <LanguageToggle />
+                  <LanguageSelector />
                 </div>
                 <button 
                   onClick={handleAuthClick}

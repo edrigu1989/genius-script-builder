@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { 
   Brain, 
@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 const Features = () => {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const goToGenerator = () => {
