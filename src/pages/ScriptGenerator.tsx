@@ -42,19 +42,24 @@ const ScriptGenerator: React.FC = () => {
   const [topic, setTopic] = useState('');
   const [platform, setPlatform] = useState('tiktok');
   const [tone, setTone] = useState('casual');
-  const [duration, setDuration] = useState('30');
   const [targetAudience, setTargetAudience] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedScript, setGeneratedScript] = useState<any>(null);
+  const [generatedScripts, setGeneratedScripts] = useState<any[]>([]);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState('');
+  const [error, setError] = useState('');
 
   const generateScript = async () => {
-    if (!topic.trim()) return;
+    if (!topic.trim()) {
+      setError('Por favor ingresa un tema para el script');
+      return;
+    }
 
     setIsGenerating(true);
     setGenerationProgress(0);
-    setCurrentStep(t('script_generator.generating'));
+    setCurrentStep('Iniciando generación...');
+    setError('');
+    setGeneratedScripts([]);
     
     try {
       // Progreso de generación
@@ -63,8 +68,6 @@ const ScriptGenerator: React.FC = () => {
         'Analizando el tema proporcionado...',
         'Generando estructura optimizada...',
         'Aplicando técnicas de engagement...',
-        'Calculando predicciones de performance...',
-        'Optimizando para plataforma seleccionada...',
         'Finalizando scripts...'
       ];
 
@@ -81,34 +84,27 @@ const ScriptGenerator: React.FC = () => {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                videoAnalysis: {
-                  viralityScore: 75,
-                  insights: [`Contenido sobre ${topic}`, 'Optimizado para engagement'],
-                  recommendations: ['Usar hook fuerte', 'Incluir CTA claro']
-                },
+                topic,
                 platform,
-                businessProfile: {
-                  type: 'General',
-                  audience: targetAudience || 'General audience',
-                  voice: tone,
-                  industry: 'Content Creation'
-                }
+                tone,
+                targetAudience
               }),
             });
 
             if (response.ok) {
               const result = await response.json();
-              if (result.success) {
-                // Usar datos reales de la API
-                setGeneratedScript(result.scripts);
+              if (result.success && result.scripts) {
+                setGeneratedScripts(result.scripts);
                 setIsGenerating(false);
                 setGenerationProgress(100);
-                setCurrentStep('¡Scripts generados con IA avanzada!');
+                setCurrentStep('¡Scripts generados exitosamente!');
                 return;
               }
+            } else {
+              throw new Error('Error en la respuesta del servidor');
             }
           } catch (apiError) {
-            console.log('Error con la API:', apiError);
+            console.error('Error con la API:', apiError);
             throw apiError;
           }
         }
@@ -119,7 +115,8 @@ const ScriptGenerator: React.FC = () => {
     } catch (error) {
       console.error('Error generando script:', error);
       setIsGenerating(false);
-      setCurrentStep('Error al generar scripts. Intenta de nuevo.');
+      setError('Error al generar scripts. Por favor intenta de nuevo.');
+      setCurrentStep('');
     }
   };
 
@@ -129,8 +126,8 @@ const ScriptGenerator: React.FC = () => {
 
   const downloadScript = (script: any) => {
     const content = `
-SCRIPT GENERADO CON GEMINI AI
-=============================
+SCRIPT GENERADO CON IA AVANZADA
+===============================
 
 Plataforma: ${platform.toUpperCase()}
 Tema: ${topic}
@@ -148,10 +145,7 @@ ${script.cta}
 HASHTAGS:
 ${script.hashtags?.join(' #') || ''}
 
-MÉTRICAS PREDICHAS:
-- Score de Optimización: ${script.optimizationScore || 'N/A'}%
-- Potencial Viral: ${script.viralityPotential || 'N/A'}%
-- Emoción Objetivo: ${script.targetEmotion || 'N/A'}
+SCORE DE ENGAGEMENT: ${script.engagementScore || 'N/A'}%
 
 Generado el: ${new Date().toLocaleString()}
 `;
@@ -177,11 +171,11 @@ Generado el: ${new Date().toLocaleString()}
               <PenTool className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {t('script_generator.title')}
+              Script Generator
             </h1>
           </div>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            {t('script_generator.description')}
+            Create viral scripts with advanced AI
           </p>
         </div>
 
@@ -190,79 +184,90 @@ Generado el: ${new Date().toLocaleString()}
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-500" />
-              {t('script_generator.config_title')}
+              Configuración del Script
             </CardTitle>
             <CardDescription>
-              {t('script_generator.config_desc')}
-            </CardDescription>          </CardHeader>
+              Configura los parámetros para generar scripts optimizados con IA avanzada
+            </CardDescription>
+          </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="platform">{t('script_generator.platform')}</Label>
+                <Label htmlFor="platform">Platform</Label>
                 <Select value={platform} onValueChange={setPlatform}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('script_generator.select_platform')} />
+                    <SelectValue placeholder="Selecciona plataforma" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="tiktok">TikTok</SelectItem>
-                    <SelectItem value="instagram">Instagram Reels</SelectItem>
-                    <SelectItem value="youtube">YouTube Shorts</SelectItem>
+                    <SelectItem value="instagram">Instagram</SelectItem>
+                    <SelectItem value="youtube">YouTube</SelectItem>
+                    <SelectItem value="facebook">Facebook</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="tone">{t('script_generator.tone')}</Label>
+                <Label htmlFor="tone">Tone</Label>
                 <Select value={tone} onValueChange={setTone}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('script_generator.select_tone')} />
+                    <SelectValue placeholder="Selecciona tono" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="professional">{t('script_generator.professional')}</SelectItem>
-                    <SelectItem value="casual">{t('script_generator.casual')}</SelectItem>
-                    <SelectItem value="humorous">{t('script_generator.humorous')}</SelectItem>
-                    <SelectItem value="urgent">{t('script_generator.urgent')}</SelectItem>
-                    <SelectItem value="inspirational">{t('script_generator.inspirational')}</SelectItem>
+                    <SelectItem value="casual">Casual</SelectItem>
+                    <SelectItem value="professional">Professional</SelectItem>
+                    <SelectItem value="humorous">Humorous</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                    <SelectItem value="inspirational">Inspirational</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="topic">{t('script_generator.topic')}</Label>
+              <Label htmlFor="topic">Script Topic</Label>
               <Textarea
                 id="topic"
-                placeholder={t('script_generator.topic_placeholder')}
+                placeholder="Describe el tema o producto para tu script..."
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                className="min-h-[100px]"
+                rows={3}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="audience">{t('script_generator.audience')}</Label>
+              <Label htmlFor="audience">Target Audience</Label>
               <Input
                 id="audience"
-                placeholder={t('script_generator.audience_placeholder')}
+                placeholder="Ej: Jóvenes de 18-25 años interesados en tecnología"
                 value={targetAudience}
                 onChange={(e) => setTargetAudience(e.target.value)}
               />
             </div>
 
+            {error && (
+              <Alert className="border-red-200 bg-red-50">
+                <AlertDescription className="text-red-800">
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
+
             <Button 
               onClick={generateScript}
-              disabled={!topic.trim() || isGenerating}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105"
+              disabled={isGenerating || !topic.trim()}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              size="lg"
             >
               {isGenerating ? (
                 <>
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                  {t('script_generator.generating')}
+                  Generating...
                 </>
               ) : (
                 <>
-                  <Wand2 className="w-4 h-4 mr-2" />
-                  {t('script_generator.generate')}
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Generate Scripts
                 </>
               )}
             </Button>
@@ -270,10 +275,14 @@ Generado el: ${new Date().toLocaleString()}
             {/* Progreso de Generación */}
             {isGenerating && (
               <div className="space-y-4">
-                <Progress value={generationProgress} className="w-full" />
                 <div className="text-center">
-                  <p className="text-sm text-gray-600 dark:text-gray-300">{currentStep}</p>
-                  <p className="text-xs text-gray-500">{generationProgress.toFixed(0)}% completado</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    {currentStep}
+                  </p>
+                  <Progress value={generationProgress} className="w-full" />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {Math.round(generationProgress)}% completado
+                  </p>
                 </div>
               </div>
             )}
@@ -281,24 +290,27 @@ Generado el: ${new Date().toLocaleString()}
         </Card>
 
         {/* Resultados */}
-        {generatedScript && (
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6 text-center">{t('script_generator.results')}</h2>
-            
+        {generatedScripts.length > 0 && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-2">Scripts Generados</h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                {generatedScripts.length} scripts únicos creados para {platform}
+              </p>
+            </div>
+
             <div className="grid gap-6">
-              {Array.isArray(generatedScript) ? generatedScript.map((script, index) => (
-                <Card key={index} className="border-2 hover:border-purple-300 transition-colors">
+              {generatedScripts.map((script, index) => (
+                <Card key={script.id || index} className="max-w-4xl mx-auto">
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <CardTitle className="flex items-center">
-                          <Badge variant="outline" className="mr-2">
-                            {script.type || `Versión ${index + 1}`}
-                          </Badge>
-                          <span className="text-lg">Script para {platform.toUpperCase()}</span>
+                        <CardTitle className="flex items-center gap-2">
+                          <Badge variant="outline">Script {index + 1}</Badge>
+                          <span className="text-lg">Optimizado para {platform}</span>
                         </CardTitle>
                         <CardDescription>
-                          Generado con Gemini AI • {script.characterCount || script.script?.length || 0} caracteres
+                          Generado con IA avanzada • {script.script?.length || 0} caracteres
                         </CardDescription>
                       </div>
                       <div className="flex space-x-2">
@@ -308,7 +320,7 @@ Generado el: ${new Date().toLocaleString()}
                           onClick={() => copyToClipboard(script.script || '')}
                         >
                           <Copy className="w-4 h-4 mr-1" />
-                          {t('script_generator.copy')}
+                          Copy
                         </Button>
                         <Button
                           variant="outline"
@@ -316,7 +328,7 @@ Generado el: ${new Date().toLocaleString()}
                           onClick={() => downloadScript(script)}
                         >
                           <Download className="w-4 h-4 mr-1" />
-                          Descargar
+                          Download
                         </Button>
                       </div>
                     </div>
@@ -325,14 +337,14 @@ Generado el: ${new Date().toLocaleString()}
                     <Tabs defaultValue="script" className="w-full">
                       <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="script">Script</TabsTrigger>
-                        <TabsTrigger value="elements">Elementos</TabsTrigger>
-                        <TabsTrigger value="metrics">Métricas</TabsTrigger>
+                        <TabsTrigger value="elements">Elements</TabsTrigger>
+                        <TabsTrigger value="metrics">Metrics</TabsTrigger>
                         <TabsTrigger value="hashtags">Hashtags</TabsTrigger>
                       </TabsList>
                       
                       <TabsContent value="script" className="space-y-4">
                         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                          <h4 className="font-semibold mb-2">Script Completo:</h4>
+                          <h4 className="font-semibold mb-2">Complete Script:</h4>
                           <p className="whitespace-pre-wrap">{script.script}</p>
                         </div>
                       </TabsContent>
@@ -354,65 +366,47 @@ Generado el: ${new Date().toLocaleString()}
                             <p>{script.cta}</p>
                           </div>
                         </div>
-                        {script.targetEmotion && (
-                          <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                            <h4 className="font-semibold mb-2 flex items-center">
-                              <Heart className="w-4 h-4 mr-1 text-purple-600" />
-                              Emoción Objetivo:
-                            </h4>
-                            <p>{script.targetEmotion}</p>
-                          </div>
-                        )}
                       </TabsContent>
                       
                       <TabsContent value="metrics" className="space-y-4">
                         <div className="grid md:grid-cols-3 gap-4">
-                          {script.optimizationScore && (
-                            <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg">
-                              <div className="text-2xl font-bold text-blue-600">{script.optimizationScore}%</div>
-                              <div className="text-sm text-gray-600 dark:text-gray-300">Score de Optimización</div>
+                          <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg text-center">
+                            <div className="text-2xl font-bold text-purple-600">
+                              {script.engagementScore || 'N/A'}%
                             </div>
-                          )}
-                          {script.viralityPotential && (
-                            <div className="text-center p-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg">
-                              <div className="text-2xl font-bold text-purple-600">{script.viralityPotential}%</div>
-                              <div className="text-sm text-gray-600 dark:text-gray-300">Potencial Viral</div>
+                            <div className="text-sm text-gray-600">Engagement Score</div>
+                          </div>
+                          <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg text-center">
+                            <div className="text-2xl font-bold text-orange-600">
+                              {script.platform || platform}
                             </div>
-                          )}
-                          {script.predictedPerformance && (
-                            <div className="text-center p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg">
-                              <div className="text-2xl font-bold text-green-600">{script.predictedPerformance.estimatedEngagementRate}%</div>
-                              <div className="text-sm text-gray-600 dark:text-gray-300">Engagement Estimado</div>
+                            <div className="text-sm text-gray-600">Platform</div>
+                          </div>
+                          <div className="bg-pink-50 dark:bg-pink-900/20 p-4 rounded-lg text-center">
+                            <div className="text-2xl font-bold text-pink-600">
+                              {script.tone || tone}
                             </div>
-                          )}
+                            <div className="text-sm text-gray-600">Tone</div>
+                          </div>
                         </div>
                       </TabsContent>
                       
                       <TabsContent value="hashtags" className="space-y-4">
-                        <div className="flex flex-wrap gap-2">
-                          {script.hashtags?.map((hashtag: string, idx: number) => (
-                            <Badge key={idx} variant="secondary" className="text-sm">
-                              #{hashtag}
-                            </Badge>
-                          ))}
+                        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                          <h4 className="font-semibold mb-2">Recommended Hashtags:</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {script.hashtags?.map((hashtag: string, idx: number) => (
+                              <Badge key={idx} variant="secondary">
+                                #{hashtag}
+                              </Badge>
+                            )) || <p className="text-gray-500">No hashtags available</p>}
+                          </div>
                         </div>
                       </TabsContent>
                     </Tabs>
                   </CardContent>
                 </Card>
-              )) : (
-                <Card className="border-2 hover:border-purple-300 transition-colors">
-                  <CardHeader>
-                    <CardTitle>Script Generado</CardTitle>
-                    <CardDescription>Generado con Gemini AI</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                      <p className="whitespace-pre-wrap">{generatedScript}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+              ))}
             </div>
           </div>
         )}
