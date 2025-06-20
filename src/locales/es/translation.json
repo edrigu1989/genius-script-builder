@@ -11,6 +11,7 @@
   "nav.start": "Comenzar",
   "nav.settings": "Configuración",
   "nav.logout": "Cerrar Sesión",
+  "nav.demo": "Demostración",
 
   "home.title": "Genera Scripts Virales con IA",
   "home.subtitle": "Crea contenido que conquiste las redes sociales usando inteligencia artificial avanzada",
@@ -89,8 +90,10 @@
   "footer.terms": "Términos",
   "footer.cookies": "Cookies",
   "footer.copyright": "© 2024 Genius Script Builder. Todos los derechos reservados.",
+  "footer.contact": "Contacto",
 
   "dashboard.description": "Panel de Control",
+  "dashboard.title": "Panel de Control",
   "dashboard.generate_script": "Generar Script",
   "dashboard.generate_script_desc": "Crea scripts virales con IA",
   "dashboard.video_analysis": "Análisis de Video",
@@ -104,6 +107,11 @@
   "dashboard.welcome_back": "¡Bienvenido de vuelta!",
   "dashboard.system_active": "Sistema Activo",
   "dashboard.dark_mode": "Modo Oscuro",
+  "dashboard.system_status": "Estado del Sistema",
+  "dashboard.models": "Modelos",
+  "dashboard.tools": "Herramientas",
+  "dashboard.workspace": "Espacio de Trabajo",
+  "dashboard.feedback": "Sugerencias",
 
   "settings.description": "Configuración",
   "settings.title": "Configuración",
