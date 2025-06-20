@@ -18,7 +18,23 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Log para debugging
+    console.log('🎬 Video Analysis API called');
+    console.log('📝 Request body:', req.body);
+    console.log('🔑 API Key exists:', !!process.env.GEMINI_API_KEY);
+    
+    // Verificar que la API key existe
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('❌ GEMINI_API_KEY not found in environment variables');
+      return res.status(500).json({
+        success: false,
+        error: 'API key not configured',
+        details: 'GEMINI_API_KEY environment variable is missing'
+      });
+    }
+
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
+    console.log('✅ GoogleGenerativeAI imported successfully');
     
     // CONFIGURACIÓN DE GEMINI API PARA ANÁLISIS DE VIDEO
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -28,15 +44,18 @@ export default async function handler(req, res) {
     const { videoUrl, analysisType = 'complete', customPrompt } = req.body;
     
     if (!videoUrl) {
+      console.log('❌ Video URL is missing from request');
       return res.status(400).json({
         success: false,
         error: 'URL del video es requerida'
       });
     }
 
+    console.log('📋 Parameters:', { videoUrl, analysisType, customPrompt });
+
     // CONFIGURAR EL MODELO GEMINI
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-1.5-flash",
       generationConfig: {
         temperature: 0.7,
         topP: 0.8,
@@ -44,6 +63,8 @@ export default async function handler(req, res) {
         maxOutputTokens: 2048,
       }
     });
+
+    console.log('✅ Model configured');
 
     // PROMPTS ESPECIALIZADOS SEGÚN TIPO DE ANÁLISIS
     const prompts = {
@@ -100,33 +121,17 @@ Proporciona un análisis profesional y detallado.`,
 
     console.log(`📝 Usando prompt de análisis: ${analysisType}`);
 
-    // CREAR CONTENIDO PARA GEMINI
-    const parts = [
-      {
-        text: finalPrompt
-      }
-    ];
+    // Para análisis de video, usamos solo el prompt de texto ya que Vercel no soporta upload de archivos
+    finalPrompt += `\n\nVideo URL: ${videoUrl}\n\nNota: Proporciona un análisis basado en la URL del video proporcionada.`;
 
-    // SI ES URL DE YOUTUBE, AGREGARLA DIRECTAMENTE
-    if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
-      parts.push({
-        fileData: {
-          mimeType: "video/mp4",
-          fileUri: videoUrl
-        }
-      });
-    } else {
-      // PARA OTROS VIDEOS, USAR COMO REFERENCIA
-      parts[0].text += `\n\nVideo URL: ${videoUrl}`;
-    }
-
-    // GENERAR ANÁLISIS CON GEMINI
     console.log('🤖 Enviando solicitud a Gemini API...');
-    const result = await model.generateContent(parts);
+    
+    const result = await model.generateContent(finalPrompt);
     const response = await result.response;
     const analysisText = response.text();
 
     console.log('✅ Análisis completado exitosamente');
+    console.log('📄 Response length:', analysisText.length);
 
     // PROCESAR Y ESTRUCTURAR LA RESPUESTA
     const analysis = {
@@ -157,11 +162,13 @@ Proporciona un análisis profesional y detallado.`,
 
   } catch (error) {
     console.error('❌ Error en análisis de video:', error);
+    console.error('❌ Error stack:', error.stack);
     
     res.status(500).json({
       success: false,
       error: 'Error interno del servidor durante el análisis',
-      details: error.message
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }

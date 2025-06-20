@@ -18,22 +18,43 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Log para debugging
+    console.log('🚀 API called with method:', req.method);
+    console.log('📝 Request body:', req.body);
+    console.log('🔑 API Key exists:', !!process.env.GEMINI_API_KEY);
+    
+    // Verificar que la API key existe
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('❌ GEMINI_API_KEY not found in environment variables');
+      return res.status(500).json({
+        success: false,
+        error: 'API key not configured',
+        details: 'GEMINI_API_KEY environment variable is missing'
+      });
+    }
+
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
+    console.log('✅ GoogleGenerativeAI imported successfully');
     
     // Inicializar Gemini AI
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    console.log('✅ Gemini AI initialized');
 
     const { topic, platform, tone, targetAudience } = req.body;
 
     if (!topic) {
+      console.log('❌ Topic is missing from request');
       return res.status(400).json({
         success: false,
         error: 'Topic is required'
       });
     }
 
+    console.log('📋 Parameters:', { topic, platform, tone, targetAudience });
+
     // Obtener el modelo
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    console.log('✅ Model obtained');
 
     // Crear el prompt para generar scripts
     const prompt = `
@@ -81,16 +102,23 @@ Formato de respuesta en JSON:
 Asegúrate de que los scripts sean únicos, creativos y optimizados para generar engagement en ${platform}.
 `;
 
+    console.log('🤖 Calling Gemini API...');
+    
     // Generar contenido
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
+    
+    console.log('✅ Gemini API responded');
+    console.log('📄 Response length:', text.length);
 
     // Intentar parsear la respuesta como JSON
     try {
       const parsedResponse = JSON.parse(text);
+      console.log('✅ JSON parsed successfully');
       res.json(parsedResponse);
     } catch (parseError) {
+      console.log('⚠️ JSON parse failed, creating structured response');
       // Si no es JSON válido, crear una respuesta estructurada
       const scripts = [
         {
@@ -122,11 +150,13 @@ Asegúrate de que los scripts sean únicos, creativos y optimizados para generar
     }
 
   } catch (error) {
-    console.error('Error generating scripts:', error);
+    console.error('❌ Error generating scripts:', error);
+    console.error('❌ Error stack:', error.stack);
     res.status(500).json({
       success: false,
       error: 'Error generating scripts',
-      details: error.message
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
