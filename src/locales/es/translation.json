@@ -94,6 +94,8 @@
 
   "dashboard.description": "Panel de Control",
   "dashboard.title": "Panel de Control",
+  "dashboard.today": "Hoy",
+  "dashboard.light_mode": "Modo Claro",
   "dashboard.generate_script": "Generar Script",
   "dashboard.generate_script_desc": "Crea scripts virales con IA",
   "dashboard.video_analysis": "Análisis de Video",

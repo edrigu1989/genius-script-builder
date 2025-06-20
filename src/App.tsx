@@ -27,6 +27,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/video-analysis-advanced" element={<VideoAnalysisAdvanced />} />
               <Route path="/video-analysis" element={<VideoAnalysisAdvanced />} />
               <Route path="/script-generator" element={<ScriptGenerator />} />
               <Route path="/analytics" element={<Analytics />} />

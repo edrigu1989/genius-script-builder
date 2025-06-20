@@ -94,6 +94,8 @@
 
   "dashboard.description": "Dashboard",
   "dashboard.title": "Dashboard",
+  "dashboard.today": "Today",
+  "dashboard.light_mode": "Light Mode",
   "dashboard.generate_script": "Generate Script",
   "dashboard.generate_script_desc": "Create viral scripts with AI",
   "dashboard.video_analysis": "Video Analysis",
