@@ -298,24 +298,21 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Scripts Recientes y Acciones Rápidas */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+             {/* Scripts Recientes y Acciones Rápidas */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Scripts Recientes */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Scripts Recientes</CardTitle>
-                  <CardDescription>Tus últimos contenidos generados</CardDescription>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleNavigateToScripts}
-                >
-                  Ver Todos
-                </Button>
-              </CardHeader>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div>
+                <CardTitle>{t('dashboard.recent_scripts')}</CardTitle>
+                <CardDescription>
+                  {t('dashboard.recent_scripts_desc')}
+                </CardDescription>
+              </div>
+              <Button variant="outline" size="sm">
+                {t('dashboard.view_all')}
+              </Button>
+            </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {recentScripts.map((script) => (
@@ -364,8 +361,8 @@ const Dashboard = () => {
           <div>
             <Card>
               <CardHeader>
-                <CardTitle>Acciones Rápidas</CardTitle>
-                <CardDescription>Herramientas más utilizadas</CardDescription>
+                <CardTitle>{t('dashboard.quick_actions')}</CardTitle>
+                <CardDescription>{t('dashboard.quick_actions_desc')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
@@ -374,7 +371,7 @@ const Dashboard = () => {
                   onClick={handleNavigateToGenerator}
                 >
                   <Brain className="h-4 w-4 mr-3" />
-                  Generar Script con IA
+                  {t('dashboard.generate_script_ai')}
                 </Button>
                 
                 <Button 
@@ -383,7 +380,7 @@ const Dashboard = () => {
                   onClick={handleNavigateToVideoAnalysis}
                 >
                   <Video className="h-4 w-4 mr-3" />
-                  Analizar Video
+                  {t('dashboard.analyze_video')}
                 </Button>
                 
                 <Button 
@@ -420,13 +417,13 @@ const Dashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Target className="h-5 w-5 mr-2" />
-                  Progreso del Mes
+                  {t('dashboard.monthly_progress')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span>Scripts Creados</span>
+                    <span>{t('dashboard.scripts_created')}</span>
                     <span>{recentScripts.length}/20</span>
                   </div>
                   <Progress value={(recentScripts.length / 20) * 100} />
@@ -434,7 +431,7 @@ const Dashboard = () => {
                 
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span>Plataformas Conectadas</span>
+                    <span>{t('dashboard.connected_platforms')}</span>
                     <span>{connections.length}/6</span>
                   </div>
                   <Progress value={(connections.length / 6) * 100} />
@@ -442,7 +439,7 @@ const Dashboard = () => {
                 
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span>Engagement Objetivo</span>
+                    <span>{t('dashboard.engagement_goal')}</span>
                     <span>4.2%/5.0%</span>
                   </div>
                   <Progress value={84} />
@@ -470,7 +467,7 @@ const Dashboard = () => {
                   <p className="text-2xl font-bold text-gray-900">
                     {analytics.trends.engagement?.current || 0}%
                   </p>
-                  <p className="text-sm text-gray-600">Engagement Promedio</p>
+                  <p className="text-sm text-gray-600">{t('dashboard.avg_engagement')}</p>
                   <div className="flex items-center justify-center mt-1">
                     {analytics.trends.engagement?.trend === 'up' ? (
                       <ArrowUpRight className="h-4 w-4 text-green-600" />

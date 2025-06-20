@@ -19,48 +19,48 @@ const Settings = () => {
 
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-            Configuración Básica
+            {t('settings.basic_config')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Esta es la página de configuración. Aquí puedes ajustar las preferencias de tu cuenta.
+            {t('settings.basic_config_desc')}
           </p>
           
           <div className="mt-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Nombre completo
+                {t('settings.full_name')}
               </label>
               <input 
                 type="text" 
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Tu nombre completo"
+                placeholder={t('settings.full_name_placeholder')}
               />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email
+                {t('settings.email')}
               </label>
               <input 
                 type="email" 
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="tu@email.com"
+                placeholder={t('settings.email_placeholder')}
               />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Idioma preferido
+                {t('settings.preferred_language')}
               </label>
               <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                <option value="es">Español</option>
-                <option value="en">English</option>
-                <option value="pt">Português</option>
+                <option value="es">{t('settings.spanish')}</option>
+                <option value="en">{t('settings.english')}</option>
+                <option value="pt">{t('settings.portuguese')}</option>
               </select>
             </div>
             
             <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-              Guardar cambios
+              {t('settings.save_changes')}
             </button>
           </div>
         </div>
