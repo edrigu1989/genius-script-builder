@@ -67,13 +67,7 @@ Formato de respuesta (SOLO este JSON, sin texto adicional):
 }
 `;
 
-    const result = await model.generateContent({
-      contents: [{ text: prompt }],
-      generationConfig: {
-        temperature: 0.3
-      },
-      systemInstruction: 'Eres un redactor profesional. Sigue las reglas del prompt con precisión.'
-    });
+    const result = await model.generateContent(prompt);
 
     const response = await result.response;
     const text = response.text();
