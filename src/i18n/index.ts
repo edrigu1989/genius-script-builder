@@ -2,16 +2,16 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Import translation files
-import enTranslations from '../public/locales/en/translation.json';
-import esTranslations from '../public/locales/es/translation.json';
-import ptTranslations from '../public/locales/pt/translation.json';
-import frTranslations from '../public/locales/fr/translation.json';
-import deTranslations from '../public/locales/de/translation.json';
-import itTranslations from '../public/locales/it/translation.json';
-import jaTranslations from '../public/locales/ja/translation.json';
-import koTranslations from '../public/locales/ko/translation.json';
-import zhTranslations from '../public/locales/zh/translation.json';
+// Import translation files from src folder
+import enTranslations from '../locales/en/translation.json';
+import esTranslations from '../locales/es/translation.json';
+import ptTranslations from '../locales/pt/translation.json';
+import frTranslations from '../locales/fr/translation.json';
+import deTranslations from '../locales/de/translation.json';
+import itTranslations from '../locales/it/translation.json';
+import jaTranslations from '../locales/ja/translation.json';
+import koTranslations from '../locales/ko/translation.json';
+import zhTranslations from '../locales/zh/translation.json';
 
 const resources = {
   en: { translation: enTranslations },
