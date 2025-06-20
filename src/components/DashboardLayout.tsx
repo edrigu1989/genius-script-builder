@@ -18,7 +18,8 @@ import {
   Moon,
   Zap,
   Brain,
-  TrendingUp
+  TrendingUp,
+  Settings
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback } from './ui/avatar';
@@ -75,6 +76,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       href: '/analytics',
       active: location.pathname === '/analytics',
       description: t('dashboard.analytics_desc')
+    },
+    {
+      title: t('nav.settings'),
+      icon: Settings,
+      href: '/settings',
+      active: location.pathname === '/settings',
+      description: t('settings.description')
     }
   ];
 

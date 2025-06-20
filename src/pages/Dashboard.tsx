@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import createAnalytics from '../lib/realTimeAnalytics';
@@ -32,6 +33,7 @@ import {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -199,15 +201,15 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600">Bienvenido de vuelta, {user?.email?.split('@')[0] || 'Usuario'}</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.title')}</h1>
+            <p className="text-gray-600">{t('dashboard.welcome_back')}, {user?.email?.split('@')[0] || t('dashboard.user')}</p>
           </div>
           <Button 
             onClick={handleNavigateToGenerator}
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
             <PlusCircle className="h-4 w-4 mr-2" />
-            Crear Script
+            {t('dashboard.create_script')}
           </Button>
         </div>
 
@@ -217,7 +219,7 @@ const Dashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Scripts Creados</p>
+                  <p className="text-sm font-medium text-gray-600">{t('dashboard.scripts_created')}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {analytics?.metrics?.totalPosts || 0}
                   </p>
@@ -238,7 +240,7 @@ const Dashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Engagement Promedio</p>
+                  <p className="text-sm font-medium text-gray-600">{t('dashboard.avg_engagement')}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {analytics?.metrics?.avgEngagement || 0}%
                   </p>
@@ -259,7 +261,7 @@ const Dashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Plataformas Conectadas</p>
+                  <p className="text-sm font-medium text-gray-600">{t('dashboard.connected_platforms')}</p>
                   <p className="text-2xl font-bold text-gray-900">{connections.length}</p>
                 </div>
                 <div className="p-3 bg-purple-100 rounded-full">
@@ -278,7 +280,7 @@ const Dashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Revenue Total</p>
+                  <p className="text-sm font-medium text-gray-600">{t('dashboard.total_revenue')}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     ${analytics?.metrics?.totalRevenue?.toLocaleString() || 0}
                   </p>
