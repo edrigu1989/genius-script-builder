@@ -98,27 +98,43 @@ const ScriptGenerator: React.FC = () => {
         setCurrentStep(steps[i]);
         setGenerationProgress((i + 1) * (100 / steps.length));
         
-        // En el paso 3, hacer la llamada real a la API
+        // En el paso 3, hacer la llamada real a Gemini API
         if (i === 2) {
           try {
-            const response = await scriptGeneration.generate({
-              topic,
-              platform,
-              tone,
-              duration,
-              target_audience: targetAudience
+            const response = await fetch('http://localhost:3001/api/generate-scripts', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                videoAnalysis: {
+                  viralityScore: 75,
+                  insights: [`Contenido sobre ${topic}`, 'Optimizado para engagement'],
+                  recommendations: ['Usar hook fuerte', 'Incluir CTA claro']
+                },
+                platform,
+                businessProfile: {
+                  type: 'General',
+                  audience: targetAudience || 'General audience',
+                  voice: tone,
+                  industry: 'Content Creation'
+                }
+              }),
             });
-            
-            if (response.success) {
-              // Usar datos reales si la API responde
-              setGeneratedScript(response.data);
-              setIsGenerating(false);
-              setGenerationProgress(100);
-              setCurrentStep('¡Script generado!');
-              return;
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                // Usar datos reales de Gemini
+                setGeneratedScript(result.scripts);
+                setIsGenerating(false);
+                setGenerationProgress(100);
+                setCurrentStep('¡Scripts generados con Gemini AI!');
+                return;
+              }
             }
           } catch (apiError) {
-            console.log('API no disponible, usando datos simulados:', apiError);
+            console.log('Gemini API no disponible, usando datos simulados:', apiError);
           }
         }
         

@@ -67,12 +67,9 @@ const VideoAnalysisAdvanced: React.FC = () => {
 
     setIsAnalyzing(true);
     setAnalysisProgress(0);
-    setCurrentStep('Inicializando análisis...');
+    setCurrentStep('Inicializando análisis con Gemini AI...');
 
     try {
-      // Importar el cliente API
-      const { videoAnalysis } = await import('../utils/evolutiveAPI.js');
-      
       // Validar archivo
       if (selectedFile.size > 100 * 1024 * 1024) {
         throw new Error('El archivo es demasiado grande. Máximo 100MB.');
@@ -80,11 +77,11 @@ const VideoAnalysisAdvanced: React.FC = () => {
 
       // Simular progreso de análisis
       const steps = [
-        'Conectando con IA evolutiva...',
-        'Extrayendo frames del video...',
-        'Analizando calidad técnica...',
+        'Conectando con Gemini AI...',
+        'Subiendo video al servidor...',
+        'Analizando contenido visual...',
         'Procesando audio y transcripción...',
-        'Evaluando elementos visuales...',
+        'Evaluando elementos virales...',
         'Calculando predicciones de engagement...',
         'Generando insights únicos...',
         'Finalizando análisis...'
@@ -94,24 +91,35 @@ const VideoAnalysisAdvanced: React.FC = () => {
         setCurrentStep(steps[i]);
         setAnalysisProgress((i + 1) * (100 / steps.length));
         
-        // En el paso 3, hacer la llamada real a la API
+        // En el paso 3, hacer la llamada real a Gemini API
         if (i === 2) {
           try {
-            const response = await videoAnalysis.analyze(selectedFile, selectedPlatform);
-            if (response.success) {
-              // Usar datos reales si la API responde
-              setAnalysisResult(response.data);
-              setIsAnalyzing(false);
-              setAnalysisProgress(100);
-              setCurrentStep('¡Análisis completado!');
-              return;
+            const formData = new FormData();
+            formData.append('video', selectedFile);
+            formData.append('platform', selectedPlatform);
+
+            const response = await fetch('http://localhost:3001/api/analyze-video', {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                // Usar datos reales de Gemini
+                setAnalysisResult(result.analysis);
+                setIsAnalyzing(false);
+                setAnalysisProgress(100);
+                setCurrentStep('¡Análisis completado con Gemini AI!');
+                return;
+              }
             }
           } catch (apiError) {
-            console.log('API no disponible, usando datos simulados:', apiError);
+            console.log('Gemini API no disponible, usando datos simulados:', apiError);
           }
         }
         
-        await new Promise(resolve => setTimeout(resolve, 1200));
+        await new Promise(resolve => setTimeout(resolve, 800));
       }
 
       // Fallback: resultado simulado si la API no está disponible
