@@ -100,25 +100,25 @@ const Settings: React.FC = () => {
               <Settings className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Configuración</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
               <p className="text-gray-600 dark:text-gray-300">
-                Personaliza tu experiencia y gestiona tu cuenta
+                {t('settings.description')}
               </p>
             </div>
           </div>
           <Button onClick={handleSave} className="bg-gradient-to-r from-blue-500 to-purple-500">
             <Save className="w-4 h-4 mr-2" />
-            Guardar Cambios
+            {t('settings.save_changes')}
           </Button>
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="profile">Perfil</TabsTrigger>
-            <TabsTrigger value="notifications">Notificaciones</TabsTrigger>
-            <TabsTrigger value="privacy">Privacidad</TabsTrigger>
-            <TabsTrigger value="api">API & Integraciones</TabsTrigger>
-            <TabsTrigger value="advanced">Avanzado</TabsTrigger>
+            <TabsTrigger value="profile">{t('settings.profile')}</TabsTrigger>
+            <TabsTrigger value="notifications">{t('settings.notifications')}</TabsTrigger>
+            <TabsTrigger value="privacy">{t('settings.privacy')}</TabsTrigger>
+            <TabsTrigger value="api">{t('settings.api')}</TabsTrigger>
+            <TabsTrigger value="advanced">{t('settings.advanced')}</TabsTrigger>
           </TabsList>
 
           {/* Profile Tab */}
@@ -127,50 +127,50 @@ const Settings: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <User className="w-5 h-5 mr-2" />
-                  Información Personal
+                  {t('settings.personal_info')}
                 </CardTitle>
                 <CardDescription>
-                  Actualiza tu información de perfil y preferencias de cuenta
+                  {t('settings.personal_info_desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nombre Completo</Label>
+                    <Label htmlFor="name">{t('settings.full_name')}</Label>
                     <Input 
                       id="name" 
                       defaultValue={user?.user_metadata?.full_name || ''} 
-                      placeholder="Tu nombre completo"
+                      placeholder={t('settings.full_name')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('settings.email')}</Label>
                     <Input 
                       id="email" 
                       type="email" 
                       defaultValue={user?.email || ''} 
-                      placeholder="tu@email.com"
+                      placeholder={t('settings.email')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="company">Empresa</Label>
+                    <Label htmlFor="company">{t('settings.company')}</Label>
                     <Input 
                       id="company" 
-                      placeholder="Nombre de tu empresa"
+                      placeholder={t('settings.company')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="role">Rol</Label>
+                    <Label htmlFor="role">{t('settings.role')}</Label>
                     <Select>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona tu rol" />
+                        <SelectValue placeholder={t('settings.select_role')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="marketer">Marketing Manager</SelectItem>
-                        <SelectItem value="creator">Content Creator</SelectItem>
-                        <SelectItem value="agency">Agency Owner</SelectItem>
-                        <SelectItem value="freelancer">Freelancer</SelectItem>
-                        <SelectItem value="other">Otro</SelectItem>
+                        <SelectItem value="marketer">{t('settings.marketing_manager')}</SelectItem>
+                        <SelectItem value="creator">{t('settings.content_creator')}</SelectItem>
+                        <SelectItem value="agency">{t('settings.agency_owner')}</SelectItem>
+                        <SelectItem value="freelancer">{t('settings.freelancer')}</SelectItem>
+                        <SelectItem value="other">{t('settings.other')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -182,10 +182,10 @@ const Settings: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Globe className="w-5 h-5 mr-2" />
-                  Preferencias de Idioma
+                  {t('settings.language_preferences')}
                 </CardTitle>
                 <CardDescription>
-                  Selecciona tu idioma preferido para la interfaz
+                  {t('settings.language_preferences_desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -209,18 +209,18 @@ const Settings: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Palette className="w-5 h-5 mr-2" />
-                  Apariencia
+                  {t('settings.appearance')}
                 </CardTitle>
                 <CardDescription>
-                  Personaliza la apariencia de la aplicación
+                  {t('settings.appearance_desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label>Modo Oscuro</Label>
+                    <Label>{t('settings.dark_mode')}</Label>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Activa el tema oscuro para una mejor experiencia visual
+                      {t('settings.dark_mode_desc')}
                     </p>
                   </div>
                   <Switch 
@@ -230,9 +230,9 @@ const Settings: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label>Modo Compacto</Label>
+                    <Label>{t('settings.compact_mode')}</Label>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Reduce el espaciado para mostrar más contenido
+                      {t('settings.compact_mode_desc')}
                     </p>
                   </div>
                   <Switch 
@@ -255,10 +255,10 @@ const Settings: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Bell className="w-5 h-5 mr-2" />
-                  Preferencias de Notificaciones
+                  {t('settings.notification_preferences')}
                 </CardTitle>
                 <CardDescription>
-                  Controla qué notificaciones quieres recibir
+                  {t('settings.notification_preferences_desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

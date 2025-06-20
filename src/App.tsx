@@ -2,7 +2,7 @@ import { Toaster } from "./components/ui/toaster";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
-import { LanguageProvider } from "./contexts/LanguageContext";
+import './i18n';
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import VideoAnalysisAdvanced from "./pages/VideoAnalysisAdvanced";
@@ -18,9 +18,8 @@ import FinetuningOnboarding from "./pages/FinetuningOnboarding";
 function App() {
   return (
     <ThemeProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <Router>
+      <AuthProvider>
+        <Router>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<Home />} />
@@ -38,10 +37,9 @@ function App() {
             <Toaster />
           </Router>
         </AuthProvider>
-      </LanguageProvider>
-    </ThemeProvider>
-  );
-}
+      </ThemeProvider>
+    );
+  }
 
 export default App;
 

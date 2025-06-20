@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import LanguageSelector from './LanguageSelector';
 import { 
   LayoutDashboard, 
   Plus, 
@@ -28,6 +30,7 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -39,39 +42,39 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const menuItems = [
     {
-      title: 'Dashboard',
+      title: t('dashboard.title'),
       icon: LayoutDashboard,
       href: '/dashboard',
       active: location.pathname === '/dashboard',
-      description: 'Vista general y accesos rápidos'
+      description: t('dashboard.description')
     },
     {
-      title: 'Generar Script',
+      title: t('dashboard.generate_script'),
       icon: Plus,
       href: '/script-generator',
       active: location.pathname === '/script-generator',
-      description: 'Crea scripts virales con IA evolutiva'
+      description: t('dashboard.generate_script_desc')
     },
     {
-      title: 'Análisis de Videos',
+      title: t('dashboard.video_analysis'),
       icon: Video,
       href: '/video-analysis',
       active: location.pathname === '/video-analysis',
-      description: 'Predice el éxito de tus videos'
+      description: t('dashboard.video_analysis_desc')
     },
     {
-      title: 'Fine Tuning',
+      title: t('dashboard.finetuning'),
       icon: Brain,
       href: '/finetuning',
       active: location.pathname === '/finetuning',
-      description: 'Entrena la IA con tu voz única'
+      description: t('dashboard.finetuning_desc')
     },
     {
-      title: 'Analytics',
+      title: t('dashboard.analytics'),
       icon: BarChart3,
       href: '/analytics',
       active: location.pathname === '/analytics',
-      description: 'Métricas y retroalimentación'
+      description: t('dashboard.analytics_desc')
     }
   ];
 
@@ -164,28 +167,28 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           {/* Quick Stats */}
           <div className="p-4 mx-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl">
-            <h3 className="font-semibold text-sm mb-3 text-gray-700 dark:text-gray-300">Estado del Sistema</h3>
+            <h3 className="font-semibold text-sm mb-3 text-gray-700 dark:text-gray-300">{t('dashboard.system_status')}</h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center space-x-1">
                   <Brain className="w-3 h-3 text-blue-500" />
-                  <span>IA Evolutiva</span>
+                  <span>{t('dashboard.ai_active')}</span>
                 </span>
-                <span className="text-green-600 dark:text-green-400 font-medium">Activa</span>
+                <span className="text-green-600 dark:text-green-400 font-medium">{t('dashboard.active')}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center space-x-1">
                   <TrendingUp className="w-3 h-3 text-purple-500" />
-                  <span>Precisión</span>
+                  <span>{t('dashboard.precision')}</span>
                 </span>
                 <span className="text-blue-600 dark:text-blue-400 font-medium">87.3%</span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center space-x-1">
                   <Zap className="w-3 h-3 text-yellow-500" />
-                  <span>Última Actualización</span>
+                  <span>{t('dashboard.last_update')}</span>
                 </span>
-                <span className="text-gray-600 dark:text-gray-400">Hoy</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('dashboard.today')}</span>
               </div>
             </div>
           </div>
@@ -202,7 +205,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <p className="text-sm font-medium truncate">
                   {user?.user_metadata?.full_name || user?.email}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Usuario Premium</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t('dashboard.premium_user')}</p>
               </div>
               <div className="flex space-x-1">
                 <Button
@@ -210,7 +213,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   size="sm"
                   onClick={toggleTheme}
                   className="p-1 h-8 w-8"
-                  title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+                  title={theme === 'dark' ? t('dashboard.light_mode') : t('dashboard.dark_mode')}
                 >
                   {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </Button>
@@ -219,7 +222,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   size="sm"
                   onClick={handleSignOut}
                   className="p-1 h-8 w-8 text-red-500 hover:text-red-600"
-                  title="Cerrar sesión"
+                  title={t('nav.logout')}
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
@@ -261,18 +264,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <div className="hidden md:flex items-center space-x-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-full border border-green-200 dark:border-green-800">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-xs font-medium text-green-700 dark:text-green-300">
-                    Sistema Activo
+                    {t('dashboard.system_active')}
                   </span>
                 </div>
                 
                 {/* User Menu */}
                 <div className="flex items-center space-x-2">
+                  <LanguageSelector />
+                  
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={toggleTheme}
                     className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+                    title={theme === 'dark' ? t('dashboard.light_mode') : t('dashboard.dark_mode')}
                   >
                     {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                   </Button>
@@ -293,7 +298,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     size="sm"
                     onClick={handleSignOut}
                     className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                    title="Cerrar sesión"
+                    title={t('nav.logout')}
                   >
                     <LogOut className="w-4 h-4" />
                   </Button>
