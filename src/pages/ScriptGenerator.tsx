@@ -101,7 +101,7 @@ const ScriptGenerator: React.FC = () => {
         // En el paso 3, hacer la llamada real a Gemini API
         if (i === 2) {
           try {
-            const response = await fetch('http://localhost:3001/api/generate-scripts', {
+            const response = await fetch('/api/generate-scripts', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

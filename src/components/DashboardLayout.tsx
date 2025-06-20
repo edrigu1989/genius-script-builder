@@ -60,6 +60,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       description: 'Predice el éxito de tus videos'
     },
     {
+      title: 'Fine Tuning',
+      icon: Brain,
+      href: '/finetuning',
+      active: location.pathname === '/finetuning',
+      description: 'Entrena la IA con tu voz única'
+    },
+    {
       title: 'Analytics',
       icon: BarChart3,
       href: '/analytics',

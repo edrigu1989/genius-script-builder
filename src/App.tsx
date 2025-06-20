@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import FinetuningOnboarding from "./pages/FinetuningOnboarding";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/finetuning" element={<FinetuningOnboarding />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="*" element={<div className="flex items-center justify-center min-h-screen"><div className="text-center"><h1 className="text-2xl font-bold mb-4">Página no encontrada</h1><p>La página que buscas no existe.</p></div></div>} />
