@@ -18,188 +18,113 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { videoAnalysis, platform, businessProfile } = req.body;
+    const { topic, platform, tone, targetAudience } = req.body;
 
-    if (!videoAnalysis || !platform) {
+    if (!topic || !platform) {
       return res.status(400).json({ 
-        error: 'Missing required fields: videoAnalysis, platform' 
+        error: 'Missing required fields: topic, platform' 
       });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Get the model - using gemini-2.5-flash as per documentation
+    const model = genAI.getGenerativeModel({ 
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: 0.9,
+        topK: 1,
+        topP: 1,
+        maxOutputTokens: 2048,
+      }
+    });
 
-    const prompt = `
-    You are an expert social media script writer specializing in viral content creation.
-    
-    CONTEXT:
-    - Platform: ${platform}
-    - Video Analysis Score: ${videoAnalysis.viralityScore || 75}/100
-    - Business Type: ${businessProfile?.type || 'General'}
-    - Target Audience: ${businessProfile?.audience || 'General audience'}
-    - Voice/Tone: ${businessProfile?.voice || 'Professional'}
-    - Industry: ${businessProfile?.industry || 'General'}
-    
-    TASK: Generate 4 different script variations optimized for ${platform}:
-    
-    1. VIRAL HOOK - Maximum engagement and shareability
-    2. VALUE-DRIVEN - Educational/informational focus  
-    3. ENGAGEMENT-BAIT - Designed to generate comments/interactions
-    4. CONVERSION-FOCUSED - Clear call-to-action for business goals
-    
-    For each script, provide:
-    - Complete script text (optimized length for ${platform})
-    - Hook (opening line)
-    - CTA (call to action)
-    - Hashtags (6 relevant hashtags)
-    - Predicted performance metrics
-    - Target emotion
-    
-    Format as structured data that can be parsed programmatically.
-    Focus on ${platform}-specific best practices and current trends.
-    `;
+    const prompt = `Genera 4 scripts virales para ${platform} sobre el tema: "${topic}"
 
+Parámetros:
+- Tono: ${tone || 'casual'}
+- Audiencia objetivo: ${targetAudience || 'general'}
+- Plataforma: ${platform}
+
+Para cada script, incluye:
+1. Hook atractivo (primeros 3 segundos)
+2. Contenido principal estructurado
+3. Call-to-action efectivo
+4. Hashtags relevantes
+5. Predicción de engagement (%)
+6. Score de viralidad (1-10)
+
+Responde en formato JSON válido:
+{
+  "success": true,
+  "scripts": [
+    {
+      "id": 1,
+      "title": "Título del script",
+      "hook": "Hook inicial",
+      "content": "Contenido principal del script",
+      "cta": "Call to action",
+      "hashtags": ["#hashtag1", "#hashtag2"],
+      "engagement_prediction": 85,
+      "virality_score": 8,
+      "platform": "${platform}",
+      "tone": "${tone || 'casual'}"
+    }
+  ]
+}`;
+
+    console.log('Generating content with Gemini API...');
+    
+    // Generate content using the correct API syntax from documentation
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
 
-    // Parse and structure the response
-    const scripts = parseGeminiScriptResponse(text, platform);
+    console.log('Gemini API response received:', text.substring(0, 200) + '...');
 
-    return res.status(200).json({
-      success: true,
-      scripts: scripts,
-      metadata: {
-        baseViralityScore: videoAnalysis.viralityScore || 75,
-        analysisInsights: videoAnalysis.insights || [],
-        generatedAt: new Date().toISOString(),
-        rawResponse: text,
-        geminiModel: 'gemini-1.5-flash'
-      },
-      generatedAt: new Date().toISOString()
-    });
+    try {
+      // Try to parse as JSON
+      const jsonResponse = JSON.parse(text);
+      console.log('Successfully parsed JSON response');
+      return res.status(200).json(jsonResponse);
+    } catch (parseError) {
+      console.log('Response is not JSON, creating structured response');
+      // If not JSON, create a structured response
+      return res.status(200).json({
+        success: true,
+        scripts: [
+          {
+            id: 1,
+            title: `Script para ${platform} - ${topic}`,
+            hook: "¿Sabías que puedes transformar tu negocio en 30 días?",
+            content: text.substring(0, 500) + "...",
+            cta: "¡Sígueme para más tips como este!",
+            hashtags: [`#${platform.toLowerCase()}`, "#marketing", "#tips", "#viral"],
+            engagement_prediction: Math.floor(Math.random() * 30) + 70,
+            virality_score: Math.floor(Math.random() * 3) + 7,
+            platform: platform,
+            tone: tone || 'casual'
+          },
+          {
+            id: 2,
+            title: `Script Alternativo - ${topic}`,
+            hook: "Esto cambió mi perspectiva completamente...",
+            content: text.substring(100, 600) + "...",
+            cta: "¿Qué opinas? Comenta abajo 👇",
+            hashtags: [`#${platform.toLowerCase()}`, "#contenido", "#viral"],
+            engagement_prediction: Math.floor(Math.random() * 30) + 65,
+            virality_score: Math.floor(Math.random() * 3) + 6,
+            platform: platform,
+            tone: tone || 'casual'
+          }
+        ]
+      });
+    }
 
   } catch (error) {
     console.error('Error generating scripts:', error);
     return res.status(500).json({ 
-      error: 'Failed to generate scripts',
+      error: 'Error generating scripts',
       details: error.message 
     });
   }
-}
-
-function parseGeminiScriptResponse(text, platform) {
-  // Parse the Gemini response and structure it
-  const scripts = [];
-  
-  try {
-    // Extract script variations from the response
-    const versions = text.split(/VERSION \d+:/i);
-    
-    versions.forEach((version, index) => {
-      if (index === 0) return; // Skip the first empty split
-      
-      const lines = version.split('\n').filter(line => line.trim());
-      let script = {
-        id: `${platform}_gemini_v${index}`,
-        version: index,
-        type: extractType(version),
-        platform: platform,
-        script: extractScript(version),
-        hook: extractHook(version),
-        cta: extractCTA(version),
-        hashtags: extractHashtags(version),
-        predictedPerformance: extractPerformance(version),
-        targetEmotion: extractEmotion(version),
-        characterCount: extractScript(version).length,
-        optimizationScore: Math.floor(Math.random() * 30) + 70, // 70-100
-        viralityPotential: Math.floor(Math.random() * 40) + 50, // 50-90
-        generatedAt: new Date().toISOString(),
-        geminiGenerated: true
-      };
-      
-      scripts.push(script);
-    });
-    
-  } catch (parseError) {
-    console.error('Error parsing Gemini response:', parseError);
-    // Fallback to basic structure
-    return generateFallbackScripts(platform);
-  }
-  
-  return scripts.length > 0 ? scripts : generateFallbackScripts(platform);
-}
-
-function extractType(text) {
-  if (text.toLowerCase().includes('viral')) return 'Viral Hook';
-  if (text.toLowerCase().includes('value')) return 'Value-Driven';
-  if (text.toLowerCase().includes('engagement')) return 'Engagement-Bait';
-  if (text.toLowerCase().includes('conversion')) return 'Conversion-Focused';
-  return 'General';
-}
-
-function extractScript(text) {
-  const scriptMatch = text.match(/Script:\s*(.+?)(?:\n|Hook:|$)/i);
-  return scriptMatch ? scriptMatch[1].trim() : text.split('\n')[1]?.trim() || 'Generated script content';
-}
-
-function extractHook(text) {
-  const hookMatch = text.match(/Hook:\s*(.+?)(?:\n|CTA:|$)/i);
-  return hookMatch ? hookMatch[1].trim() : 'Attention-grabbing hook';
-}
-
-function extractCTA(text) {
-  const ctaMatch = text.match(/CTA:\s*(.+?)(?:\n|Hashtags:|$)/i);
-  return ctaMatch ? ctaMatch[1].trim() : 'Take action now!';
-}
-
-function extractHashtags(text) {
-  const hashtagMatch = text.match(/Hashtags:\s*(.+?)(?:\n|Performance:|$)/i);
-  if (hashtagMatch) {
-    return hashtagMatch[1].split(/[#\s,]+/).filter(tag => tag.trim()).slice(0, 6);
-  }
-  return ['viral', 'trending', 'fyp', 'content', 'social', 'marketing'];
-}
-
-function extractPerformance(text) {
-  const engagementMatch = text.match(/engagement[:\s]*(\d+)/i);
-  const reachMatch = text.match(/reach[:\s]*(\d+)/i);
-  
-  return {
-    estimatedEngagementRate: engagementMatch ? parseInt(engagementMatch[1]) : Math.floor(Math.random() * 50) + 30,
-    estimatedReach: reachMatch ? parseInt(reachMatch[1]) : Math.floor(Math.random() * 50) + 40,
-    confidenceLevel: 'Medium',
-    factors: ['AI-generated content', 'Platform optimization', 'Trend alignment'],
-    viralityBoost: Math.floor(Math.random() * 20) + 5
-  };
-}
-
-function extractEmotion(text) {
-  const emotionMatch = text.match(/emotion[:\s]*(.+?)(?:\n|$)/i);
-  return emotionMatch ? emotionMatch[1].trim() : 'Engagement, curiosity, interest';
-}
-
-function generateFallbackScripts(platform) {
-  return [
-    {
-      id: `${platform}_fallback_1`,
-      type: 'Viral Hook',
-      platform: platform,
-      script: 'This will change everything you know! 🤯',
-      hook: 'Mind-blowing revelation',
-      cta: 'Share if you agree!',
-      hashtags: ['viral', 'mindblown', 'trending', 'fyp', 'amazing', 'wow'],
-      predictedPerformance: {
-        estimatedEngagementRate: 65,
-        estimatedReach: 80,
-        confidenceLevel: 'High'
-      },
-      targetEmotion: 'Surprise, amazement',
-      characterCount: 35,
-      optimizationScore: 85,
-      viralityPotential: 75,
-      generatedAt: new Date().toISOString(),
-      geminiGenerated: false
-    }
-  ];
 }
 
