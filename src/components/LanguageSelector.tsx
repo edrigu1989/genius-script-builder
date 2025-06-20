@@ -1,83 +1,106 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Globe, Check } from 'lucide-react';
-import { Button } from './ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+import { ChevronDown, Globe } from 'lucide-react';
 
-const LanguageSelector: React.FC = () => {
-  const { i18n } = useTranslation();
+const LanguageSelector = () => {
+  const { i18n, t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
 
   const languages = [
     { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'pt', name: 'Português', flag: '🇧🇷' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'ja', name: '日本語', flag: '🇯🇵' },
-    { code: 'ko', name: '한국어', flag: '🇰🇷' },
-    { code: 'zh', name: '中文', flag: '🇨🇳' }
+    { code: 'en', name: 'English', flag: '🇺🇸' }
   ];
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
-  const changeLanguage = async (languageCode: string) => {
+  const handleLanguageChange = async (languageCode) => {
     try {
+      // Cambiar idioma en i18next
       await i18n.changeLanguage(languageCode);
-      // Forzar re-render de la página
-      window.location.reload();
+      
+      // Actualizar estado local
+      setCurrentLanguage(languageCode);
+      
+      // Guardar en localStorage
+      localStorage.setItem('language', languageCode);
+      
+      // Cerrar dropdown
+      setIsOpen(false);
+      
+      // Forzar recarga de la página para asegurar que todos los componentes se actualicen
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+      
     } catch (error) {
       console.error('Error changing language:', error);
     }
   };
 
+  useEffect(() => {
+    // Sincronizar con el idioma actual de i18next
+    const handleLanguageChanged = (lng) => {
+      setCurrentLanguage(lng);
+    };
+
+    i18n.on('languageChanged', handleLanguageChanged);
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChanged);
+    };
+  }, [i18n]);
+
+  useEffect(() => {
+    // Cargar idioma guardado al montar el componente
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage && savedLanguage !== currentLanguage) {
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, []);
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600"
-          title="Cambiar idioma / Change language"
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        onMouseEnter={() => setIsOpen(true)}
+        className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+        title="Cambiar idioma / Change language"
+      >
+        <span className="text-lg">{currentLang.flag}</span>
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {currentLang.code.toUpperCase()}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div 
+          className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+          onMouseLeave={() => setIsOpen(false)}
         >
-          <Globe className="w-4 h-4 mr-1" />
-          <span className="hidden sm:inline">{currentLanguage.flag}</span>
-          <span className="ml-1 text-xs">{currentLanguage.code.toUpperCase()}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-lg">
-        <div className="p-2 border-b border-gray-200 dark:border-gray-600">
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-            Seleccionar Idioma
-          </p>
+          <div className="py-2">
+            {languages.map((language) => (
+              <button
+                key={language.code}
+                onClick={() => handleLanguageChange(language.code)}
+                className={`w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 ${
+                  currentLanguage === language.code 
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
+                    : 'text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <span className="text-lg">{language.flag}</span>
+                <span className="text-sm font-medium">{language.name}</span>
+                {currentLanguage === language.code && (
+                  <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-        {languages.map((language) => (
-          <DropdownMenuItem
-            key={language.code}
-            onClick={() => changeLanguage(language.code)}
-            className={`flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-              i18n.language === language.code 
-                ? 'bg-blue-50 dark:bg-blue-900/20 border-l-2 border-blue-500' 
-                : ''
-            }`}
-          >
-            <span className="text-lg">{language.flag}</span>
-            <span className="flex-1 font-medium">{language.name}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 uppercase">
-              {language.code}
-            </span>
-            {i18n.language === language.code && (
-              <Check className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            )}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      )}
+    </div>
   );
 };
 

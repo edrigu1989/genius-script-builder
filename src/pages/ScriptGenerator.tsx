@@ -188,14 +188,13 @@ Generado el: ${new Date().toLocaleString()}
         {/* Formulario de Generación */}
         <Card className="max-w-4xl mx-auto">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Sparkles className="w-5 h-5 mr-2 text-purple-600" />
-              Configuración del Script
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-500" />
+              {t('script_generator.config_title')}
             </CardTitle>
             <CardDescription>
-              Configura los parámetros para generar scripts optimizados con IA avanzada
-            </CardDescription>
-          </CardHeader>
+              {t('script_generator.config_desc')}
+            </CardDescription>          </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -241,10 +240,10 @@ Generado el: ${new Date().toLocaleString()}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="audience">Audiencia Objetivo (Opcional)</Label>
+              <Label htmlFor="audience">{t('script_generator.audience')}</Label>
               <Input
                 id="audience"
-                placeholder="Ej: Jóvenes de 18-25 años interesados en tecnología"
+                placeholder={t('script_generator.audience_placeholder')}
                 value={targetAudience}
                 onChange={(e) => setTargetAudience(e.target.value)}
               />
@@ -253,8 +252,7 @@ Generado el: ${new Date().toLocaleString()}
             <Button 
               onClick={generateScript}
               disabled={!topic.trim() || isGenerating}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-              size="lg"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105"
             >
               {isGenerating ? (
                 <>
@@ -263,7 +261,7 @@ Generado el: ${new Date().toLocaleString()}
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <Wand2 className="w-4 h-4 mr-2" />
                   {t('script_generator.generate')}
                 </>
               )}

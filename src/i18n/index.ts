@@ -2,27 +2,17 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Import translation files from src folder
-import enTranslations from '../locales/en/translation.json';
-import esTranslations from '../locales/es/translation.json';
-import ptTranslations from '../locales/pt/translation.json';
-import frTranslations from '../locales/fr/translation.json';
-import deTranslations from '../locales/de/translation.json';
-import itTranslations from '../locales/it/translation.json';
-import jaTranslations from '../locales/ja/translation.json';
-import koTranslations from '../locales/ko/translation.json';
-import zhTranslations from '../locales/zh/translation.json';
+// Importar traducciones
+import esTranslation from '../locales/es/translation.json';
+import enTranslation from '../locales/en/translation.json';
 
 const resources = {
-  en: { translation: enTranslations },
-  es: { translation: esTranslations },
-  pt: { translation: ptTranslations },
-  fr: { translation: frTranslations },
-  de: { translation: deTranslations },
-  it: { translation: itTranslations },
-  ja: { translation: jaTranslations },
-  ko: { translation: koTranslations },
-  zh: { translation: zhTranslations }
+  es: {
+    translation: esTranslation,
+  },
+  en: {
+    translation: enTranslation,
+  },
 };
 
 i18n
@@ -30,34 +20,57 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'es', // Spanish as default
-    debug: true, // Enable debug for troubleshooting
-    
-    interpolation: {
-      escapeValue: false
-    },
+    fallbackLng: 'es',
+    debug: false, // Cambiar a true para debugging
     
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
-      lookupLocalStorage: 'i18nextLng'
     },
 
-    // Add react options for better integration
+    interpolation: {
+      escapeValue: false,
+    },
+
     react: {
       useSuspense: false,
-      bindI18n: 'languageChanged loaded',
-      bindI18nStore: 'added removed',
-      transEmptyNodeValue: '',
-      transSupportBasicHtmlNodes: true,
-      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i']
-    }
+    },
+
+    // Configuración para mejor manejo de claves faltantes
+    saveMissing: true,
+    missingKeyHandler: (lng, ns, key, fallbackValue) => {
+      console.warn(`Missing translation key: ${key} for language: ${lng}`);
+      return key; // Devolver la clave como fallback
+    },
+
+    // Configuración para recargar traducciones
+    load: 'languageOnly',
+    cleanCode: true,
+    
+    // Configuración de namespace
+    defaultNS: 'translation',
+    ns: ['translation'],
   });
 
-// Expose i18n to window for debugging
+// Exponer i18n globalmente para debugging
 if (typeof window !== 'undefined') {
-  (window as any).i18n = i18n;
+  window.i18n = i18n;
 }
+
+// Función helper para cambiar idioma con recarga
+export const changeLanguageWithReload = async (languageCode) => {
+  try {
+    await i18n.changeLanguage(languageCode);
+    localStorage.setItem('language', languageCode);
+    
+    // Pequeño delay para asegurar que el cambio se procese
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
+  } catch (error) {
+    console.error('Error changing language:', error);
+  }
+};
 
 export default i18n;
 
