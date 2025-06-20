@@ -2,6 +2,7 @@
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { Zap, Shield, DollarSign } from 'lucide-react';
 
 const CTA = () => {
   const { t } = useLanguage();
@@ -54,17 +55,23 @@ const CTA = () => {
         {/* Trust Elements */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           <div className="flex flex-col items-center">
-            <div className="text-3xl mb-2">⚡</div>
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
             <div className="text-white font-semibold">{t('cta.instant')}</div>
             <div className="text-blue-100 text-sm">{t('cta.instantDesc')}</div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="text-3xl mb-2">🔒</div>
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
             <div className="text-white font-semibold">{t('cta.secure')}</div>
             <div className="text-blue-100 text-sm">{t('cta.secureDesc')}</div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="text-3xl mb-2">💰</div>
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3">
+              <DollarSign className="w-6 h-6 text-white" />
+            </div>
             <div className="text-white font-semibold">{t('cta.noCommitment')}</div>
             <div className="text-blue-100 text-sm">{t('cta.noCommitmentDesc')}</div>
           </div>

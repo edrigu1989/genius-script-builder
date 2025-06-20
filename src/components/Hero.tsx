@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, Zap, Target, BarChart3 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { AnimatedIcon } from './AnimatedIcons.jsx';
 
 const Hero = () => {
   const { t } = useLanguage();
@@ -64,13 +63,13 @@ const Hero = () => {
           {/* Key Features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 animate-fade-in">
             {[
-              { iconKey: 'instantGeneration', title: t('hero.feature1.title'), desc: t('hero.feature1.desc') },
-              { iconKey: 'target', title: t('hero.feature2.title'), desc: t('hero.feature2.desc') },
-              { iconKey: 'analytics', title: t('hero.feature3.title'), desc: t('hero.feature3.desc') }
+              { icon: Zap, title: t('hero.feature1.title'), desc: t('hero.feature1.desc') },
+              { icon: Target, title: t('hero.feature2.title'), desc: t('hero.feature2.desc') },
+              { icon: BarChart3, title: t('hero.feature3.title'), desc: t('hero.feature3.desc') }
             ].map((feature, index) => (
               <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-all duration-300">
                 <div className="flex justify-center mb-3">
-                  <AnimatedIcon iconKey={feature.iconKey} size="w-8 h-8" className="filter brightness-0 invert" />
+                  <feature.icon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-white font-semibold text-lg mb-2">{feature.title}</h3>
                 <p className="text-blue-100">{feature.desc}</p>

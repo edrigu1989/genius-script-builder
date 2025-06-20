@@ -27,8 +27,12 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await signIn(email, password);
-      navigate('/');
+      const { error } = await signIn(email, password);
+      if (error) {
+        setError(error.message || 'Error al iniciar sesión');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       setError(err.message || 'Error al iniciar sesión');
     } finally {
@@ -42,8 +46,12 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await signUp(email, password, name);
-      navigate('/');
+      const { error } = await signUp(email, password, name);
+      if (error) {
+        setError(error.message || 'Error al registrarse');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       setError(err.message || 'Error al registrarse');
     } finally {
@@ -221,11 +229,11 @@ const Login = () => {
 
         <p className="text-center text-sm text-muted-foreground mt-4">
           Al continuar, aceptas nuestros{' '}
-          <Link to="/terms" className="underline underline-offset-4 hover:text-primary">
+          <Link to="/terms-of-service" className="underline underline-offset-4 hover:text-primary">
             Términos de servicio
           </Link>{' '}
           y{' '}
-          <Link to="/privacy" className="underline underline-offset-4 hover:text-primary">
+          <Link to="/privacy-policy" className="underline underline-offset-4 hover:text-primary">
             Política de privacidad
           </Link>
           .

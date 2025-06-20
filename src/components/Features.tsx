@@ -2,7 +2,14 @@
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { AnimatedIcon } from './AnimatedIcons.jsx';
+import { 
+  Brain, 
+  Zap, 
+  Target, 
+  BarChart3, 
+  CheckCircle, 
+  Clock 
+} from 'lucide-react';
 
 const Features = () => {
   const { t } = useLanguage();
@@ -14,37 +21,37 @@ const Features = () => {
 
   const features = [
     {
-      iconKey: 'multiAI',
+      icon: Brain,
       title: t('features.multiAI.title'),
       description: t('features.multiAI.desc'),
       gradient: 'from-blue-500 to-purple-600'
     },
     {
-      iconKey: 'instantGeneration',
+      icon: Zap,
       title: t('features.instant.title'),
       description: t('features.instant.desc'),
       gradient: 'from-purple-500 to-pink-600'
     },
     {
-      iconKey: 'brandCustomization',
+      icon: Target,
       title: t('features.brand.title'),
       description: t('features.brand.desc'),
       gradient: 'from-green-500 to-blue-600'
     },
     {
-      iconKey: 'advancedAnalytics',
+      icon: BarChart3,
       title: t('features.analytics.title'),
       description: t('features.analytics.desc'),
       gradient: 'from-orange-500 to-red-600'
     },
     {
-      iconKey: 'qualityControl',
+      icon: CheckCircle,
       title: t('features.quality.title'),
       description: t('features.quality.desc'),
       gradient: 'from-teal-500 to-green-600'
     },
     {
-      iconKey: 'availability',
+      icon: Clock,
       title: t('features.availability.title'),
       description: t('features.availability.desc'),
       gradient: 'from-indigo-500 to-blue-600'
@@ -81,13 +88,9 @@ const Features = () => {
               <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`}></div>
               <div className="absolute inset-0.5 bg-white rounded-2xl -z-10"></div>
               
-              {/* Animated Icon */}
+              {/* Icon */}
               <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-xl p-3 mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <AnimatedIcon 
-                  iconKey={feature.iconKey} 
-                  size="w-10 h-10" 
-                  className="filter brightness-0 invert"
-                />
+                <feature.icon className="w-8 h-8 text-white" />
               </div>
 
               {/* Content */}
