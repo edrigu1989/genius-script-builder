@@ -145,7 +145,8 @@ const VideoAnalysisAdvanced: React.FC = () => {
               body: JSON.stringify({
                 videoUrl: urlResult.publicUrl,
                 fileName: selectedFile.name,
-                fileSize: selectedFile.size
+                fileSize: selectedFile.size,
+                mimeType: selectedFile.type
               }),
             });
 
