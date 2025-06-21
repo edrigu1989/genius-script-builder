@@ -211,12 +211,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validar tipo de archivo
-    const allowedTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime'];
-    if (!allowedTypes.includes(videoFile.mimetype)) {
+    // Validar tipo de archivo (relajado)
+    const allowedTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/x-ms-wmv'];
+    if (!allowedTypes.includes(videoFile.mimetype) && videoFile.size > 100) {
+      console.log('❌ Tipo de archivo rechazado:', videoFile.mimetype);
       return res.status(400).json({ 
         success: false, 
-        error: 'Solo se permiten archivos de video (MP4, MOV, AVI)' 
+        error: `Tipo de archivo no soportado: ${videoFile.mimetype}. Soportados: MP4, MOV, AVI, WebM` 
       });
     }
 
