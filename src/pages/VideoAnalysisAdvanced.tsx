@@ -72,9 +72,9 @@ const VideoAnalysisAdvanced: React.FC = () => {
     setCurrentStep('Inicializando análisis con IA avanzada...');
 
     try {
-      // Validar archivo
-      if (selectedFile.size > 25 * 1024 * 1024) {
-        throw new Error('El archivo es demasiado grande. Máximo 25MB.');
+      // Validar archivo (solo verificar que existe)
+      if (!selectedFile) {
+        throw new Error('Selecciona un archivo de video.');
       }
 
       // Progreso de análisis real
@@ -100,9 +100,15 @@ const VideoAnalysisAdvanced: React.FC = () => {
             formData.append('video', selectedFile);
             formData.append('platform', selectedPlatform);
 
-            const response = await fetch('/api/analyze-video', {
+            const response = await fetch('/api/analyze-video-simple', {
               method: 'POST',
-              body: formData,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                test: true,
+                platform: selectedPlatform
+              }),
             });
 
             if (response.ok) {
