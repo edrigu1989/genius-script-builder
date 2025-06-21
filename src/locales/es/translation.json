@@ -188,5 +188,23 @@
   "common.download": "Descargar",
   "common.copy": "Copiar",
   "common.share": "Compartir"
+  "user": "Usuario",
+  "create_script": "Crear Guion",
+  "scripts_created": "Guiones Creados",
+  "avg_engagement": "Engagement Promedio",
+  "connected_platforms": "Plataformas Conectadas",
+  "total_revenue": "Ingresos Totales",
+  "recent_scripts": "Guiones Recientes",
+  "recent_scripts_desc": "Últimos guiones generados con IA",
+  "view_all": "Ver Todos",
+  "quick_actions": "Acciones Rápidas",
+  "quick_actions_desc": "Accede rápidamente a funciones útiles",
+  "generate_script_ai": "Generar Guion con IA",
+  "analyze_video": "Analizar Video",
+  "monthly_progress": "Progreso Mensual",
+  "engagement_goal": "Meta de Engagement",
+  "ai_active": "IA Activa",
+  "precision": "Precisión",
+  "last_update": "Última Actualización"
 }
 
