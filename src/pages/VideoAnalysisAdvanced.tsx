@@ -106,7 +106,8 @@ const VideoAnalysisAdvanced: React.FC = () => {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                test: true,
+                fileName: selectedFile.name,
+                fileSize: (selectedFile.size / 1024 / 1024).toFixed(2),
                 platform: selectedPlatform
               }),
             });
