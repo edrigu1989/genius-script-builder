@@ -61,7 +61,10 @@ const VideoAnalysisAdvanced: React.FC = () => {
   }, []);
 
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDef  const analyzeVideo = async () => {
+    event.preventDefault();
+  }, []);
+
+  const analyzeVideo = async () => {
     if (!selectedFile) return;
 
     setIsAnalyzing(true);
