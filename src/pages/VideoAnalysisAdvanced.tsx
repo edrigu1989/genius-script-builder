@@ -73,8 +73,8 @@ const VideoAnalysisAdvanced: React.FC = () => {
 
     try {
       // Validar archivo
-      if (selectedFile.size > 50 * 1024 * 1024) {
-        throw new Error('El archivo es demasiado grande. Máximo 50MB.');
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        throw new Error('El archivo es demasiado grande. Máximo 10MB.');
       }
 
       // Progreso de análisis real
@@ -191,7 +191,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
                   Arrastra tu video aquí o haz clic para seleccionar
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Formatos soportados: MP4, MOV, AVI (máx. 50MB)
+                  Formatos soportados: MP4, MOV, AVI (máx. 10MB)
                 </p>
                 <input
                   ref={fileInputRef}

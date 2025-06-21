@@ -5,10 +5,12 @@
   "devCommand": "npm run dev",
   "functions": {
     "api/analyze-video.js": {
-      "maxDuration": 60
+      "maxDuration": 45,
+      "memory": 512
     },
     "api/generate-scripts.js": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "memory": 256
     }
   },
   "rewrites": [
