@@ -124,6 +124,42 @@ const ScriptGenerator: React.FC = () => {
     navigator.clipboard.writeText(text);
   };
 
+  const saveScript = async (script: any) => {
+    try {
+      console.log('💾 Guardando script...');
+      
+      const response = await fetch('/api/save-script', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic,
+          platform,
+          tone,
+          targetAudience,
+          script: script.script,
+          hook: script.hook,
+          cta: script.cta,
+          hashtags: script.hashtags,
+          engagementScore: script.engagementScore,
+          userId: null // TODO: Agregar user ID cuando esté autenticado
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Script guardado:', result);
+        // TODO: Mostrar notificación de éxito
+      } else {
+        throw new Error('Error al guardar script');
+      }
+    } catch (error) {
+      console.error('❌ Error guardando script:', error);
+      // TODO: Mostrar notificación de error
+    }
+  };
+
   const downloadScript = (script: any) => {
     const content = `
 SCRIPT GENERADO CON IA AVANZADA
@@ -329,6 +365,15 @@ Generado el: ${new Date().toLocaleString()}
                         >
                           <Download className="w-4 h-4 mr-1" />
                           Download
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => saveScript(script)}
+                          className="bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-200"
+                        >
+                          <Heart className="w-4 h-4 mr-1" />
+                          Guardar
                         </Button>
                       </div>
                     </div>
