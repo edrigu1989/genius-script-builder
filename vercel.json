@@ -4,6 +4,14 @@
   "installCommand": "npm install",
   "devCommand": "npm run dev",
   "functions": {
+    "api/upload-url.js": {
+      "maxDuration": 30,
+      "memory": 256
+    },
+    "api/analyze-video-url.js": {
+      "maxDuration": 60,
+      "memory": 512
+    },
     "api/analyze-video-advanced.js": {
       "maxDuration": 60,
       "memory": 1024

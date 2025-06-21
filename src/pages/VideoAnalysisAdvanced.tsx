@@ -61,10 +61,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
   }, []);
 
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-  }, []);
-
-  const analyzeVideo = async () => {
+    event.preventDef  const analyzeVideo = async () => {
     if (!selectedFile) return;
 
     setIsAnalyzing(true);
@@ -72,53 +69,104 @@ const VideoAnalysisAdvanced: React.FC = () => {
     setCurrentStep('Inicializando análisis con IA avanzada...');
 
     try {
-      // Validar archivo (solo verificar que existe)
+      // Validar archivo
       if (!selectedFile) {
         throw new Error('Selecciona un archivo de video.');
       }
 
-      // Progreso de análisis real
+      // Progreso de análisis con Google Cloud Storage
       const steps = [
-        'Conectando con IA avanzada...',
-        'Subiendo video al servidor...',
-        'Analizando contenido visual con IA...',
-        'Procesando audio y transcripción...',
-        'Evaluando elementos virales...',
-        'Calculando predicciones de engagement...',
-        'Generando insights únicos...',
-        'Finalizando análisis...'
+        'Conectando con Google Cloud Storage...',
+        'Generando URL de subida segura...',
+        'Subiendo video al almacenamiento en la nube...',
+        'Procesando con IA avanzada...',
+        'Analizando colores y composición...',
+        'Evaluando psicología visual...',
+        'Generando insights científicos...',
+        'Finalizando análisis completo...'
       ];
 
       for (let i = 0; i < steps.length; i++) {
         setCurrentStep(steps[i]);
         setAnalysisProgress((i + 1) * (100 / steps.length));
         
-        // En el paso 3, hacer la llamada real a la API
-        if (i === 2) {
+        // Paso 1: Obtener signed URL
+        if (i === 1) {
           try {
-            const formData = new FormData();
-            formData.append('video', selectedFile);
-            formData.append('platform', selectedPlatform);
-
-            const response = await fetch('/api/analyze-video-advanced', {
+            console.log('🔗 Obteniendo signed URL...');
+            const urlResponse = await fetch('/api/upload-url', {
               method: 'POST',
-              body: formData,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                fileName: selectedFile.name,
+                fileType: selectedFile.type
+              }),
             });
 
-            if (response.ok) {
-              const result = await response.json();
+            if (!urlResponse.ok) {
+              throw new Error('Error obteniendo URL de subida');
+            }
+
+            const urlResult = await urlResponse.json();
+            
+            if (!urlResult.success) {
+              throw new Error(urlResult.error || 'Error en URL de subida');
+            }
+
+            // Paso 2: Subir archivo a Google Cloud Storage
+            setCurrentStep('Subiendo video al almacenamiento en la nube...');
+            setAnalysisProgress(37.5);
+
+            const uploadResponse = await fetch(urlResult.signedUrl, {
+              method: 'PUT',
+              body: selectedFile,
+              headers: {
+                'Content-Type': selectedFile.type,
+              },
+            });
+
+            if (!uploadResponse.ok) {
+              throw new Error('Error subiendo archivo a la nube');
+            }
+
+            console.log('✅ Video subido exitosamente a:', urlResult.publicUrl);
+
+            // Paso 3: Analizar video por URL
+            setCurrentStep('Procesando con IA avanzada...');
+            setAnalysisProgress(50);
+
+            const analysisResponse = await fetch('/api/analyze-video-url', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                videoUrl: urlResult.publicUrl,
+                fileName: selectedFile.name,
+                fileSize: selectedFile.size
+              }),
+            });
+
+            if (analysisResponse.ok) {
+              const result = await analysisResponse.json();
               if (result.success) {
                 // Usar datos reales de la API
                 setAnalysisResult(result.analysis);
                 setIsAnalyzing(false);
                 setAnalysisProgress(100);
-                setCurrentStep('¡Análisis completado con IA avanzada!');
+                setCurrentStep('¡Análisis científico completado!');
                 return;
+              } else {
+                throw new Error(result.error || 'Error en análisis');
               }
+            } else {
+              throw new Error('Error en respuesta de análisis');
             }
           } catch (apiError) {
             console.error('Error con la API:', apiError);
-            throw new Error('Error al analizar el video con IA avanzada');
+            throw apiError;
           }
         }
         
@@ -126,15 +174,12 @@ const VideoAnalysisAdvanced: React.FC = () => {
       }
 
     } catch (error) {
-      console.error('Error analyzing video:', error);
-      setCurrentStep('Error al analizar el video. Intenta de nuevo.');
-    } finally {
+      console.error('Error analizando video:', error);
       setIsAnalyzing(false);
-      setAnalysisProgress(0);
+      setError(`Error en análisis: ${error.message}`);
+      setCurrentStep('');
     }
-  };
-
-  const getScoreColor = (score: number) => {
+  };st getScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-600 dark:text-green-400';
     if (score >= 80) return 'text-blue-600 dark:text-blue-400';
     if (score >= 70) return 'text-yellow-600 dark:text-yellow-400';
