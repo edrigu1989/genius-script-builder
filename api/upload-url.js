@@ -1,92 +1,42 @@
 import { Storage } from '@google-cloud/storage';
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+const storage = new Storage({
+  projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS // o usa el JSON directo si lo importás como string
+});
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+const bucket = storage.bucket(process.env.GOOGLE_CLOUD_STORAGE_BUCKET);
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método no permitido. Solo POST.' });
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Solo POST permitido' });
+  const { fileName, fileType } = req.body;
+
+  if (!fileName || !fileType) {
+    return res.status(400).json({ error: 'Faltan datos: fileName o fileType' });
   }
 
   try {
-    console.log('🔗 Generando signed URL para subida...');
+    const file = bucket.file(fileName);
 
-    // Verificar variables de entorno
-    if (!process.env.GOOGLE_CLOUD_PROJECT_ID || !process.env.GOOGLE_CLOUD_STORAGE_BUCKET) {
-      return res.status(500).json({
-        success: false,
-        error: 'Google Cloud no configurado correctamente'
-      });
-    }
-
-    const { fileName, fileType } = req.body;
-
-    if (!fileName) {
-      return res.status(400).json({
-        success: false,
-        error: 'fileName requerido'
-      });
-    }
-
-    // Configurar Google Cloud Storage
-    let storage;
-    
-    if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-      // Si hay credenciales JSON
-      const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-      storage = new Storage({
-        projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
-        credentials: credentials
-      });
-    } else {
-      // Usar configuración por defecto
-      storage = new Storage({
-        projectId: process.env.GOOGLE_CLOUD_PROJECT_ID
-      });
-    }
-
-    const bucket = storage.bucket(process.env.GOOGLE_CLOUD_STORAGE_BUCKET);
-    
-    // Generar nombre único para el archivo
-    const timestamp = Date.now();
-    const uniqueFileName = `videos/${timestamp}-${fileName}`;
-
-    // Configurar signed URL para subida
-    const options = {
+    const [signedUrl] = await file.getSignedUrl({
       version: 'v4',
       action: 'write',
       expires: Date.now() + 15 * 60 * 1000, // 15 minutos
-      contentType: fileType || 'video/mp4',
-    };
+      contentType: fileType
+    });
 
-    const [signedUrl] = await bucket.file(uniqueFileName).getSignedUrl(options);
-
-    // URL pública para acceso posterior
-    const publicUrl = `https://storage.googleapis.com/${process.env.GOOGLE_CLOUD_STORAGE_BUCKET}/${uniqueFileName}`;
-
-    console.log('✅ Signed URL generada exitosamente');
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
 
     return res.status(200).json({
       success: true,
-      signedUrl: signedUrl,
-      publicUrl: publicUrl,
-      fileName: uniqueFileName,
-      expiresIn: '15 minutos'
+      signedUrl,
+      publicUrl
     });
-
-  } catch (error) {
-    console.error('❌ Error generando signed URL:', error);
-    
-    return res.status(500).json({
-      success: false,
-      error: 'Error generando URL de subida',
-      details: error.message
-    });
+  } catch (err) {
+    console.error('❌ Error generando signed URL:', err);
+    return res.status(500).json({ success: false, error: 'Error interno al generar la URL' });
   }
 }
-
