@@ -73,8 +73,8 @@ const VideoAnalysisAdvanced: React.FC = () => {
 
     try {
       // Validar archivo
-      if (selectedFile.size > 100 * 1024 * 1024) {
-        throw new Error('El archivo es demasiado grande. Máximo 100MB.');
+      if (selectedFile.size > 50 * 1024 * 1024) {
+        throw new Error('El archivo es demasiado grande. Máximo 50MB.');
       }
 
       // Progreso de análisis real
@@ -100,7 +100,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
             formData.append('video', selectedFile);
             formData.append('platform', selectedPlatform);
 
-            const response = await fetch('/api/analyze-video-hybrid', {
+            const response = await fetch('/api/analyze-video', {
               method: 'POST',
               body: formData,
             });
@@ -191,7 +191,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
                   Arrastra tu video aquí o haz clic para seleccionar
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Formatos soportados: MP4, MOV, AVI (máx. 100MB)
+                  Formatos soportados: MP4, MOV, AVI (máx. 50MB)
                 </p>
                 <input
                   ref={fileInputRef}
