@@ -1,28 +1,19 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
-  "devCommand": "npm run dev",
   "functions": {
-    "api/upload-url.js": {
-      "maxDuration": 30,
-      "memory": 256
+    "api/generate-scripts.js": {
+      "maxDuration": 30
     },
     "api/analyze-video-url.js": {
-      "maxDuration": 60,
-      "memory": 512
+      "maxDuration": 60
     },
-    "api/analyze-video-advanced.js": {
-      "maxDuration": 60,
-      "memory": 1024
+    "api/upload-url.js": {
+      "maxDuration": 10
     },
-    "api/analyze-video-simple.js": {
-      "maxDuration": 30,
-      "memory": 512
+    "api/save-script.js": {
+      "maxDuration": 10
     },
-    "api/generate-scripts.js": {
-      "maxDuration": 30,
-      "memory": 256
+    "api/get-scripts.js": {
+      "maxDuration": 10
     }
   },
   "rewrites": [

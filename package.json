@@ -8,9 +8,10 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "server": "node server/index.cjs",
-    "dev:full": "concurrently \"npm run server\" \"npm run dev\""
+    "preview": "vite preview --host 0.0.0.0 --port $PORT",
+    "server": "node server.js",
+    "dev:full": "concurrently \"npm run server\" \"npm run dev\"",
+    "start": "npm run build && npm run server"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.54.0",
