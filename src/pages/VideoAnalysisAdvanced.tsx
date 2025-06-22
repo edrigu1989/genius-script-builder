@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { AnimatedIcon } from '../components/AnimatedIcons.jsx';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +41,7 @@ const VideoAnalysisAdvanced: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState('tiktok');
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState('');
+  const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
