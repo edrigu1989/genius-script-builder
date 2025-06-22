@@ -49,10 +49,13 @@ app.post('/api/generate-scripts', (req, res) => {
 app.post('/api/upload-url', (req, res) => {
   const { fileName = 'video.mp4' } = req.body;
   
+  // En lugar de devolver URLs mock que causan CORS, simular upload exitoso directamente
   res.json({
     success: true,
-    signedUrl: `https://mock.com/${fileName}?signed=true`,
-    publicUrl: `https://mock.com/${fileName}`
+    message: 'Upload simulado exitosamente',
+    signedUrl: 'MOCK_UPLOAD_SUCCESS',
+    publicUrl: `https://storage.googleapis.com/genius-bucket/${fileName}`,
+    uploadComplete: true // Indicar que el upload ya está "completo"
   });
 });
 
@@ -69,6 +72,48 @@ app.post('/api/analyze-video-url', (req, res) => {
       best_platform: "tiktok",
       recommended_hashtags: ["#viral", "#fyp"]
     }
+  });
+});
+
+// API save-script
+app.post('/api/save-script', (req, res) => {
+  console.log('💾 API save-script llamada');
+  console.log('Body recibido:', req.body);
+  
+  const { script, platform, user_id } = req.body;
+  
+  // Simular guardado exitoso
+  res.json({
+    success: true,
+    message: 'Script guardado exitosamente',
+    script_id: Math.floor(Math.random() * 1000000),
+    saved_at: new Date().toISOString()
+  });
+});
+
+// API get-scripts
+app.get('/api/get-scripts', (req, res) => {
+  console.log('📋 API get-scripts llamada');
+  
+  // Simular lista de scripts guardados
+  res.json({
+    success: true,
+    scripts: [
+      {
+        id: 1,
+        title: "Script de Marketing Digital",
+        platform: "TikTok",
+        created_at: new Date(Date.now() - 24*60*60*1000).toISOString(),
+        engagement_score: 85
+      },
+      {
+        id: 2,
+        title: "Script de Productividad",
+        platform: "Instagram",
+        created_at: new Date(Date.now() - 48*60*60*1000).toISOString(),
+        engagement_score: 78
+      }
+    ]
   });
 });
 

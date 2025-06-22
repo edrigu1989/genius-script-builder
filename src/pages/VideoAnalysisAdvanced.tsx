@@ -119,20 +119,28 @@ const VideoAnalysisAdvanced: React.FC = () => {
               throw new Error(urlResult.error || 'Error en URL de subida');
             }
 
-            // Paso 2: Subir archivo a Google Cloud Storage
+            // Paso 2: Simular subida (ya que es mock)
             setCurrentStep('Subiendo video al almacenamiento en la nube...');
             setAnalysisProgress(37.5);
 
-            const uploadResponse = await fetch(urlResult.signedUrl, {
-              method: 'PUT',
-              body: selectedFile,
-              headers: {
-                'Content-Type': selectedFile.type,
-              },
-            });
+            // Si es mock, saltar el upload real
+            if (urlResult.signedUrl === 'MOCK_UPLOAD_SUCCESS' || urlResult.uploadComplete) {
+              console.log('✅ Upload simulado exitosamente');
+              // Simular tiempo de upload
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            } else {
+              // Upload real solo si no es mock
+              const uploadResponse = await fetch(urlResult.signedUrl, {
+                method: 'PUT',
+                body: selectedFile,
+                headers: {
+                  'Content-Type': selectedFile.type,
+                },
+              });
 
-            if (!uploadResponse.ok) {
-              throw new Error('Error subiendo archivo a la nube');
+              if (!uploadResponse.ok) {
+                throw new Error('Error subiendo archivo a la nube');
+              }
             }
 
             console.log('✅ Video subido exitosamente a:', urlResult.publicUrl);
